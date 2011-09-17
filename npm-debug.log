@@ -1,0 +1,45 @@
+info it worked if it ends with ok
+verbose cli [ 'node', '/usr/local/bin/npm', 'link' ]
+info using npm@1.0.23
+info using node@v0.4.10
+verbose config file /Users/dan/.npmrc
+verbose config file /usr/local/etc/npmrc
+silly testEngine { name: 'surf',
+silly testEngine   description: 'HTTP Client',
+silly testEngine   author: { name: 'Border Stylo' },
+silly testEngine   version: '0.0.1',
+silly testEngine   main: './lib/surf.js',
+silly testEngine   repository: 
+silly testEngine    { type: 'git',
+silly testEngine      url: 'git://github.com/borderstylo/surf.git' },
+silly testEngine   file: [ 'examples', 'lib', 'test' ],
+silly testEngine   dependencies: { underscore: '1.1.7', eventemitter2: '0.4.1' },
+silly testEngine   devDependencies: {},
+silly testEngine   engine: 'node >= 0.4.10',
+silly testEngine   _npmJsonOpts: 
+silly testEngine    { dev: true,
+silly testEngine      file: '/Users/dan/Projects/surf/package.json',
+silly testEngine      wscript: false,
+silly testEngine      serverjs: false,
+silly testEngine      contributors: false },
+silly testEngine   _id: 'surf@0.0.1',
+silly testEngine   engines: { node: '*' },
+silly testEngine   _engineSupported: true,
+silly testEngine   _npmVersion: '1.0.23',
+silly testEngine   _nodeVersion: 'v0.4.10',
+silly testEngine   _defaultsLoaded: true }
+verbose caching /Users/dan/Projects/surf/package.json
+verbose loadDefaults surf@0.0.1
+ERR! Error: EACCES, Permission denied '/Users/dan/Projects/surf'
+ERR! 
+ERR! Please use 'sudo' or log in as root to run this command.
+ERR!     sudo npm "link"
+ERR! or set the 'unsafe-perm' config var to true.
+ERR!     npm config set unsafe-perm true
+ERR! 
+ERR! System Darwin 10.8.0
+ERR! command "node" "/usr/local/bin/npm" "link"
+ERR! cwd /Users/dan/Projects/surf
+ERR! node -v v0.4.10
+ERR! npm -v 1.0.23
+verbose exit [ 13, true ]
