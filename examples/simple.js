@@ -2,7 +2,7 @@ var Surf = require("surf");
 var surfer = new Surf();
 
 surfer.get({
-  url: "http://google.com",
+  url: "http://rocket.ly",
   on: {
     response: function(response) {
       console.log(response.body);
