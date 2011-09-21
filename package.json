@@ -8,10 +8,11 @@
     "type": "git",
     "url": "https://github.com/borderstylo/surf/"
   },
-  "files": ["examples","lib", "test"],
+  "files": ["examples","lib","test"],
   "dependencies": {
     "underscore": "1.1.7",
-    "eventemitter2": "0.4.1"
+    "eventemitter2": "0.4.1",
+    "sprintf": "0.1.1"
   },
   "devDependencies": {
   },
