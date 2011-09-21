@@ -6,7 +6,7 @@ var request = surfer.get({
   on: {
     response: function(response) {
       console.log("HELLO!");
-      console.log(response);  
+      console.log(response.body.text);  
     },
     error: function(response) {
       //console.log("ERROR!");
