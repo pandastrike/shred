@@ -5,7 +5,8 @@ var request = surfer.get({
   url: "http://rocket.ly/",
   on: {
     response: function(response) {
-      //console.log(response);  
+      console.log("HELLO!");
+      console.log(response);  
     },
     error: function(response) {
       //console.log("ERROR!");
