@@ -1,11 +1,13 @@
-var Surf = require("surf");
-var surfer = new Surf();
+var Surf = require("surf")
+  , Ax = require("ax")
+;
+var surfer = new Surf({ logger: new Ax({ level: "debug" })});
 
 surfer.get({
-  url: "http://rocket.ly",
+  url: "http://localhost:1337/200",
   on: {
     response: function(response) {
-      console.log(response.body);
+      console.log(response.body.text);
     }
   }
 });

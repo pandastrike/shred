@@ -15,6 +15,9 @@
     "sprintf": "0.1.1"
   },
   "devDependencies": {
+    "rephraser": "0.0.1",
+    "docco": "0.3.0",
+    "vows": "0.5.11"
   },
   "engine": "node >= 0.4.10"
 }
