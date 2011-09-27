@@ -33,7 +33,7 @@ vows.describe('Surf').addBatch({
       assert.equal(response.status, 200);
     },
     "should have a content type of 'text/plain'": function(response) {
-      assert.equal(response.contentType, "text/plain");
+      assert.equal(response.content.data.headers["Content-Type"], "text/plain");
     }
   }
 }).export(module);
