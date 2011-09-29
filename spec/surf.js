@@ -34,7 +34,7 @@ vows.describe('Surf').addBatch({
     },
     "should have no content type": function(response) {
       assert.equal(!!response.content.data.headers["Content-Type"],false);
-    }
+    },
   },
   'A minimal valid POST request': {
     topic: function() {
@@ -155,6 +155,30 @@ vows.describe('Surf').addBatch({
     },
     "will transparently handle the redirect": function(response){
       assert.equal(response.status, 200);
+    }
+  },
+  "A request with an event handler based on the status code": {
+    topic: function() { 
+      var surfer = new Surf({ logger: log })
+        , promise = new(Emitter)
+      ;
+      surfer.get({
+        url: "http://localhost:1337/200",
+        on: {
+          200: function(response) {
+            promise.emit("success",response);
+          },
+          error: function(error) {
+            log.debug(error);
+            log.info("Is rephraser running?")
+          }
+        }
+      });
+      
+      return promise;
+    },
+    "will trigger the correct callback": function(response) {
+      assert.equal(response.status,200);
     }
   }
   
