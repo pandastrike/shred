@@ -3,7 +3,7 @@ var vows = require('vows')
   , Emitter = require("events").EventEmitter
   , _ = require("underscore")
   , Ax = require("ax")
-  , log = new Ax({ level: "debug" })
+  , log = new Ax({ level: "debug", file: "log/specs/content.log" })
   , Content = require("../lib/surf/content")
 ;
 

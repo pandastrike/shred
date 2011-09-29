@@ -2,8 +2,8 @@ var vows = require('vows')
   , assert = require('assert')
   , Emitter = require("events").EventEmitter
   , Ax = require("ax")
-  , log = new Ax({ level: "debug" })
-  , Surf = require("Surf")
+  , log = new Ax({ level: "debug", file: "log/specs/surf.log" })
+  , Surf = require("surf")
 ;
 
 vows.describe('Surf').addBatch({

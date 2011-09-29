@@ -7,7 +7,7 @@ surfer.get({
   url: "http://localhost:1337/200",
   on: {
     response: function(response) {
-      console.log(response.body.text);
+      console.log(response.content.body);
     }
   }
 });

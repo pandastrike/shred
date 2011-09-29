@@ -1,11 +1,9 @@
 sys = require 'sys'
 {spawn, exec} = require 'child_process'
 run = (command) ->
-  console.log(command.line)
   child = exec(command.line)
   child.stdout.on "data", command.handler||(data) -> sys.print(data)
   child.stderr.on "data", (data) -> process.stderr.write(data)
-  child.on "exit", -> console.log(command.line + " exited.")
   child
 
 
@@ -36,5 +34,5 @@ task 'test', 'run all the specs', ->
       line: "node_modules/vows/bin/vows --spec spec/*.js",
     }
   }
-
-  commands.server.child = run commands.server
+  exec "mkdir log ; mkdir log/specs",(error,stdin,stdout) -> 
+    commands.server.child = run commands.server
