@@ -47,6 +47,18 @@ vows.describe('Surf Headers').addBatch({
       assert.equal(object._headers["Content-Type"],headers["Content-Type"]);
       assert.equal(object._headers["Accept"],headers["Accept"]);
       assert.equal(object._headers["Host"],headers["Host"]);
+    },
+    "should be able to use a variety of case and underscores": function(K) {
+      var object = new K();
+      var headers = {
+        content_type: "text/html",
+        accept: "text/html,*/*",
+        hOST: "foobar.com"
+      };
+      object.setHeaders(headers);
+      assert.equal(object._headers["Content-Type"],headers["content_type"]);
+      assert.equal(object._headers["Accept"],headers["accept"]);
+      assert.equal(object._headers["Host"],headers["hOST"]);
     }
   }
 }).export(module);
