@@ -131,7 +131,33 @@ vows.describe('Surf').addBatch({
         response.content.data.headers["Content-Type"],
         "application/json");
     }
+  },
+  "A GET request to a redirected URL": {
+    topic: function() {
+      
+      var surfer = new Surf({ logger: log })
+        , promise = new(Emitter)
+      ;
+      surfer.get({
+        url: "http://localhost:1337/301",
+        on: {
+          response: function(response) {
+            promise.emit("success",response);
+          },
+          error: function(error) {
+            log.debug(error);
+            log.info("Is rephraser running?")
+          }
+        }
+      });
+      
+      return promise;
+    },
+    "will transparently handle the redirect": function(response){
+      assert.equal(response.status, 200);
+    }
   }
+  
   
   
   
