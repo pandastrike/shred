@@ -47,5 +47,20 @@ vows.describe('Surf Content').addBatch({
     "should have a length property equal to the length of the body": function(content) {
       assert.equal(content.length, content.body.length);
     }  
+  },
+  "An content object constructed with a complex MIME type": {
+    topic: function() {
+      return new Content({
+          type: "application/vnd.foo.baz+json;version=1.0",
+          data: { foo: "HELLO" } });
+    },
+    "should have a body property equal to the stringified data": function(content) {
+      assert.equal(typeof content.body, 'string');
+      assert.equal(content.body, JSON.stringify(content.data));
+    },
+    "should have a length property equal to the length of the body": function(content) {
+      assert.equal(content.length, content.body.length);
+    }  
   }
+  
 }).export(module);
