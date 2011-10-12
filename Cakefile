@@ -19,8 +19,8 @@ task 'docs', 'generate the inline documentation', ->
 task 'test', 'run all the specs', ->
   commands = {
     server: {
-      line: "rephraser spec/rephraser.conf",
-      handler: (data) -> 
+      line: "node_modules/rephraser/bin/rephraser spec/rephraser.conf",
+      handler: (data) ->
         sys.print data
         # we're assuming here that output to stdout
         # means a successful start and so we set up
