@@ -50,10 +50,10 @@ task 'bundle', 'Generate the browser bundle for chat.js', (options)->
   ;
 
   buffer = new Buffer [
-    # 'var Surf = (function () {'
+    'var Surf = (function () {'
     src
-    # '; return require("./surf")'
-    # '})()'
+    '; return require("./surf.js")'
+    '})()'
   ].join '';
 
   fs.writeFile bundle, buffer, (err) ->
