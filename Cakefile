@@ -41,7 +41,7 @@ task 'bundle', 'Generate the browser bundle for chat.js', (options)->
   fs = require 'fs'
   path = require 'path'
   browserify = require 'browserify'
-  module = path.join __dirname, 'lib', 'surf.js'
+  module = path.join __dirname, 'lib', 'surf'
   bundle = path.join __dirname, 'spec', 'browser', 'surf.js'
 
   src = browserify({ filter : require('uglify-js') })
