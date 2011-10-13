@@ -44,10 +44,12 @@ task 'bundle', 'Generate the browser bundle for chat.js', (options)->
   module = path.join __dirname, 'lib', 'surf'
   bundle = path.join __dirname, 'spec', 'browser', 'surf.js'
 
-  src = browserify({ filter : require('uglify-js') })
-    .require(module)
-    .bundle()
-  ;
+  src = browserify({
+    # filter : require('uglify-js')
+    require: {
+      # 'surf': module
+    }
+  }).require(module).bundle()
 
   buffer = new Buffer [
     'var Surf = (function () {'
