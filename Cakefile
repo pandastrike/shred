@@ -34,5 +34,29 @@ task 'test', 'run all the specs', ->
       line: "node_modules/vows/bin/vows --spec spec/*.js",
     }
   }
-  exec "mkdir log ; mkdir log/specs",(error,stdin,stdout) -> 
+  exec "mkdir log ; mkdir log/specs",(error,stdin,stdout) ->
     commands.server.child = run commands.server
+
+task 'bundle', 'Generate the browser bundle for chat.js', (options)->
+  fs = require 'fs'
+  path = require 'path'
+  browserify = require 'browserify'
+  module = path.join __dirname, 'lib', 'surf.js'
+  bundle = path.join __dirname, 'spec', 'browser', 'surf.js'
+
+  src = browserify({ filter : require('uglify-js') })
+    .require(module)
+    .bundle()
+  ;
+
+  buffer = new Buffer [
+    # 'var Surf = (function () {'
+    src
+    # '; return require("./surf")'
+    # '})()'
+  ].join '';
+
+  fs.writeFile bundle, buffer, (err) ->
+    throw err if err;
+
+    console.log bundle + ' written (' + buffer.length + ' bytes)'
