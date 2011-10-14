@@ -3,7 +3,7 @@ var vows = require('vows')
   , Emitter = require("events").EventEmitter
   , Ax = require("ax")
   , log = new Ax({ level: "debug", file: "log/specs/surf.log" })
-  , Surf = require("surf")
+  , Surf = require("../lib/surf")
 ;
 
 vows.describe('Surf').addBatch({
