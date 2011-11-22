@@ -27,3 +27,12 @@ The response was JSON, but Shred handles that for you because we specified `appl
 
 See http://www.spire.io/docs/tutorials/rest-api.html for more examples.
 
+## Installation
+
+Just `npm install shred` and you're good to go.
+
+## Feedback
+
+Feedback is highly encouraged in the form of [tickets][tickets] or pull requests. Thank you!
+
+[tickets]: https://github.com/spire-io/shred/issues
