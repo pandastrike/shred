@@ -1,6 +1,6 @@
 ## Introduction
 
-Shred is an HTTP client library that makes writing clients fun and easy.
+Shred is an HTTP client library for node.js that makes writing clients fun and easy.
 
     var Shred = require("shred")
       , shred = Shred.new()
@@ -12,8 +12,13 @@ Shred is an HTTP client library that makes writing clients fun and easy.
         accept: "application/json"
       },
       on: {
-        response: function(response) {
+        // you can use response codes as events
+        200: function(response) {
           console.log(response.content.data);
+        },
+        // any other response means something's wrong
+        response: function(response) {
+          console.log("Oh no!");
         }
       }
     });
