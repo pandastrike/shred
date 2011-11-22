@@ -1,0 +1,21 @@
+{
+    "name": "surf"
+  , "version": "0.0.1pre"
+  , "author": "Dan Shaw <dshaw@dshaw.com> (http://dshaw.io)"
+  , "repository": {
+      "type": "git"
+    , "url": "git://github.com/dshaw/surf.git"
+  }
+  , "dependencies": {
+      "hiredis": "~0.1.10"
+    , "redis": "~!0.6.7"
+    }
+  , "devDependencies": {
+      "expresso" : "~0.7.6"
+    , "semvar": ""
+    }
+  , "scripts" : {
+        "start" : "node surf"
+     ,  "test" : "expresso"
+    }
+}

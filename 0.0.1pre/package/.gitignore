@@ -1,0 +1,7 @@
+*.swp
+.DS_Store
+.idea
+nohup.out
+logs
+node_modules
+pids

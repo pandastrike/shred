@@ -1,26 +1,57 @@
-{
-  "name": "surf",
-  "description": "HTTP Client",
-  "author": "Border Stylo",
-  "version": "0.0.1",
-  "main" : "./lib/surf.js",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/borderstylo/surf/"
-  },
-  "files": ["examples","lib","test"],
-  "dependencies": {
+{ "name": "shred"
+, "version": "0.0.5"
+, "description": "A dead-simple HTTP client"
+, "keywords": [ "http", "client" ]
+, "licenses": [
+    { "type": "MIT"
+    , "url": "https://github.com/spire-io/ax/blob/master/ReadMe.md"
+    }
+  ]
+, "homepage": "https://github.com/spire-io/shred"
+, "bugs": { "url": "https://github.com/spire-io/shred/issues" }
+, "author": { 
+    "name": "Dan Yoder",
+    "email": "dan@spire.io"
+  }
+, "maintainers": [
+    { "name": "Dan Yoder"
+    , "email": "dan@spire.io"
+    }
+  , { "name": "Jason Campbell"
+    , "email": "jason@spire.io"
+    }
+  , { "name": "Matthew King"
+    , "email": "mking@spire.io"
+    }
+  ]
+, "contributors":   [
+    { "name": "Dan Yoder"
+    , "email": "dyoder@spire.io"
+    }
+  , { "name": "Jason Campbell"
+    , "email": "jason@spire.io"
+    }
+  , { "name": "Matthew King"
+    , "email": "mking@spire.io"
+    }
+  ]
+, "main" : "./lib/surf.js"
+, "repository": { "type": "git"
+  , "url": "git://github.com/spire-io/surf.git"
+  }
+, "files": [ "examples" ,"lib", "doc", "spec" ]
+, "dependencies": { 
     "underscore": "1.1.7",
     "eventemitter2": "0.4.1",
     "sprintf": "0.1.1",
     "ax": "0.0.2",
     "browserify": "1.5.0",
     "uglify-js": "1.1.1"
-  },
-  "devDependencies": {
+  }
+, "devDependencies": { 
     "docco": "0.3.0",
     "vows": "0.5.11",
     "rephraser": "https://github.com/borderstylo/rephraser/tarball/master"
-  },
-  "engine": "node >= 0.4.10"
+  }
+, "engine": "node >= 0.4.10"
 }
