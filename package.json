@@ -35,9 +35,9 @@
     , "email": "mking@spire.io"
     }
   ]
-, "main" : "./lib/surf.js"
+, "main" : "./lib/shred.js"
 , "repository": { "type": "git"
-  , "url": "git://github.com/spire-io/surf.git"
+  , "url": "git://github.com/spire-io/shred.git"
   }
 , "files": [ "examples" ,"lib", "doc", "spec" ]
 , "dependencies": { 
