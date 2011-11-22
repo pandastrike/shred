@@ -4,10 +4,10 @@ var vows = require('vows')
   , _ = require("underscore")
   , Ax = require("ax")
   , log = new Ax({ level: "debug", file: "log/specs/content.log" })
-  , Content = require("../lib/surf/content")
+  , Content = require("../lib/shred/content")
 ;
 
-vows.describe('Surf Content').addBatch({
+vows.describe('Shred Content').addBatch({
   'An content object constructed with a body and no type': {
     topic: function() {
       return new Content({body: "Hello" });

@@ -4,7 +4,7 @@
 , "keywords": [ "http", "client" ]
 , "licenses": [
     { "type": "MIT"
-    , "url": "https://github.com/spire-io/ax/blob/master/ReadMe.md"
+    , "url": "http://copyfree.org/licenses/mit/license.txt"
     }
   ]
 , "homepage": "https://github.com/spire-io/shred"
@@ -39,18 +39,12 @@
   , "url": "git://github.com/spire-io/shred.git"
   }
 , "files": [ "examples" ,"lib", "doc", "spec" ]
-, "dependencies": { 
-    "underscore": "1.1.7",
-    "eventemitter2": "0.4.1",
-    "sprintf": "0.1.1",
-    "ax": "0.0.2",
-    "browserify": "1.5.0",
-    "uglify-js": "1.1.1"
+, "dependencies": {  "underscore": "1.1.7"
+    , "sprintf": "0.1.1"
+    , "ax": "0.0.2"
   }
-, "devDependencies": { 
-    "docco": "0.3.0",
-    "vows": "0.5.11",
-    "rephraser": "https://github.com/borderstylo/rephraser/tarball/master"
+, "devDependencies": { "vows": "0.5.11"
+    , "rephraser": "https://github.com/borderstylo/rephraser/tarball/master"
   }
 , "engine": "node >= 0.4.10"
 }

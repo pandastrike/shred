@@ -4,10 +4,10 @@ var vows = require('vows')
   , _ = require("underscore")
   , Ax = require("ax")
   , log = new Ax({ level: "debug", file: "log/specs/headers.log" })
-  , H = require("../lib/surf/mixins/headers")
+  , H = require("../lib/shred/mixins/headers")
 ;
 
-vows.describe('Surf Headers').addBatch({
+vows.describe('Shred Headers').addBatch({
   'An object that mixins in Getters and Setters': {
     topic: function() {
       

@@ -2,19 +2,19 @@ var vows = require('vows')
   , assert = require('assert')
   , Emitter = require("events").EventEmitter
   , Ax = require("ax")
-  , log = new Ax({ level: "debug", file: "log/specs/surf.log" })
-  , Surf = require("../lib/surf")
+  , log = new Ax({ level: "debug", file: "log/specs/shred.log" })
+  , Shred = require("../lib/shred")
 ;
 
-vows.describe('Surf').addBatch({
+vows.describe('Shred').addBatch({
   'A minimal valid GET request': {
     topic: function() {
       
-      var surfer = new Surf({ logger: log })
+      var shred = new Shred({ logger: log })
         , promise = new(Emitter)
       ;
       
-      surfer.get({
+      shred.get({
         url: "http://localhost:1337/200",
         on: {
           response: function(response) {
@@ -39,11 +39,11 @@ vows.describe('Surf').addBatch({
   'A minimal valid POST request': {
     topic: function() {
       
-      var surfer = new Surf({ logger: log })
+      var shred = new Shred({ logger: log })
         , promise = new(Emitter)
       ;
       
-      surfer.post({
+      shred.post({
         url: "http://localhost:1337/200",
         on: {
           response: function(response) {
@@ -68,11 +68,11 @@ vows.describe('Surf').addBatch({
   'A POST request with a body': {
     topic: function() {
       
-      var surfer = new Surf({ logger: log })
+      var shred = new Shred({ logger: log })
         , promise = new(Emitter)
       ;
       
-      surfer.post({
+      shred.post({
         url: "http://localhost:1337/200",
         body: "Hello",
         on: {
@@ -100,10 +100,10 @@ vows.describe('Surf').addBatch({
   "A POST request with a content type of 'application/json body that returns a 201": {
     topic: function() {
       
-      var surfer = new Surf({ logger: log })
+      var shred = new Shred({ logger: log })
         , promise = new(Emitter)
       ;
-      surfer.post({
+      shred.post({
         url: "http://localhost:1337/201",
         body: {foo: 1, bar: 2},
         on: {
@@ -135,10 +135,10 @@ vows.describe('Surf').addBatch({
   "A GET request to a redirected URL": {
     topic: function() {
       
-      var surfer = new Surf({ logger: log })
+      var shred = new Shred({ logger: log })
         , promise = new(Emitter)
       ;
-      surfer.get({
+      shred.get({
         url: "http://localhost:1337/301",
         on: {
           response: function(response) {
@@ -159,10 +159,10 @@ vows.describe('Surf').addBatch({
   },
   "A request with an event handler based on the status code": {
     topic: function() { 
-      var surfer = new Surf({ logger: log })
+      var shred = new Shred({ logger: log })
         , promise = new(Emitter)
       ;
-      surfer.get({
+      shred.get({
         url: "http://localhost:1337/200",
         on: {
           200: function(response) {

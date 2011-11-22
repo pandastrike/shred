@@ -2,5 +2,5 @@ log
 *.log
 tmp
 node_modules
-.*
 npm_debug.log
+.*

@@ -1,13 +1,13 @@
 ## Introduction
 
-Surf is an HTTP client library that makes writing clients fun and easy.
+Shred is an HTTP client library that makes writing clients fun and easy.
 
     // we'll omit this part in future examples
-    var Surf = require("surf")
-      , surfer = Surf.new()
+    var Shred = require("shred")
+      , shred = Shred.new()
       ;
   
-    surfer.get({
+    shred.get({
       url: "http://shark.com/",
       headers: {
         accept: "application/json"
@@ -19,11 +19,11 @@ Surf is an HTTP client library that makes writing clients fun and easy.
       }
     });
 
-The response was JSON, but Surf handles that for you because we specified `application/json` in the `Accept` header. So we're able to access it via `response.body.json`.
+The response was JSON, but Shred handles that for you because we specified `application/json` in the `Accept` header. So we're able to access it via `response.body.json`.
 
 Here's another example:
 
-    surfer.post({
+    shred.post({
       url: home.sessions.url
       headers: {
         accept: shark.types["1.0"].session,
