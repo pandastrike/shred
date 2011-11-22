@@ -1,5 +1,5 @@
 { "name": "shred"
-, "version": "0.5.4"
+, "version": "0.5.5"
 , "description": "A dead-simple HTTP client"
 , "keywords": [ "http", "client" ]
 , "licenses": [
@@ -38,7 +38,7 @@
 , "repository": { "type": "git"
   , "url": "git://github.com/spire-io/shred.git"
   }
-, "files": [ "Cakefile", "AUTHORS", "LICENSE", "lib", "test" ]
+, "files": [ "Cakefile", "AUTHORS", "LICENSE", "Readme.md", "lib", "test" ]
 , "dependencies": {  "underscore": "1.1.7"
     , "sprintf": "0.1.1"
     , "ax": "0.0.2"
