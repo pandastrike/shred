@@ -1,10 +1,10 @@
 { "name": "shred"
-, "version": "0.5.0"
+, "version": "0.5.2"
 , "description": "A dead-simple HTTP client"
 , "keywords": [ "http", "client" ]
 , "licenses": [
     { "type": "MIT"
-    , "url": "http://copyfree.org/licenses/mit/license.txt"
+    , "url": "https://github.com/spire-io/shred/blob/master/LICENSE"
     }
   ]
 , "homepage": "https://github.com/spire-io/shred"
