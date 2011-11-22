@@ -9,9 +9,8 @@
   ]
 , "homepage": "https://github.com/spire-io/shred"
 , "bugs": { "url": "https://github.com/spire-io/shred/issues" }
-, "author": { 
-    "name": "Dan Yoder",
-    "email": "dan@spire.io"
+, "author": {  "name": "Dan Yoder"
+  , "email": "dan@spire.io"
   }
 , "maintainers": [
     { "name": "Dan Yoder"

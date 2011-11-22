@@ -1,3 +1,0 @@
-===Surf
-
-Streaming Server
