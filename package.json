@@ -1,5 +1,5 @@
 { "name": "shred"
-, "version": "0.6.0"
+, "version": "0.6.1"
 , "description": "A dead-simple HTTP client"
 , "keywords": [ "http", "client" ]
 , "licenses": [
@@ -38,13 +38,13 @@
 , "repository": { "type": "git"
   , "url": "git://github.com/spire-io/shred.git"
   }
-, "files": [ "Cakefile", "AUTHORS", "LICENSE", "Readme.md", "lib", "test" ]
+, "files": [ "Cakefile", "AUTHORS", "LICENSE", "Readme.md", "lib", "test", "examples", "docs" ]
 , "dependencies": {  "underscore": "1.1.7"
     , "sprintf": "0.1.1"
-    , "ax": "0.0.2"
+    , "ax": ">= 0.1.0"
   }
 , "devDependencies": { "vows": "0.5.11"
-    , "rephraser": "https://github.com/borderstylo/rephraser/tarball/master"
+    , "rephraser": ">= 0.1.0"
   }
 , "engine": "node >= 0.4.10"
 }
