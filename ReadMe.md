@@ -24,7 +24,7 @@ Shred is an HTTP client library for node.js that makes writing HTTP clients fun 
 
 The response was JSON, but Shred handles that for you because we specified `application/json` in the `Accept` header. So we're able to access it via `response.content.data`.
 
-See `docs/example.html` for more examples.
+See [the wiki](https://github.com/spire-io/shred/wiki) for more examples.
 
 ## Installation
 
