@@ -14,8 +14,7 @@ vows.describe('Shred Headers').addBatch({
       var K = function(){}
         , promise = new(Emitter)
       ;
-      H.Getters.mixWith(K);
-      H.Setters.mixWith(K);
+      H.gettersAndSetters(K);
       
       return K;
     },

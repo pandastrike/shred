@@ -28,3 +28,11 @@ task 'test', 'run all the specs', ->
   exec "mkdir log ; mkdir log/specs",(error,stdin,stdout) ->
     commands.server.child = run commands.server
 
+task 'docs', 'generate the inline documentation', ->
+  exec "rm -rf docs/*.html", (error) -> 
+  exec "node_modules/docco/bin/docco lib/*.js lib/shred/*.js lib/shred/mixins/*.js examples/*.js", (error) ->
+    if error
+      console.log error.message
+    else
+      exec "cp docs/shred.html docs/index.html", (error) ->
+        console.log error.message if error
