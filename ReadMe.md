@@ -3,7 +3,7 @@
 Shred is an HTTP client library for node.js that makes writing HTTP clients fun and easy.
 
     var Shred = require("shred");
-		var surf = new Shred;
+		var shred = new Shred;
   
     shred.get({
       url: "http://api.spire.io/",
@@ -26,6 +26,8 @@ The response was JSON, but Shred handles that for you because we specified `appl
 
 See [the wiki](https://github.com/spire-io/shred/wiki) for more examples.
 
+Also, we wrote [a blog post][blog] on why we wrote Shred instead of going with existing libraries.
+
 ## Installation
 
 Just `npm install shred` and you're good to go.
@@ -35,6 +37,8 @@ Just `npm install shred` and you're good to go.
 Feedback is highly encouraged in the form of [tickets][tickets] or pull requests. Thank you!
 
 ## Code
+
+[Browse the annotated source.][docs]
 
 We'd love [your contributions](repo) - don't hesitate to send us pull requests. We'll also happily add you as a committer after we've accepted it.
 
@@ -52,4 +56,6 @@ Shred is based on code originally written by [Matthew King][king]. That code was
 [yoder]: mailto:dan@spire.io
 [king]: mailto:mking@spire.io
 [campbell]: mailto:jason@spire.io
+[docs]: http://www.spire.io/docs/shred/
+[blog]: http://www.spire.io/posts/introducing-shred.html
 
