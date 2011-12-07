@@ -1,4 +1,4 @@
-sys = require 'sys'
+sys = require 'util'
 {spawn, exec} = require 'child_process'
 run = (command) ->
   child = exec(command.line)

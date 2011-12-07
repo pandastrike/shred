@@ -1,5 +1,5 @@
 { "name": "shred"
-, "version": "0.6.1"
+, "version": "0.6.2"
 , "description": "A dead-simple HTTP client"
 , "keywords": [ "http", "client" ]
 , "licenses": [
@@ -43,8 +43,8 @@
     , "sprintf": "0.1.1"
     , "ax": ">= 0.1.0"
   }
-, "devDependencies": { "vows": "0.5.11"
+, "devDependencies": { "vows": "0.6.0"
     , "rephraser": ">= 0.1.0"
   }
-, "engine": "node >= 0.4.10"
+, "engine": "node >= 0.6.0"
 }
