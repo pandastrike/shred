@@ -3,7 +3,7 @@
 Shred is an HTTP client library for node.js that makes writing HTTP clients fun and easy.
 
     var Shred = require("shred");
-		var surf = new Shred;
+		var shred = new Shred;
   
     shred.get({
       url: "http://api.spire.io/",
