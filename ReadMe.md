@@ -26,6 +26,8 @@ The response was JSON, but Shred handles that for you because we specified `appl
 
 See [the wiki](https://github.com/spire-io/shred/wiki) for more examples.
 
+Also, we wrote [a blog post][blog] on why we wrote Shred instead of going with existing libraries.
+
 ## Installation
 
 Just `npm install shred` and you're good to go.
@@ -55,4 +57,5 @@ Shred is based on code originally written by [Matthew King][king]. That code was
 [king]: mailto:mking@spire.io
 [campbell]: mailto:jcampbell@spire.io
 [docs]: http://www.spire.io/docs/shred/
+[blog]: http://www.spire.io/posts/introducing-shred.html
 
