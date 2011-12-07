@@ -36,6 +36,8 @@ Feedback is highly encouraged in the form of [tickets][tickets] or pull requests
 
 ## Code
 
+[Browse the annotated source.][docs]
+
 We'd love [your contributions](repo) - don't hesitate to send us pull requests. We'll also happily add you as a committer after we've accepted it.
 
 ## License
@@ -52,4 +54,5 @@ Shred is based on code originally written by [Matthew King][king]. That code was
 [yoder]: mailto:dan@spire.io
 [king]: mailto:mking@spire.io
 [campbell]: mailto:jcampbell@spire.io
+[docs]: http://www.spire.io/docs/shred/
 
