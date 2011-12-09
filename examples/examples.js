@@ -51,6 +51,22 @@ surf.get({
   }
 });
 
+// We can also chain response handlers and have many handlers
+// for the generic 'response' event.
+surf.get({
+  url: "http://api.spire.io",
+  headers: {
+    accept: "text/html"
+  }
+}).on(200, function(response) {
+  assert.ok(response.content.body);
+  console.log("√ Got API description as HTML");
+}).on(function(response) {
+  console.log("We got something besides a 200 response!");
+}).on(function(response) {
+  console.log("I'm not so happy about this non 200 response. Launch the missiles!");
+});
+
 // # Data Conversion
 //
 // Shred provides a very helpful facility for converting content entities to and
