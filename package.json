@@ -1,5 +1,5 @@
 { "name": "shred"
-, "version": "0.6.3"
+, "version": "0.6.4"
 , "description": "A dead-simple HTTP client"
 , "keywords": [ "http", "client" ]
 , "licenses": [
