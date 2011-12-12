@@ -14,15 +14,11 @@ vows.describe('Shred').addBatch({
         , promise = new(Emitter)
       ;
       
-      var handleCount = 0;
       var req = shred.get({
         url: "http://localhost:1337/200",
         on: {
           response: function(response) {
-            handleCount++;
-            if (handleCount == 2) {
-              promise.emit("success", response, handleCount);
-            }
+            promise.emit("success", response);
           },
           error: function(error) {
             log.debug(error);
@@ -30,18 +26,7 @@ vows.describe('Shred').addBatch({
           }
         }
       });
-      
-      req.on(function(response) {
-        handleCount++;
-        if (handleCount == 2) {
-          promise.emit("success", response, handleCount);
-        }
-      });
-      
       return promise;
-    },
-    "should be able to have multiple handlers": function(err, response, count) {
-      assert.equal(count, 2);
     },
     "should have a response status code of 200": function(response){
       assert.equal(response.status, 200);
@@ -210,9 +195,59 @@ vows.describe('Shred').addBatch({
     "can have multiple callbacks": function(err, response, count) {
       assert.equal(count, 2);
     }
+  },
+  'A GET request with multiple handlers': {
+    topic: function() {
+      
+      var shred = new Shred({ logger: log })
+        , promise = new(Emitter)
+      ;
+      
+      var handleRunCount = 0;
+      var numberOfHandlers = 0;
+
+      var createHandlerFunction = function () {
+        numberOfHandlers ++;
+        return function (response) {
+          handleRunCount++;
+          if (handleRunCount == numberOfHandlers) {
+            promise.emit("success", response, numberOfHandlers, handleRunCount);
+          }
+        };
+      };
+
+      var req = shred.get({
+        url: "http://localhost:1337/200",
+        // Handler defined in the request options hash
+        on: {
+          response: createHandlerFunction(),
+          error: function(error) {
+            log.debug(error);
+            log.info("Is rephraser running?")
+          }
+        }
+      });
+
+      // Handler without an event name
+      req.on(createHandlerFunction());
+
+      // Handler with an event name
+      req.on('response', createHandlerFunction());
+
+      // Handler with a hash of event names
+      req.on({
+        response: createHandlerFunction()
+      });
+
+      return promise;
+    },
+    "should be able to have multiple handlers": function(err, response, numberOfHandlers, handleRunCount) {
+      // Sanity check to make sure that there are handlers:
+      assert.notEqual(0, numberOfHandlers);
+      assert.notEqual(1, numberOfHandlers);
+    },
+    "should run all of the handlers": function (err, response, numberOfHandlers, handleRunCount) {
+      assert.equal(handleRunCount, numberOfHandlers);
+    }
   }
-  
-  
-  
-  
 }).export(module);

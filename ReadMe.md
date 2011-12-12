@@ -9,16 +9,15 @@ Shred is an HTTP client library for node.js that makes writing HTTP clients fun 
       url: "http://api.spire.io/",
       headers: {
         accept: "application/json"
+      }
+    }).on({
+      // you can use response codes as events
+      200: function(response) {
+        console.log(response.content.data);
       },
-      on: {
-        // you can use response codes as events
-        200: function(response) {
-          console.log(response.content.data);
-        },
-        // any other response means something's wrong
-        response: function(response) {
-          console.log("Oh no!");
-        }
+      // any other response means something's wrong
+      response: function(response) {
+        console.log("Oh no!");
       }
     });
 
