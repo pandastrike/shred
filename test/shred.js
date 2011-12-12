@@ -41,7 +41,6 @@ vows.describe('Shred').addBatch({
       return promise;
     },
     "should be able to have multiple handlers": function(err, response, count) {
-      console.log(response, count);
       assert.equal(count, 2);
     },
     "should have a response status code of 200": function(response){
