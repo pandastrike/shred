@@ -14,11 +14,15 @@ vows.describe('Shred').addBatch({
         , promise = new(Emitter)
       ;
       
-      shred.get({
+      var handleCount = 0;
+      var req = shred.get({
         url: "http://localhost:1337/200",
         on: {
           response: function(response) {
-            promise.emit("success",response);
+            handleCount++;
+            if (handleCount == 2) {
+              promise.emit("success", response, handleCount);
+            }
           },
           error: function(error) {
             log.debug(error);
@@ -27,7 +31,18 @@ vows.describe('Shred').addBatch({
         }
       });
       
+      req.on(function(response) {
+        handleCount++;
+        if (handleCount == 2) {
+          promise.emit("success", response, handleCount);
+        }
+      });
+      
       return promise;
+    },
+    "should be able to have multiple handlers": function(err, response, count) {
+      console.log(response, count);
+      assert.equal(count, 2);
     },
     "should have a response status code of 200": function(response){
       assert.equal(response.status, 200);
@@ -162,11 +177,17 @@ vows.describe('Shred').addBatch({
       var shred = new Shred({ logger: log })
         , promise = new(Emitter)
       ;
-      shred.get({
+      
+      var handleCount = 0;
+      
+      var req = shred.get({
         url: "http://localhost:1337/200",
         on: {
           200: function(response) {
-            promise.emit("success",response);
+            handleCount++;
+            if (handleCount == 2) {
+              promise.emit("success", response, handleCount);
+            }
           },
           error: function(error) {
             log.debug(error);
@@ -175,10 +196,20 @@ vows.describe('Shred').addBatch({
         }
       });
       
+      req.on(200, function(response) {
+        handleCount++;
+        if (handleCount == 2) {
+          promise.emit("success", response, handleCount);
+        }
+      })
+      
       return promise;
     },
     "will trigger the correct callback": function(response) {
       assert.equal(response.status,200);
+    },
+    "can have multiple callbacks": function(err, response, count) {
+      assert.equal(count, 2);
     }
   }
   
