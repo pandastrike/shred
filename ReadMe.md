@@ -6,7 +6,7 @@ Shred is an HTTP client library for node.js that makes writing HTTP clients fun 
 var Shred = require("shred");
 var shred = new Shred;
 
-shred.get({
+var req = shred.get({
   url: "http://api.spire.io/",
   headers: {
     accept: "application/json"
@@ -20,6 +20,19 @@ shred.get({
     response: function(response) {
       console.log("Oh no!");
     }
+  }
+});
+```
+
+You can also add listeners to the request with the `on` method:
+
+```javascript
+req.on({
+  404: function(response) {
+    console.log("Not Found");
+  },
+  500: function(response) {
+    console.log("Server Error, please try again later.");
   }
 });
 ```
