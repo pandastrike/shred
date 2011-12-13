@@ -196,7 +196,7 @@ vows.describe('Shred').addBatch({
       assert.equal(count, 2);
     }
   },
-  'A GET request with multiple handlers': {
+  'A GET request with multiple "response" handlers': {
     topic: function() {
       
       var shred = new Shred({ logger: log })
