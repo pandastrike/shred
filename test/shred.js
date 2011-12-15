@@ -249,5 +249,137 @@ vows.describe('Shred').addBatch({
     "should run all of the handlers": function (err, response, numberOfHandlers, handleRunCount) {
       assert.equal(handleRunCount, numberOfHandlers);
     }
+  },
+  'A valid GET request with multiple listeners': {
+    topic: function() {
+      
+      var shred = new Shred({ logger: log })
+        , promise = new(Emitter)
+      ;
+      var numberOfFiredCallbacks = 0;
+      
+      var req = shred.get({
+        url: "http://localhost:1337/200",
+        on: {
+          200: function(response) {
+            numberOfFiredCallbacks++
+            if (numberOfFiredCallbacks === 1){
+              response.fired200 = true;
+              promise.emit("success", response);
+            }
+          },
+          success: function(response) {
+            numberOfFiredCallbacks++;
+            if (numberOfFiredCallbacks === 1){
+              response.firedSuccess = true;
+              promise.emit("success", response);
+            }
+          },
+          response: function(response) {
+            numberOfFiredCallbacks++;
+            if (numberOfFiredCallbacks === 1){
+              response.firedResponse = true;
+              promise.emit("success", response);
+            }
+          },
+          error: function(error) {
+            log.debug(error);
+            log.info("Is rephraser running?")
+          }
+        }
+      });
+      return promise;
+    },
+    "should have a response status code of 200": function(response){
+      assert.equal(response.status, 200);
+    },
+    "should fire the '200' listener": function(response) {
+      assert.equal(response.fired200,true);
+    },
+    "should NOT fire the 'success' listener": function(response) {
+      assert.equal(response.firedSuccess,null);
+    },
+    "should NOT fire the 'response' listener": function(response) {
+      assert.equal(response.firedResponse,null);
+    }
+  },
+  'A failing GET request (caused by an HTTP error) with multiple listeners': {
+    topic: function() {
+      
+      var shred = new Shred({ logger: log })
+        , promise = new(Emitter)
+      ;
+      var numberOfFiredCallbacks = 0;
+      
+      var req = shred.get({
+        url: "http://localhost:1337/404",
+        on: {
+          404: function(response) {
+            numberOfFiredCallbacks++
+            if (numberOfFiredCallbacks === 1){
+              response.fired404 = true;
+              promise.emit("success", response);
+            }
+          },
+          error: function(response) {
+            numberOfFiredCallbacks++;
+            if (numberOfFiredCallbacks === 1){
+              response.firedError = true;
+              promise.emit("success", response);
+            }
+          },
+          response: function(response) {
+            numberOfFiredCallbacks++;
+            if (numberOfFiredCallbacks === 1){
+              response.firedResponse = true;
+              promise.emit("success", response);
+            }
+          }
+        }
+      });
+      return promise;
+    },
+    "should have a response status code of 404": function(response){
+      assert.equal(response.status, 404);
+    },
+    "should fire the '404' listener": function(response) {
+      assert.equal(response.fired404,true);
+    },
+    "should NOT fire the 'error' listener": function(response) {
+      assert.equal(response.firedError,null);
+    },
+    "should NOT fire the 'response' listener": function(response) {
+      assert.equal(response.firedResponse,null);
+    }
+  },
+  'A failing GET request not caused by an HTTP error': {
+    topic: function() {
+      
+      var shred = new Shred({ logger: log })
+        , promise = new(Emitter)
+      ;
+      var requestErrorFired = false;
+      
+      var req = shred.get({
+        url: "http://url.that.doesnt-exist.and.never.will/",
+        on: {
+          success: function (response) {
+            console.log("success");
+          },
+          error: function (response) {
+            console.log("we got an http error");
+          },
+          request_error: function (requestErrorFired) {
+            requestErrorFired = true;
+            promise.emit("success", requestErrorFired);
+            console.error("something went very wrong! request was not made!")
+          }
+        }
+      });
+      return promise;
+    },
+    "should fire the 'request_error' listener": function(response, requestErrorFired) {
+      assert.equal(requestErrorFired,true);
+    }
   }
 }).export(module);
