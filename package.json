@@ -44,7 +44,7 @@
     , "ax": ">= 0.1.0"
   }
 , "devDependencies": { "vows": "0.5.11"
-    , "rephraser": ">= 0.1.0"
+    , "rephraser": ">= 0.1.3"
   }
 , "engine": "node >= 0.4.10"
 }
