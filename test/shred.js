@@ -9,11 +9,11 @@ var vows = require('vows')
 vows.describe('Shred').addBatch({
   'A minimal valid GET request': {
     topic: function() {
-      
+
       var shred = new Shred({ logger: log })
         , promise = new(Emitter)
       ;
-      
+
       var req = shred.get({
         url: "http://localhost:1337/200",
         on: {
@@ -37,11 +37,11 @@ vows.describe('Shred').addBatch({
   },
   'A minimal valid POST request': {
     topic: function() {
-      
+
       var shred = new Shred({ logger: log })
         , promise = new(Emitter)
       ;
-      
+
       shred.post({
         url: "http://localhost:1337/200",
         on: {
@@ -54,7 +54,7 @@ vows.describe('Shred').addBatch({
           }
         }
       });
-      
+
       return promise;
     },
     "should have a response status code of 200": function(response){
@@ -66,11 +66,11 @@ vows.describe('Shred').addBatch({
   },
   'A POST request with a body': {
     topic: function() {
-      
+
       var shred = new Shred({ logger: log })
         , promise = new(Emitter)
       ;
-      
+
       shred.post({
         url: "http://localhost:1337/200",
         body: "Hello",
@@ -84,7 +84,7 @@ vows.describe('Shred').addBatch({
           }
         }
       });
-      
+
       return promise;
     },
     "should have a response status code of 200": function(response){
@@ -98,7 +98,7 @@ vows.describe('Shred').addBatch({
   },
   "A POST request with a content type of 'application/json body that returns a 201": {
     topic: function() {
-      
+
       var shred = new Shred({ logger: log })
         , promise = new(Emitter)
       ;
@@ -115,7 +115,7 @@ vows.describe('Shred').addBatch({
           }
         }
       });
-      
+
       return promise;
     },
     "should have a response status code of 201": function(response){
@@ -133,7 +133,7 @@ vows.describe('Shred').addBatch({
   },
   "A GET request to a redirected URL": {
     topic: function() {
-      
+
       var shred = new Shred({ logger: log })
         , promise = new(Emitter)
       ;
@@ -149,7 +149,7 @@ vows.describe('Shred').addBatch({
           }
         }
       });
-      
+
       return promise;
     },
     "will transparently handle the redirect": function(response){
@@ -157,13 +157,13 @@ vows.describe('Shred').addBatch({
     }
   },
   "A request with an event handler based on the status code": {
-    topic: function() { 
+    topic: function() {
       var shred = new Shred({ logger: log })
         , promise = new(Emitter)
       ;
-      
+
       var handleCount = 0;
-      
+
       var req = shred.get({
         url: "http://localhost:1337/200",
         on: {
@@ -179,14 +179,14 @@ vows.describe('Shred').addBatch({
           }
         }
       });
-      
+
       req.on(200, function(response) {
         handleCount++;
         if (handleCount == 2) {
           promise.emit("success", response, handleCount);
         }
       })
-      
+
       return promise;
     },
     "will trigger the correct callback": function(response) {
@@ -198,11 +198,11 @@ vows.describe('Shred').addBatch({
   },
   'A GET request with multiple "response" handlers': {
     topic: function() {
-      
+
       var shred = new Shred({ logger: log })
         , promise = new(Emitter)
       ;
-      
+
       var handleRunCount = 0;
       var numberOfHandlers = 0;
 
@@ -252,12 +252,12 @@ vows.describe('Shred').addBatch({
   },
   'A valid GET request with multiple listeners': {
     topic: function() {
-      
+
       var shred = new Shred({ logger: log })
         , promise = new(Emitter)
       ;
       var numberOfFiredCallbacks = 0;
-      
+
       var req = shred.get({
         url: "http://localhost:1337/200",
         on: {
@@ -305,12 +305,12 @@ vows.describe('Shred').addBatch({
   },
   'A failing GET request (caused by an HTTP error) with multiple listeners': {
     topic: function() {
-      
+
       var shred = new Shred({ logger: log })
         , promise = new(Emitter)
       ;
       var numberOfFiredCallbacks = 0;
-      
+
       var req = shred.get({
         url: "http://localhost:1337/404",
         on: {
