@@ -4,6 +4,7 @@ var vows = require('vows')
   , Ax = require("ax")
   , log = new Ax({ level: "debug", file: "log/specs/shred.log" })
   , Shred = require("../lib/shred")
+  , zlib = require('zlib');
 ;
 
 vows.describe('Shred').addBatch({
@@ -388,5 +389,28 @@ vows.describe('Shred').addBatch({
     "should fire the 'request_error' listener": function(response, requestErrorFired) {
       assert.equal(requestErrorFired,true);
     }
+  },
+  'A GET request of gzip content': {
+    topic: function() {
+
+      var shred = new Shred({ logger: log })
+        , promise = new(Emitter)
+      ;
+
+      var req = shred.get({
+		url: "http://www.writeonglass.com",
+		headers: {
+		  "Accept-Encoding": "gzip"
+		},
+		on: {
+		  200: function (res) { zlib.gunzip(res.body._body, function(err, result){ console.log(result.toString()) } ); }
+		}
+	  });
+
+      return promise;
+    }//,
+    //"should fire the 'request_error' listener": function(response) {
+      //assert.equal(true, true);
+    //}
   }
 }).export(module);
