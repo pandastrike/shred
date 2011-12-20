@@ -22,6 +22,9 @@
   , { "name": "Matthew King"
     , "email": "mking@spire.io"
     }
+  , { "name": "Nicolas LaCasse"
+    , "email": "nicolas@spire.io"
+    }
   ]
 , "contributors":   [
     { "name": "Dan Yoder"
