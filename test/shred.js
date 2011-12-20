@@ -393,7 +393,7 @@ vows.describe('Shred').addBatch({
       assert.equal(requestErrorFired,true);
     }
   },
-  'A GET request of gzip content': {
+  "A request with Accept-Encoding 'gzip'": {
     topic: function() {
 
       var shred = new Shred({ logger: log })
@@ -406,14 +406,18 @@ vows.describe('Shred').addBatch({
 		  "Accept-Encoding": "gzip"
 		},
 		on: {
-		  200: function (res) { zlib.gunzip(res.body._body, function(err, result){ console.log(result.toString()) } ); }
+		  response: function (res) {
+		    zlib.gunzip(res.content.body, function(err, result){
+		      promise.emit("success", result);
+		    });
+		  }
 		}
 	  });
 
       return promise;
-    }//,
-    //"should fire the 'request_error' listener": function(response) {
-      //assert.equal(true, true);
-    //}
+    },
+    "should return proper gzip data": function(response, result) {
+      assert.equal(result.toString().length >	 0, true);
+    }
   }
 }).export(module);
