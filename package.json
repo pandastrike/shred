@@ -22,6 +22,9 @@
   , { "name": "Matthew King"
     , "email": "mking@spire.io"
     }
+  , { "name": "Nicolas LaCasse"
+    , "email": "nicolas@spire.io"
+    }
   ]
 , "contributors":   [
     { "name": "Dan Yoder"
@@ -33,6 +36,9 @@
   , { "name": "Matthew King"
     , "email": "mking@spire.io"
     }
+  , { "name": "Andy Burke"
+    , "email": "aburke@bitflood.org"
+    }
   ]
 , "main" : "./lib/shred.js"
 , "repository": { "type": "git"
@@ -42,6 +48,7 @@
 , "dependencies": {  "underscore": "1.1.7"
     , "sprintf": "0.1.1"
     , "ax": ">= 0.1.0"
+    , "cookiejar": "1.3.x"
   }
 , "devDependencies": { "vows": "0.5.11"
     , "rephraser": ">= 0.1.3"
