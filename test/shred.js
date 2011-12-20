@@ -34,8 +34,11 @@ vows.describe('Shred').addBatch({
     "should have no content type": function(response) {
       assert.equal(!!response.content.data.headers["Content-Type"],false);
     },
-    "should result in a body that is a Buffer": function(response) {
-      assert.isTrue(Buffer.isBuffer(response.content.body));
+    "should result in a content.body that is a string": function(response) {
+      assert.equal(typeof response.content.body, 'string');
+    },
+    "should result in a content._body that is a Buffer": function(response) {
+      assert.isTrue(Buffer.isBuffer(response.content._body));
     }
   },
   'A minimal valid POST request': {
