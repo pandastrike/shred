@@ -137,7 +137,7 @@ vows.describe('Shred').addBatch({
         "application/json");
     }
   },
-  "A GET request to a redirected URL": {
+  "A GET request to a redirected URL (301)": {
     topic: function() {
 
       var shred = new Shred({ logger: log })
@@ -145,6 +145,31 @@ vows.describe('Shred').addBatch({
       ;
       shred.get({
         url: "http://localhost:1337/301",
+        on: {
+          response: function(response) {
+            promise.emit("success",response);
+          },
+          error: function(error) {
+            log.debug(error);
+            log.info("Is rephraser running?")
+          }
+        }
+      });
+
+      return promise;
+    },
+    "will transparently handle the redirect": function(response){
+      assert.equal(response.status, 200);
+    }
+  },
+  "A GET request to a redirected URL (302)": {
+    topic: function() {
+
+      var shred = new Shred({ logger: log })
+        , promise = new(Emitter)
+      ;
+      shred.get({
+        url: "http://localhost:1337/302",
         on: {
           response: function(response) {
             promise.emit("success",response);
