@@ -410,7 +410,7 @@ vows.describe('Shred').addBatch({
 		},
 		on: {
 		  response: function (res) {
-		    zlib.gunzip(res.content.body, function(err, result){
+		    zlib.gunzip(res.content._body, function(err, result){
 		      promise.emit("success", result);
 		    });
 		  }
