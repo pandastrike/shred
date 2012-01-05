@@ -44,14 +44,18 @@
 , "repository": { "type": "git"
   , "url": "git://github.com/spire-io/shred.git"
   }
-, "files": [ "Cakefile", "AUTHORS", "LICENSE", "Readme.md", "lib", "test", "examples", "docs" ]
+, "directories" : { "docs" : "./docs"
+                  , "lib" : "./lib"
+                  , "test" : "./test"
+                  , "examples" : "./examples"
+                  }
 , "dependencies": {  "underscore": "1.1.7"
     , "sprintf": "0.1.1"
-    , "ax": ">= 0.1.0"
+    , "ax": ">= 0.1.1"
     , "cookiejar": "1.3.x"
   }
 , "devDependencies": { "vows": "0.5.11"
-    , "rephraser": ">= 0.1.3"
+    , "rephraser": ">= 0.1.4"
   }
 , "engine": "node >= 0.6.0"
 }
