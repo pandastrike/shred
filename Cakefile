@@ -1,8 +1,8 @@
-sys = require 'util'
+util = require 'util'
 {spawn, exec} = require 'child_process'
 run = (command) ->
   child = exec(command.line)
-  child.stdout.on "data", command.handler||(data) -> sys.print(data)
+  child.stdout.on "data", command.handler||(data) -> util.print(data)
   child.stderr.on "data", (data) -> process.stderr.write(data)
   child
 
@@ -12,7 +12,7 @@ task 'test', 'run all the specs', ->
     server: {
       line: "node_modules/rephraser/bin/rephraser test/rephraser.conf",
       handler: (data) ->
-        sys.print data
+        util.print data
         # we're assuming here that output to stdout
         # means a successful start and so we set up
         # our exit handler to shut down rephraser

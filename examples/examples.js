@@ -18,7 +18,7 @@
 //
 // For these examples, however, a simple Shred instance will work fine.
 var Shred = require("shred");
-var surf = new Shred;
+var shred = new Shred;
 
 // We're going to check our responses with `assert`.
 var assert = require("assert");
@@ -28,7 +28,7 @@ var assert = require("assert");
 // We have to let the <a class="logo" href="/">spire<span
 // class="grey">.</span><span class="blue">io</span></a> API know that we want
 // the docs as HTML.
-surf.get({
+shred.get({
   url: "http://api.spire.io",
   headers: {
     accept: "text/html"
@@ -53,7 +53,7 @@ surf.get({
 
 // We can also chain response handlers and have many handlers
 // for the generic 'response' event.
-surf.get({
+shred.get({
   url: "http://api.spire.io",
   headers: {
     accept: "text/html"
@@ -78,7 +78,7 @@ surf.get({
 // First, let's declare a couple of variables we'll be using in later examples.
 var resources, schema;
 
-surf.get({
+shred.get({
   url: "http://api.spire.io",
   headers: {
     accept: "application/json"
@@ -109,7 +109,7 @@ surf.get({
 // use it in a callback.
 
 var createSession = function() {
-  surf.post({
+  shred.post({
     url: resources.sessions.url,
     headers: {
       accept: schema.session.mediaType,
@@ -154,7 +154,7 @@ setTimeout(createSession,1000);
 // for kicks.
 
 var createChannel = function() {
-  surf.post({
+  shred.post({
     url: resources.session.resources.channels.url,
     // Normally, we'd pass in a authorization header, too.
     headers: {
