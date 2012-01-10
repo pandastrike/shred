@@ -438,17 +438,15 @@ vows.describe('Shred').addBatch({
 		},
 		on: {
 		  response: function (res) {
-		    res.content._body, function(err, result){
-		      promise.emit("success", result);
-		    };
+		    promise.emit("success", res);
 		  }
 		}
 	  });
 
       return promise;
     },
-    "should return proper gzip data": function(response, result) {
-      assert.equal(result.toString().length >	 0, true);
+    "should return proper gzip data": function(response, res) {
+      assert.equal(res.content._body.toString().length > 0, true);
     }
   }
 }).export(module);
