@@ -435,9 +435,9 @@ vows.describe('Shred').addBatch({
 		},
 		on: {
 		  response: function (res) {
-		    zlib.gunzip(res.content._body, function(err, result){
+		    res.content._body, function(err, result){
 		      promise.emit("success", result);
-		    });
+		    };
 		  }
 		}
 	  });
