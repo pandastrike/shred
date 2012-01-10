@@ -54,8 +54,8 @@
     , "ax": ">= 0.1.1"
     , "cookiejar": "1.3.x"
   }
-, "devDependencies": { "vows": "0.5.11"
-    , "rephraser": ">= 0.1.4"
+, "devDependencies": { "vows": "0.6.0"
+    , "rephraser": ">= 0.1.0"
   }
 , "engine": "node >= 0.6.0"
 }

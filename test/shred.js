@@ -80,7 +80,7 @@ vows.describe('Shred').addBatch({
 
       shred.post({
         url: "http://localhost:1337/200",
-        body: "Hello",
+	body: "Hello",
         on: {
           response: function(response) {
             promise.emit("success",response);
@@ -111,6 +111,9 @@ vows.describe('Shred').addBatch({
       ;
       shred.post({
         url: "http://localhost:1337/201",
+	headers: {
+	  content_type: "application/json"
+	},
         body: {foo: 1, bar: 2},
         on: {
           response: function(response) {

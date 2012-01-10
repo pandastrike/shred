@@ -70,7 +70,7 @@ Shred is based on code originally written by [Matthew King][king]. That code was
 [license]: https://github.com/spire-io/shred/blob/master/LICENSE
 [yoder]: mailto:dan@spire.io
 [king]: mailto:mking@spire.io
-[campbell]: mailto:jcampbell@spire.io
+[campbell]: mailto:jason@spire.io
 [docs]: http://www.spire.io/docs/shred/
 [blog]: http://www.spire.io/posts/introducing-shred.html
 
