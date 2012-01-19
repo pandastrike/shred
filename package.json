@@ -1,6 +1,6 @@
 { "name": "shred"
-, "version": "0.6.7"
-, "description": "A dead-simple HTTP client"
+, "version": "0.6.8"
+, "description": "A dead-simple HTTP client for nodejs and browsers"
 , "keywords": [ "http", "client" ]
 , "licenses": [
     { "type": "MIT"
