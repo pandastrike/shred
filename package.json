@@ -59,6 +59,7 @@
     , "browserify": ">= 1.9.2"
     , "http-browserify": ">= 0.0.1"
     , "uglify-js": ">= 1.2.5"
+    , "docco": ">= 0.3.0"
   }
 , "engine": "node >= 0.6.0"
 }
