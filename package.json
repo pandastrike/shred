@@ -56,6 +56,9 @@
   }
 , "devDependencies": { "vows": "0.6.1"
     , "rephraser": ">= 0.1.6"
+    , "browserify": ">= 1.9.2"
+    , "http-browserify": ">= 0.0.1"
+    , "uglify-js": ">= 1.2.5"
   }
 , "engine": "node >= 0.6.0"
 }
