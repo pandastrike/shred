@@ -6,6 +6,21 @@ run = (command) ->
   child.stderr.on "data", (data) -> process.stderr.write(data)
   child
 
+task 'bundle', 'create the bundled version of shred for browsers', ->
+  TaskHelpers.makeBundle()
+
+task 'bundle:min', 'create the bundled and minified version of shred.js for browsers', ->
+  TaskHelpers.makeBundle ->
+    fs = require 'fs'
+    uglify = require 'uglify-js'
+
+    fs.readFile 'shred.bundle.js', 'utf8', (err, data)->
+      throw err if err
+
+      minified = uglify data
+
+      fs.writeFile 'shred.bundle.min.js', minified, (err)->
+        throw err if err
 
 task 'test', 'run all the specs', ->
   commands = {
@@ -36,3 +51,56 @@ task 'docs', 'generate the inline documentation', ->
     else
       exec "cp docs/shred.html docs/index.html", (error) ->
         console.log error.message if error
+
+task 'test:server', 'launch a server for the browser tests', (o)->
+  path = require 'path'
+  fs = require 'fs'
+  {exec} = require 'child_process'
+  express = require 'express'
+  app = express.createServer()
+  libSrc = path.join __dirname, 'shred.bundle.js'
+  http = require 'http'
+  _ = require 'underscore'
+
+  app.get '/shred.bundle.js', (req, res)->
+    TaskHelpers.makeBundle ->
+      res.header 'Content-Type', 'text/javascript'
+      res.sendfile libSrc
+
+  app.get '/', (req, res)->
+    index = [
+      '<html>'
+      '<head>'
+      '  <title>spire.io.js | specs</title>'
+      '  <link rel="shortcut icon"'
+      '    type="image/png" href="jasmine/favicon.png" />'
+      '  <script src="shred.bundle.js"></script>'
+      '</head>'
+      ''
+      '<body>'
+      '</body>'
+      '</html>'
+    ].join '\n'
+    res.header 'Content-Type', 'text/html'
+    res.send(index);
+
+  app.listen 8080, 'localhost', ->
+    process.stdout.write 'Test server running:\n'
+    process.stdout.write '  => http://' + o.host + ':' + o.port
+    process.stdout.write '\n'
+
+
+TaskHelpers =
+  makeBundle: (callback) ->
+    fs = require 'fs'
+    browserify = require 'browserify'
+
+    bundle = browserify(
+      require: ["./lib/shred.js", {'http': 'http-browserify'}]
+      ignore: ['zlib']
+    ).bundle()
+
+    fs.writeFile 'shred.bundle.js', bundle, (err)->
+      throw err if err
+      callback() if callback
+
