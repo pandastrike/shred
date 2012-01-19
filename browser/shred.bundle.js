@@ -2719,21 +2719,32 @@ var createRequest = function(request) {
   request.log.debug("Creating request ..");
   request.log.debug(request);
 
-  // Choose which Node.js standard library to use. **Warning:** Shred has not
-  // been tested much with `https`.
-  var http = request.scheme == "http" ? HTTP : HTTPS;
-
-  // Set up the real request using the selected library. The request won't be
-  // sent until we call `.end()`.
-  request._raw = http.request({
+  var reqParams = {
     host: request.host,
     port: request.port,
     method: request.method,
     path: request.path+request.query,
     headers: request.getHeaders()
-  // Provide a response handler.
-  }, function(response) {
+  };
 
+  // Choose which Node.js standard library to use. **Warning:** Shred has not
+  // been tested much with `https`.
+  var http;
+
+  if (typeof HTTPS.request !== 'function') {
+    // If HTTPS has no 'request' method, go with HTTP.  This means we are in the
+    // browser.
+    http = HTTP;
+    // Also tell the request what scheme to use
+    reqParams.scheme = request.scheme;
+  } else {
+    // Choose based on the url schema.
+    http = request.scheme == "http" ? HTTP : HTTPS;
+  }
+
+  // Set up the real request using the selected library. The request won't be
+  // sent until we call `.end()`.
+  request._raw = http.request(reqParams, function(response) {
     request.log.debug("Received response ..");
 
     // We haven't timed out and we have a response, so make sure we clear the
@@ -3080,6 +3091,14 @@ var _ = require("underscore")
   , HeaderMixins = require("./mixins/headers")
 ;
 
+// Browser doesn't have zlib.
+var zlib = null;
+try {
+  zlib = require('zlib');
+} catch (e) {
+  console.warn("no zlib library");
+}
+
 // Construct a `Response` object. You should never have to do this directly. The
 // `Request` object handles this, getting the raw response object and passing it
 // in here, along with the request. The callback allows us to stream the response
@@ -3143,8 +3162,7 @@ var Response = function(raw, request, callback) {
       callback(response);
     }
 
-    if (response.getHeader("Content-Encoding") === 'gzip'){
-      var zlib = require('zlib');
+    if (zlib && response.getHeader("Content-Encoding") === 'gzip'){
       zlib.gunzip(body, function (err, gunzippedBody) {
         body = gunzippedBody.toString();
         setBodyAndFinish(body);
@@ -3587,7 +3605,9 @@ var Request = module.exports = function (xhr, params) {
     
     var uri = params.host + ':' + params.port + (params.path || '/');
     
-    xhr.open(params.method || 'GET', 'http://' + uri, true);
+    xhr.open( params.method || 'GET',
+        (params.scheme || 'http') + '://' + uri,
+        true);
     
     if (params.headers) {
         Object.keys(params.headers).forEach(function (key) {
