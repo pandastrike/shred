@@ -1,22 +1,50 @@
 ## Introduction
 
-Shred is an HTTP client library for node.js that makes writing HTTP clients fun and easy.
+Shred is an HTTP client library for node.js and the browser.
+Shred supports gzip, cookies, https, and redirects.
+
+## Installation
+
+# Node.js
+
+Shred can be installed through npm.
+
+    npm install shred
+
+# Browsers
+
+We use [Browserify](https://github.com/substack/node-browserify) to bundle Shred and all of its dependencies in one javascript file.
+Simply include the bundled version of shred in a script tag.
+
+    <script src="browser/shred.bundle.js" />
+
+If you want smaller downloads, use the minified version.
+
+    <script src="browser/shred.bundle.min.js" />
+
+## Basic Usage
+
+First we need to require the Shred library and instantiate a new client.
+
+    var Shred = require("./shred");
+    var shred = new Shred();
+
+Then we can use `shred` to make HTTP requests.
 
 ```javascript
-var Shred = require("shred");
-var shred = new Shred;
-
 var req = shred.get({
   url: "http://api.spire.io/",
   headers: {
-    accept: "application/json"
+    Accept: "application/json"
   },
   on: {
-    // you can use response codes as events
+    // You can use response codes as events
     200: function(response) {
+      // Shred will automatically JSON-decode response bodies that have a
+      // JSON Content-Type
       console.log(response.content.data);
     },
-    // any other response means something's wrong
+    // Any other response means something's wrong
     response: function(response) {
       console.log("Oh no!");
     }
@@ -24,7 +52,36 @@ var req = shred.get({
 });
 ```
 
-You can also add listeners to the request with the `on` method:
+```javascript
+var req = shred.post({
+  url: "http://localhost:8080/accounts
+  headers: {
+    Accept: "application/json",
+    Content-Type: "application/json"
+  },
+  // Shred will JSON-encode PUT/POST bodies
+  content: { username: "fred", email: "fred@flinstone.com },
+  on: {
+    // you can use response codes as events
+    201: function(response) {
+      console.log("User Created");
+    },
+    409: function (response) {
+      console.log("User with that name already exists.");
+    },
+    response: function(response) {
+      // We got a 40X that is not a 409, or a 50X
+      console.log("Oh no, something went wrong!");
+    }
+  }
+});
+```
+
+Shred uses HTTP status codes as event names.
+You can also add listeners to the "success" event, the "error" event, and the most generic "response" event.
+Shred makes sure that only the most specific event handler gets called for a response.
+
+You can pass listeners directly into the shred request call, as in the above examples, or add listeners to the request with the `on` method:
 
 ```javascript
 req.on({
@@ -37,15 +94,16 @@ req.on({
 });
 ```
 
-The response was JSON, but Shred handles that for you because we specified `application/json` in the `Accept` header. So we're able to access it via `response.content.data`.
+## JSON Decoding
+
+Shred will automatically decode JSON bodies if the response headers Content-Type identifies it as JSON.
+Thus, we are able to get the to the decoded object with `response.content.data`.
+The original string representation is still available to us, in `response.content.body`.
 
 See [the wiki](https://github.com/spire-io/shred/wiki) for more examples.
 
 Also, we wrote [a blog post][blog] on why we wrote Shred instead of going with existing libraries.
 
-## Installation
-
-Just `npm install shred` and you're good to go.
 
 ## Feedback
 
