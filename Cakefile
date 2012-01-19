@@ -14,12 +14,12 @@ task 'bundle:min', 'create the bundled and minified version of shred.js for brow
     fs = require 'fs'
     uglify = require 'uglify-js'
 
-    fs.readFile 'shred.bundle.js', 'utf8', (err, data)->
+    fs.readFile 'browser/shred.bundle.js', 'utf8', (err, data)->
       throw err if err
 
       minified = uglify data
 
-      fs.writeFile 'shred.bundle.min.js', minified, (err)->
+      fs.writeFile 'browser/shred.bundle.min.js', minified, (err)->
         throw err if err
 
 task 'test', 'run all the specs', ->
@@ -58,7 +58,7 @@ task 'test:server', 'launch a server for the browser tests', (o)->
   {exec} = require 'child_process'
   express = require 'express'
   app = express.createServer()
-  libSrc = path.join __dirname, 'shred.bundle.js'
+  libSrc = path.join __dirname, 'browser/shred.bundle.js'
   http = require 'http'
   _ = require 'underscore'
 
@@ -100,7 +100,7 @@ TaskHelpers =
       ignore: ['zlib']
     ).bundle()
 
-    fs.writeFile 'shred.bundle.js', bundle, (err)->
+    fs.writeFile 'browser/shred.bundle.js', bundle, (err)->
       throw err if err
       callback() if callback
 
