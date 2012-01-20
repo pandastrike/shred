@@ -26,10 +26,17 @@ If you want smaller downloads, use the minified version.
 
 First we need to require the Shred library and instantiate a new client.
 
+Browser:
+
     var Shred = require("./shred");
     var shred = new Shred();
 
-Then we can use `shred` to make HTTP requests.
+Node.js:
+
+    var Shred = require("shred");
+    var shred = new Shred();
+
+Then we are ready to use `shred` to make HTTP requests.
 
 ## Simple GET request
 
@@ -114,6 +121,18 @@ req.on({
 });
 ```
 
+You can also chain the events with 'on', if that's your style.
+
+```javascript
+req.on(
+  404,
+  function(response) {
+    console.log("Not Found");
+}).on(500 function(response) {
+    console.log("Server Error, please try again later.");
+});
+```
+
 See [the wiki](https://github.com/spire-io/shred/wiki) for more examples.
 
 Also, we wrote [a blog post][blog] on why we wrote Shred instead of going with existing libraries.
@@ -127,7 +146,7 @@ Shred has 4 methods: `shred.get`, `shred.put`, `shred.delete`, and `shred.post`.
 * `url`: url to make the request to
 * `headers`: hash of headers to send with the request
 * `port`: port to send the request to
-* `query`: hash or string to send as the query parameter
+* `query`: hash or string to send as the query parameters
 * `content`: data to send in the body of the request (also aliased to `body`)
 * `timeout`: length of time in ms to wait before killing the connection
 * `proxy`: url of http proxy to use
@@ -138,7 +157,7 @@ Shred will fire an event with the status code of the response, if that event has
 If the status code has no listeners, Shred will fire the "success" event or the "error" event, depending on whether the http response is a success (2XX) or error (4XX and 5XX).
 If the success/error event has no listeners, Shred will fire the most generic "response" event.
 
-Shred can also emit a "request_error" event if the request errors out before a response comes back.
+Shred will also emit a "request_error" event if the request errors out before a response comes back.
 
 ## Response
 
