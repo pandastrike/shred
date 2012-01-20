@@ -1,7 +1,7 @@
 # Introduction
 
 Shred is an HTTP client library for node.js and the browser.
-Shred supports gzip, cookies, https, and redirects.
+Shred supports gzip, cookies, https, proxies, and redirects.
 
 # Installation
 
@@ -31,8 +31,10 @@ First we need to require the Shred library and instantiate a new client.
 
 Then we can use `shred` to make HTTP requests.
 
+## Simple GET request
+
 Here is a simple GET request that gets some JSON data.
-We have a handler for when the response comes back with status 200 OK, and a catch-all "request" handler for all other cases.
+
 
 ```javascript
 var req = shred.get({
@@ -55,9 +57,25 @@ var req = shred.get({
 });
 ```
 
+## Response Handling
+
+Shred uses HTTP status codes as event names.
+The above example has a handler for when the response comes back with status 200, and a catch-all "request" handler for all other cases.
+
+You can also add listeners to the "success" event, the "error" event, and the most generic "response" event.
+Shred makes sure that only the most specific event handler gets called for a response.
+
+## JSON Decoding
+
+Shred will automatically decode JSON bodies if the response headers Content-Type identifies it as JSON.
+Thus, we are able to get the to the decoded object with `response.content.data`.
+The original string representation is still available to us, in `response.content.body`.
+
 Here is a POST to an accounts resource.
 Shred will automatically JSON-encode the POST body.
 We have handlers for the 201 "Created" status, 409 "Conflict" status, and a catch-all "response" handler.
+
+## Simple POST request
 
 ```javascript
 var req = shred.post({
@@ -83,10 +101,6 @@ var req = shred.post({
 });
 ```
 
-Shred uses HTTP status codes as event names.
-You can also add listeners to the "success" event, the "error" event, and the most generic "response" event.
-Shred makes sure that only the most specific event handler gets called for a response.
-
 You can pass listeners directly into the shred request call, as in the above examples, or add listeners to the request with the `on` method:
 
 ```javascript
@@ -100,15 +114,31 @@ req.on({
 });
 ```
 
-# JSON Decoding
-
-Shred will automatically decode JSON bodies if the response headers Content-Type identifies it as JSON.
-Thus, we are able to get the to the decoded object with `response.content.data`.
-The original string representation is still available to us, in `response.content.body`.
-
 See [the wiki](https://github.com/spire-io/shred/wiki) for more examples.
 
 Also, we wrote [a blog post][blog] on why we wrote Shred instead of going with existing libraries.
+
+# Interface
+
+Shred has 4 methods: `shred.get`, `shred.put`, `shred.delete`, and `shred.post`.
+
+## Options
+
+* `url`: url to make the request to
+* `headers`: hash of headers to send with the request
+* `port`: port to send the request to
+* `query`: hash or string to send as the query parameter
+* `content`: data to send in the body of the request (also aliased to `body`)
+* `timeout`: length of time in ms to wait before killing the connection
+* `proxy`: url of http proxy to use
+
+## Events
+
+Shred will fire an event with the status code of the response, if that event has any listeners.
+If the status code has no listeners, Shred will fire the "success" event or the "error" event, depending on whether the http response is a success (2XX) or error (4XX and 5XX).
+If the success/error event has no listeners, Shred will fire the most generic "response" event.
+
+Shred can also emit a "request_error" event if the request errors out before a response comes back.
 
 
 # Feedback
