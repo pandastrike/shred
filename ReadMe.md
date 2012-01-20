@@ -67,7 +67,7 @@ Shred makes sure that only the most specific event handler gets called for a res
 
 ## JSON Decoding
 
-Shred will automatically decode JSON bodies if the response headers Content-Type identifies it as JSON.
+Shred will automatically decode JSON bodies if the response headers' Content-Type identifies it as JSON.
 Thus, we are able to get the to the decoded object with `response.content.data`.
 The original string representation is still available to us, in `response.content.body`.
 
@@ -122,7 +122,7 @@ Also, we wrote [a blog post][blog] on why we wrote Shred instead of going with e
 
 Shred has 4 methods: `shred.get`, `shred.put`, `shred.delete`, and `shred.post`.
 
-## Options
+## Request Options
 
 * `url`: url to make the request to
 * `headers`: hash of headers to send with the request
@@ -140,6 +140,15 @@ If the success/error event has no listeners, Shred will fire the most generic "r
 
 Shred can also emit a "request_error" event if the request errors out before a response comes back.
 
+## Response
+
+The response is passed as the only argument to the event listeners.
+It has the following properties.
+
+* `response.status`: status code of the response
+* `response.isError`: true iff the status code is >= 400
+* `response.content.body`: string representation of the response body
+* `response.content.data`: javascript object for the response body (if the Content-Type is JSON)
 
 # Feedback
 
