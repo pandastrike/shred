@@ -3605,9 +3605,11 @@ var Request = module.exports = function (xhr, params) {
     
     var uri = params.host + ':' + params.port + (params.path || '/');
     
-    xhr.open( params.method || 'GET',
+    xhr.open(
+        params.method || 'GET',
         (params.scheme || 'http') + '://' + uri,
-        true);
+        true
+    );
     
     if (params.headers) {
         Object.keys(params.headers).forEach(function (key) {
