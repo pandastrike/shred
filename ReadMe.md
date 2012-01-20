@@ -1,6 +1,6 @@
 # Introduction
 
-Shred is an HTTP client library for node.js and the browser.
+Shred is an HTTP client library for node.js and browsers.
 Shred supports gzip, cookies, https, proxies, and redirects.
 
 # Installation
