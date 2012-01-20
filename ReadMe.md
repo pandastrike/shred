@@ -1,17 +1,17 @@
-## Introduction
+# Introduction
 
 Shred is an HTTP client library for node.js and the browser.
 Shred supports gzip, cookies, https, and redirects.
 
-## Installation
+# Installation
 
-# Node.js
+## Node.js
 
 Shred can be installed through npm.
 
     npm install shred
 
-# Browsers
+## Browsers
 
 We use [Browserify](https://github.com/substack/node-browserify) to bundle Shred and all of its dependencies in one javascript file.
 Simply include the bundled version of shred in a script tag.
@@ -22,7 +22,7 @@ If you want smaller downloads, use the minified version.
 
     <script src="browser/shred.bundle.min.js" />
 
-## Basic Usage
+# Basic Usage
 
 First we need to require the Shred library and instantiate a new client.
 
@@ -94,7 +94,7 @@ req.on({
 });
 ```
 
-## JSON Decoding
+# JSON Decoding
 
 Shred will automatically decode JSON bodies if the response headers Content-Type identifies it as JSON.
 Thus, we are able to get the to the decoded object with `response.content.data`.
@@ -105,23 +105,23 @@ See [the wiki](https://github.com/spire-io/shred/wiki) for more examples.
 Also, we wrote [a blog post][blog] on why we wrote Shred instead of going with existing libraries.
 
 
-## Feedback
+# Feedback
 
 Feedback is highly encouraged in the form of [tickets][tickets] or pull requests. Thank you!
 
-## Code
+# Code
 
 [Browse the annotated source.][docs]
 
 We'd love [your contributions](repo) - don't hesitate to send us pull requests. We'll also happily add you as a committer after we've accepted it.
 
-## License
+# License
 
 Shred is MIT licensed.
 
-## Authors
+# Authors
 
-Shred is based on code originally written by [Matthew King][king]. That code was adapted and converted into a separate Node.js library by [Dan Yoder][yoder] and [Jason Campbell][campbell].
+Shred is based on code originally written by [Matthew King][king]. That code was adapted and converted into a separate Node.js library by [Dan Yoder][yoder], [Jason Campbell][campbell], [Nick LaCasse][lacasse], and [Vicent Suria][suria].
 
 [code]: https://github.com/spire-io/shred
 [tickets]: https://github.com/spire-io/shred/issues
@@ -129,6 +129,8 @@ Shred is based on code originally written by [Matthew King][king]. That code was
 [yoder]: mailto:dan@spire.io
 [king]: mailto:mking@spire.io
 [campbell]: mailto:jason@spire.io
+[lacasse]: mailto:nlacass@spire.io
+[suria]: mailto:vicent@spire.io
 [docs]: http://www.spire.io/docs/shred/
 [blog]: http://www.spire.io/posts/introducing-shred.html
 
