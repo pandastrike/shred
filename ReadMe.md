@@ -179,6 +179,10 @@ Feedback is highly encouraged in the form of [tickets][tickets] or pull requests
 
 We'd love [your contributions](repo) - don't hesitate to send us pull requests. We'll also happily add you as a committer after we've accepted it.
 
+# Tests
+
+    cake test
+
 # License
 
 Shred is MIT licensed.
