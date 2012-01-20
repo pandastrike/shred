@@ -31,6 +31,9 @@ First we need to require the Shred library and instantiate a new client.
 
 Then we can use `shred` to make HTTP requests.
 
+Here is a simple GET request that gets some JSON data.
+We have a handler for when the response comes back with status 200 OK, and a catch-all "request" handler for all other cases.
+
 ```javascript
 var req = shred.get({
   url: "http://api.spire.io/",
@@ -52,15 +55,18 @@ var req = shred.get({
 });
 ```
 
+Here is a POST to an accounts resource.
+Shred will automatically JSON-encode the POST body.
+We have handlers for the 201 "Created" status, 409 "Conflict" status, and a catch-all "response" handler.
+
 ```javascript
 var req = shred.post({
-  url: "http://localhost:8080/accounts
+  url: "http://localhost:8080/accounts",
   headers: {
-    Accept: "application/json",
     Content-Type: "application/json"
   },
   // Shred will JSON-encode PUT/POST bodies
-  content: { username: "fred", email: "fred@flinstone.com },
+  content: { username: "fred", email: "fred@flinstone.com" },
   on: {
     // you can use response codes as events
     201: function(response) {
@@ -121,7 +127,8 @@ Shred is MIT licensed.
 
 # Authors
 
-Shred is based on code originally written by [Matthew King][king]. That code was adapted and converted into a separate Node.js library by [Dan Yoder][yoder], [Jason Campbell][campbell], [Nick LaCasse][lacasse], and [Vicent Suria][suria].
+Shred is based on code originally written by [Matthew King][king].
+That code was adapted and converted into a separate Node.js library by [Dan Yoder][yoder], [Jason Campbell][campbell], [Nick LaCasse][lacasse], and [Vicent Piquer Suria][suria].
 
 [code]: https://github.com/spire-io/shred
 [tickets]: https://github.com/spire-io/shred/issues
@@ -130,7 +137,7 @@ Shred is based on code originally written by [Matthew King][king]. That code was
 [king]: mailto:mking@spire.io
 [campbell]: mailto:jason@spire.io
 [lacasse]: mailto:nlacass@spire.io
-[suria]: mailto:vicent@spire.io
+[suria]: mailto:vsuria@spire.io
 [docs]: http://www.spire.io/docs/shred/
 [blog]: http://www.spire.io/posts/introducing-shred.html
 
