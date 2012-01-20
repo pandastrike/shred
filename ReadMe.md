@@ -181,7 +181,12 @@ We'd love [your contributions](repo) - don't hesitate to send us pull requests. 
 
 # Tests
 
+You can run the tests in node with
+
     cake test
+
+There is currently no way to run the tests in the browser (coming soon...)
+
 
 # License
 
