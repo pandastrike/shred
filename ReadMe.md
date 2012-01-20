@@ -203,7 +203,7 @@ That code was adapted and converted into a separate Node.js library by [Dan Yode
 [yoder]: mailto:dan@spire.io
 [king]: mailto:mking@spire.io
 [campbell]: mailto:jason@spire.io
-[lacasse]: mailto:nlacass@spire.io
+[lacasse]: mailto:nlacasse@spire.io
 [suria]: mailto:vsuria@spire.io
 [docs]: http://www.spire.io/docs/shred/
 [blog]: http://www.spire.io/posts/introducing-shred.html
