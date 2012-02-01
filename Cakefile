@@ -96,7 +96,11 @@ TaskHelpers =
     browserify = require 'browserify'
 
     bundle = browserify(
-      require: ["./lib/shred.js", {'http': 'http-browserify'}]
+      require: [
+        "./lib/shred.js",
+        {'http': 'http-browserify'},
+        {'https': 'http-browserify'}
+      ]
       ignore: ['zlib']
     ).bundle()
 
