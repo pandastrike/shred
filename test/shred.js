@@ -448,5 +448,52 @@ vows.describe('Shred').addBatch({
     "should return proper gzip data": function(response, res) {
       assert.equal(res.content._body.toString().length > 0, true);
     }
+  },
+  "A request using status codes and status numbers": {
+    topic: function() {
+	
+	  var handleCount = 0;
+      var shred = new Shred({ logger: log })
+        , promise = new(Emitter)
+      ;
+	  
+      var req = shred.get({
+		url: "http://www.writeonglass.com",
+		on: {
+		  ok: function (res) {
+            handleCount ++;
+            if (handleCount === 2) {
+		      promise.emit("success", res, handleCount);
+            }
+		  },
+		  Ok: function (res) {
+            handleCount ++;
+            if (handleCount === 2) {
+		      promise.emit("success", res, handleCount);
+            }
+		  },
+		  OK: function (res) {
+            handleCount ++;
+            if (handleCount === 2) {
+		      promise.emit("success", res, handleCount);
+            }
+		  },
+		  200: function (res) {
+            handleCount ++;
+            if (handleCount === 2) {
+		      promise.emit("success", res, handleCount);
+            }
+		  }
+		}
+	  });
+
+      return promise;
+    },
+    "should run both the status number handler and the status code handler": function(response, res, handleCount) {
+      assert.equal(handleCount, 2);
+    },
+    "should only run lowercased handlers": function(response, res, handleCount) {
+      assert.equal(handleCount, 2);
+    }
   }
 }).export(module);
