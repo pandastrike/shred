@@ -1466,7 +1466,7 @@ var Logger = function(options) {
 
   // Write to stderr or a file
   if (logger.options.file){
-    logger.stream = fs.createWriteStream(logger.options.file);
+    logger.stream = fs.createWriteStream(logger.options.file, {"flags": "a"});
   } else {
       if(process.title === "node")
 	  logger.stream = process.stderr;
@@ -1608,8 +1608,8 @@ exports.inspect = function(obj, showHidden, depth, colors) {
     }
 
     // Look up the keys of the object.
-    var visible_keys = Object.keys(value);
-    var keys = showHidden ? Object.getOwnPropertyNames(value) : visible_keys;
+    var visible_keys = Object_keys(value);
+    var keys = showHidden ? Object_getOwnPropertyNames(value) : visible_keys;
 
     // Functions without properties can be shortcutted.
     if (typeof value === 'function' && keys.length === 0) {
@@ -1765,8 +1765,8 @@ function isRegExp(re) {
 function isDate(d) {
   if (d instanceof Date) return true;
   if (typeof d !== 'object') return false;
-  var properties = Date.prototype && Object.getOwnPropertyNames(Date.prototype);
-  var proto = d.__proto__ && Object.getOwnPropertyNames(d.__proto__);
+  var properties = Date.prototype && Object_getOwnPropertyNames(Date.prototype);
+  var proto = d.__proto__ && Object_getOwnPropertyNames(d.__proto__);
   return JSON.stringify(proto) === JSON.stringify(properties);
 }
 
@@ -1790,9 +1790,46 @@ exports.log = function (msg) {};
 
 exports.pump = null;
 
+var Object_keys = Object.keys || function (obj) {
+    var res = [];
+    for (var key in obj) res.push(key);
+    return res;
+};
+
+var Object_getOwnPropertyNames = Object.getOwnPropertyNames || function (obj) {
+    var res = [];
+    for (var key in obj) {
+        if (Object.hasOwnProperty.call(obj, key)) res.push(key);
+    }
+    return res;
+};
+
+var Object_create = Object.create || function (prototype, properties) {
+    // from es5-shim
+    var object;
+    if (prototype === null) {
+        object = { '__proto__' : null };
+    }
+    else {
+        if (typeof prototype !== 'object') {
+            throw new TypeError(
+                'typeof prototype[' + (typeof prototype) + '] != \'object\''
+            );
+        }
+        var Type = function () {};
+        Type.prototype = prototype;
+        object = new Type();
+        object.__proto__ = prototype;
+    }
+    if (typeof properties !== 'undefined' && Object.defineProperties) {
+        Object.defineProperties(object, properties);
+    }
+    return object;
+};
+
 exports.inherits = function(ctor, superCtor) {
   ctor.super_ = superCtor;
-  ctor.prototype = Object.create(superCtor.prototype, {
+  ctor.prototype = Object_create(superCtor.prototype, {
     constructor: {
       value: ctor,
       enumerable: false,
@@ -2429,6 +2466,66 @@ var HTTP = require("http")
   , Content = require("./content")
 ;
 
+// TODO: When http-browserify supports HTTP.STATUS_CODES, (see
+// https://github.com/substack/http-browserify/pull/6)
+// replace the big object with the following line
+// var STATUS_CODES = HTTP.STATUS_CODES;
+
+var STATUS_CODES = {
+  '100': 'Continue',
+  '101': 'Switching Protocols',
+  '102': 'Processing',
+  '200': 'OK',
+  '201': 'Created',
+  '202': 'Accepted',
+  '203': 'Non-Authoritative Information',
+  '204': 'No Content',
+  '205': 'Reset Content',
+  '206': 'Partial Content',
+  '207': 'Multi-Status',
+  '300': 'Multiple Choices',
+  '301': 'Moved Permanently',
+  '302': 'Moved Temporarily',
+  '303': 'See Other',
+  '304': 'Not Modified',
+  '305': 'Use Proxy',
+  '307': 'Temporary Redirect',
+  '400': 'Bad Request',
+  '401': 'Unauthorized',
+  '402': 'Payment Required',
+  '403': 'Forbidden',
+  '404': 'Not Found',
+  '405': 'Method Not Allowed',
+  '406': 'Not Acceptable',
+  '407': 'Proxy Authentication Required',
+  '408': 'Request Time-out',
+  '409': 'Conflict',
+  '410': 'Gone',
+  '411': 'Length Required',
+  '412': 'Precondition Failed',
+  '413': 'Request Entity Too Large',
+  '414': 'Request-URI Too Large',
+  '415': 'Unsupported Media Type',
+  '416': 'Requested Range Not Satisfiable',
+  '417': 'Expectation Failed',
+  '418': 'I\'m a teapot',
+  '422': 'Unprocessable Entity',
+  '423': 'Locked',
+  '424': 'Failed Dependency',
+  '425': 'Unordered Collection',
+  '426': 'Upgrade Required',
+  '500': 'Internal Server Error',
+  '501': 'Not Implemented',
+  '502': 'Bad Gateway',
+  '503': 'Service Unavailable',
+  '504': 'Gateway Time-out',
+  '505': 'HTTP Version not supported',
+  '506': 'Variant Also Negotiates',
+  '507': 'Insufficient Storage',
+  '509': 'Bandwidth Limit Exceeded',
+  '510': 'Not Extended'
+};
+
 // The Shred object itself constructs the `Request` object. You should rarely
 // need to do this directly.
 
@@ -2752,13 +2849,16 @@ var createRequest = function(request) {
       // finally to the more general `response` handler. In the last case, we
       // need to first make sure we're not dealing with a a redirect.
       var emit = function(event) {
-        if (request.emitter.listeners(response.status).length>0) {
-          request.emitter.emit(response.status,response);
+        var emitter = request.emitter;
+        var textStatus = STATUS_CODES[response.status] ? STATUS_CODES[response.status].toLowerCase() : null;
+        if (emitter.listeners(response.status).length > 0 || emitter.listeners(textStatus).length > 0) {
+          emitter.emit(response.status, response);
+          emitter.emit(textStatus, response);
         } else {
-          if (request.emitter.listeners(event).length>0) {
-            request.emitter.emit(event,response);
+          if (emitter.listeners(event).length>0) {
+            emitter.emit(event, response);
           } else if (!response.isRedirect) {
-            request.emitter.emit("response",response);
+            emitter.emit("response", response);
             console.warn("Request has no event listener for status code " + response.status);
           }
         }
@@ -3604,6 +3704,7 @@ var Request = module.exports = function (xhr, params) {
     
     if (params.headers) {
         Object.keys(params.headers).forEach(function (key) {
+            if (!self.isSafeRequestHeader(key)) return;
             var value = params.headers[key];
             if (Array.isArray(value)) {
                 value.forEach(function (v) {
@@ -3645,6 +3746,36 @@ Request.prototype.write = function (s) {
 Request.prototype.end = function (s) {
     if (s !== undefined) this.write(s);
     this.xhr.send(this.body);
+};
+
+// Taken from http://dxr.mozilla.org/mozilla/mozilla-central/content/base/src/nsXMLHttpRequest.cpp.html
+Request.unsafeHeaders = [
+    "accept-charset",
+    "accept-encoding",
+    "access-control-request-headers",
+    "access-control-request-method",
+    "connection",
+    "content-length",
+    "cookie",
+    "cookie2",
+    "content-transfer-encoding",
+    "date",
+    "expect",
+    "host",
+    "keep-alive",
+    "origin",
+    "referer",
+    "te",
+    "trailer",
+    "transfer-encoding",
+    "upgrade",
+    "user-agent",
+    "via"
+];
+
+Request.prototype.isSafeRequestHeader = function (headerName) {
+    if (!headerName) return false;
+    return (Request.unsafeHeaders.indexOf(headerName.toLowerCase()) === -1)
 };
 
 });
