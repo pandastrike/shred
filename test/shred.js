@@ -449,7 +449,7 @@ vows.describe('Shred').addBatch({
       assert.equal(res.content._body.toString().length > 0, true);
     }
   },
-  "A request using status codes and status numbers": {
+  "A request using status names and status codes": {
     topic: function() {
 	
 	  var handleCount = 0;
@@ -489,7 +489,7 @@ vows.describe('Shred').addBatch({
 
       return promise;
     },
-    "should run both the status number handler and the status code handler": function(response, res, handleCount) {
+    "should run both the status code handler and the status name handler": function(response, res, handleCount) {
       assert.equal(handleCount, 2);
     },
     "should only run lowercased handlers": function(response, res, handleCount) {
