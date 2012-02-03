@@ -80,7 +80,7 @@ vows.describe('Shred').addBatch({
 
       shred.post({
         url: "http://localhost:1337/200",
-	body: "Hello",
+  body: "Hello",
         on: {
           response: function(response) {
             promise.emit("success",response);
@@ -111,9 +111,9 @@ vows.describe('Shred').addBatch({
       ;
       shred.post({
         url: "http://localhost:1337/201",
-	headers: {
-	  content_type: "application/json"
-	},
+  headers: {
+    content_type: "application/json"
+  },
         body: {foo: 1, bar: 2},
         on: {
           response: function(response) {
@@ -432,16 +432,16 @@ vows.describe('Shred').addBatch({
       ;
 
       var req = shred.get({
-		url: "http://www.writeonglass.com",
-		headers: {
-		  "Accept-Encoding": "gzip"
-		},
-		on: {
-		  response: function (res) {
-		    promise.emit("success", res);
-		  }
-		}
-	  });
+    url: "http://www.writeonglass.com",
+    headers: {
+      "Accept-Encoding": "gzip"
+    },
+    on: {
+      response: function (res) {
+        promise.emit("success", res);
+      }
+    }
+    });
 
       return promise;
     },
@@ -451,41 +451,41 @@ vows.describe('Shred').addBatch({
   },
   "A request using status names and status codes": {
     topic: function() {
-	
-	  var handleCount = 0;
+  
+    var handleCount = 0;
       var shred = new Shred({ logger: log })
         , promise = new(Emitter)
       ;
-	  
+    
       var req = shred.get({
-		url: "http://www.writeonglass.com",
-		on: {
-		  ok: function (res) {
+    url: "http://www.writeonglass.com",
+    on: {
+      ok: function (res) {
             handleCount ++;
             if (handleCount === 2) {
-		      promise.emit("success", res, handleCount);
+          promise.emit("success", res, handleCount);
             }
-		  },
-		  Ok: function (res) {
+      },
+      Ok: function (res) {
             handleCount ++;
             if (handleCount === 2) {
-		      promise.emit("success", res, handleCount);
+          promise.emit("success", res, handleCount);
             }
-		  },
-		  OK: function (res) {
+      },
+      OK: function (res) {
             handleCount ++;
             if (handleCount === 2) {
-		      promise.emit("success", res, handleCount);
+          promise.emit("success", res, handleCount);
             }
-		  },
-		  200: function (res) {
+      },
+      200: function (res) {
             handleCount ++;
             if (handleCount === 2) {
-		      promise.emit("success", res, handleCount);
+          promise.emit("success", res, handleCount);
             }
-		  }
-		}
-	  });
+      }
+    }
+    });
 
       return promise;
     },
