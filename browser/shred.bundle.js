@@ -361,6 +361,7 @@ var _ = require("underscore")
 
 var Shred = function(options) {
   options = (options||{});
+  this.agent = options.agent;
   this.defaults = options.defaults||{};
   this.log = options.logger||(new Ax({ level: "info" }));
   this._sharedCookieJar = new CookieJar();
@@ -378,6 +379,7 @@ Shred.prototype = {
   request: function(options) {
     options.logger = this.log;
     options.cookieJar = ( 'cookieJar' in options ) ? options.cookieJar : this._sharedCookieJar; // let them set cookieJar = null
+    options.agent = options.agent || this.agent;
     return new Shred.Request(_.defaults(options,this.defaults));
   }
 };
@@ -2752,6 +2754,8 @@ var processOptions = function(request,options) {
   // We'll use `request.emitter` to manage the `on` event handlers.
   request.emitter = (new Emitter);
 
+  request.agent = options.agent;
+
   // Set up the handlers ...
   if (options.on) {
     _(options.on).each(function(value,key) {
@@ -2825,7 +2829,10 @@ var createRequest = function(request) {
     // Node's HTTP/S modules will ignore this, but we are using the
     // browserify-http module in the browser for both HTTP and HTTPS, and this
     // is how you differentiate the two.
-    scheme: request.scheme
+    scheme: request.schemea,
+    // Use a provided agent.  'Undefined' is the default, which uses a global
+    // agent.
+    agent: request.agent
   };
 
   var http = request.scheme == "http" ? HTTP : HTTPS;
