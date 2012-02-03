@@ -458,34 +458,22 @@ vows.describe('Shred').addBatch({
       ;
     
       var req = shred.get({
-    url: "http://www.writeonglass.com",
-    on: {
-      ok: function (res) {
+        url: "http://www.writeonglass.com",
+        on: {
+          ok: function (res) {
             handleCount ++;
             if (handleCount === 2) {
-          promise.emit("success", res, handleCount);
+              promise.emit("success", res, handleCount);
             }
-      },
-      Ok: function (res) {
+          },
+          200: function (res) {
             handleCount ++;
             if (handleCount === 2) {
-          promise.emit("success", res, handleCount);
+              promise.emit("success", res, handleCount);
             }
-      },
-      OK: function (res) {
-            handleCount ++;
-            if (handleCount === 2) {
-          promise.emit("success", res, handleCount);
-            }
-      },
-      200: function (res) {
-            handleCount ++;
-            if (handleCount === 2) {
-          promise.emit("success", res, handleCount);
-            }
-      }
-    }
-    });
+          }
+        }
+      });
 
       return promise;
     },
