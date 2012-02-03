@@ -407,7 +407,6 @@ vows.describe('Shred').addBatch({
           request_error: function (requestErrorFired) {
             requestErrorFired = true;
             promise.emit("success", requestErrorFired);
-            console.error("something went very wrong! request was not made!")
           }
         }
       });
@@ -432,16 +431,16 @@ vows.describe('Shred').addBatch({
       ;
 
       var req = shred.get({
-    url: "http://www.writeonglass.com",
-    headers: {
-      "Accept-Encoding": "gzip"
-    },
-    on: {
-      response: function (res) {
-        promise.emit("success", res);
-      }
-    }
-    });
+        url: "http://www.writeonglass.com",
+        headers: {
+          "Accept-Encoding": "gzip"
+        },
+        on: {
+          response: function (res) {
+            promise.emit("success", res);
+          }
+        }
+      });
 
       return promise;
     },
@@ -452,13 +451,13 @@ vows.describe('Shred').addBatch({
   "A request using status names and status codes": {
     topic: function() {
   
-    var handleCount = 0;
+      var handleCount = 0;
       var shred = new Shred({ logger: log })
         , promise = new(Emitter)
       ;
     
       var req = shred.get({
-        url: "http://www.writeonglass.com",
+        url: "http://localhost:1337/200",
         on: {
           ok: function (res) {
             handleCount ++;
@@ -482,6 +481,51 @@ vows.describe('Shred').addBatch({
     },
     "should only run lowercased handlers": function(response, res, handleCount) {
       assert.equal(handleCount, 2);
+    }
+  },
+  "A request from Shred with its own agent": {
+    topic: function () {
+      var promise = new(Emitter);
+      var mockAgent = {
+        addRequest: function () {
+          promise.emit("success", true);
+        }
+      };
+
+      var shred = new Shred({
+        agent: mockAgent
+      });
+
+      shred.get({
+        url: "http://localhost:1337",
+      });
+      return promise;
+    },
+
+    "should call the agent's methods": function (response) {
+      assert.equal(response, true);
+    }
+  },
+  "A request using an passed in agent": {
+    topic: function () {
+      var promise = new(Emitter);
+      var mockAgent = {
+        addRequest: function () {
+          promise.emit("success", true);
+        }
+      };
+
+      var shred = new Shred();
+
+      shred.get({
+        url: "http://localhost:1337",
+        agent: mockAgent
+      });
+      return promise;
+    },
+
+    "should call the agent's methods": function (response) {
+      assert.equal(response, true);
     }
   }
 }).export(module);
