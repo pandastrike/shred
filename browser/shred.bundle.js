@@ -2829,7 +2829,7 @@ var createRequest = function(request) {
     // Node's HTTP/S modules will ignore this, but we are using the
     // browserify-http module in the browser for both HTTP and HTTPS, and this
     // is how you differentiate the two.
-    scheme: request.schemea,
+    scheme: request.scheme,
     // Use a provided agent.  'Undefined' is the default, which uses a global
     // agent.
     agent: request.agent
