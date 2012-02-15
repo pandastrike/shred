@@ -352,9 +352,7 @@ var _ = require("underscore")
 // has `info`, `warn`, `debug`, and `error` methods that take a string.
   , Ax = require("ax")
   , CookieJarLib = require( "cookiejar" )
-  , CookieAccessInfo = CookieJarLib.CookieAccessInfo
   , CookieJar = CookieJarLib.CookieJar
-  , Cookie = CookieJarLib.Cookie
 ;
 
 // Shred takes some options, including a logger and request defaults.
@@ -2468,65 +2466,7 @@ var HTTP = require("http")
   , Content = require("./content")
 ;
 
-// TODO: When http-browserify supports HTTP.STATUS_CODES, (see
-// https://github.com/substack/http-browserify/pull/6)
-// replace the big object with the following line
-// var STATUS_CODES = HTTP.STATUS_CODES;
-
-var STATUS_CODES = {
-  '100': 'Continue',
-  '101': 'Switching Protocols',
-  '102': 'Processing',
-  '200': 'OK',
-  '201': 'Created',
-  '202': 'Accepted',
-  '203': 'Non-Authoritative Information',
-  '204': 'No Content',
-  '205': 'Reset Content',
-  '206': 'Partial Content',
-  '207': 'Multi-Status',
-  '300': 'Multiple Choices',
-  '301': 'Moved Permanently',
-  '302': 'Moved Temporarily',
-  '303': 'See Other',
-  '304': 'Not Modified',
-  '305': 'Use Proxy',
-  '307': 'Temporary Redirect',
-  '400': 'Bad Request',
-  '401': 'Unauthorized',
-  '402': 'Payment Required',
-  '403': 'Forbidden',
-  '404': 'Not Found',
-  '405': 'Method Not Allowed',
-  '406': 'Not Acceptable',
-  '407': 'Proxy Authentication Required',
-  '408': 'Request Time-out',
-  '409': 'Conflict',
-  '410': 'Gone',
-  '411': 'Length Required',
-  '412': 'Precondition Failed',
-  '413': 'Request Entity Too Large',
-  '414': 'Request-URI Too Large',
-  '415': 'Unsupported Media Type',
-  '416': 'Requested Range Not Satisfiable',
-  '417': 'Expectation Failed',
-  '418': 'I\'m a teapot',
-  '422': 'Unprocessable Entity',
-  '423': 'Locked',
-  '424': 'Failed Dependency',
-  '425': 'Unordered Collection',
-  '426': 'Upgrade Required',
-  '500': 'Internal Server Error',
-  '501': 'Not Implemented',
-  '502': 'Bad Gateway',
-  '503': 'Service Unavailable',
-  '504': 'Gateway Time-out',
-  '505': 'HTTP Version not supported',
-  '506': 'Variant Also Negotiates',
-  '507': 'Insufficient Storage',
-  '509': 'Bandwidth Limit Exceeded',
-  '510': 'Not Extended'
-};
+var STATUS_CODES = HTTP.STATUS_CODES;
 
 // The Shred object itself constructs the `Request` object. You should rarely
 // need to do this directly.
@@ -2633,7 +2573,7 @@ Object.defineProperties(Request.prototype, {
         if (typeof value === 'object') {
           value = stringify(value);
         }
-        this._query = "?" + value;
+        this._query = value;
       } else {
         this._query = "";
       }
@@ -2824,7 +2764,7 @@ var createRequest = function(request) {
     host: request.host,
     port: request.port,
     method: request.method,
-    path: request.path+request.query,
+    path: request.path + (request.query ? '?'+request.query : ""),
     headers: request.getHeaders(),
     // Node's HTTP/S modules will ignore this, but we are using the
     // browserify-http module in the browser for both HTTP and HTTPS, and this
@@ -3187,6 +3127,8 @@ require.define("/shred/response.js", function (require, module, exports, __dirna
 var _ = require("underscore")
   , Content = require("./content")
   , HeaderMixins = require("./mixins/headers")
+  , CookieJarLib = require( "cookiejar" )
+  , Cookie = CookieJarLib.Cookie
 ;
 
 // Browser doesn't have zlib.
@@ -3203,7 +3145,7 @@ try {
 // and then use the callback to let the request know when it's ready.
 var Response = function(raw, request, callback) { 
   var response = this;
-  this._raw = raw; 
+  this._raw = raw;
 
   // The `._setHeaders` method is "private"; you can't otherwise set headers on
   // the response.
@@ -3211,16 +3153,34 @@ var Response = function(raw, request, callback) {
   
   // store any cookies
   if (request.cookieJar && this.getHeader('set-cookie')) {
-    var cookies = this.getHeader('set-cookie');
-    for (var cookieIndex = 0; cookieIndex < cookies.length; ++cookieIndex) {
-        if (!cookies[cookieIndex].match(/domain\=/i)) {
-            cookies[cookieIndex] += '; domain=' + request.host;
+    var cookieStrings = this.getHeader('set-cookie');
+    var cookieObjs = []
+      , cookie;
+
+    for (var i = 0; i < cookieStrings.length; i++) {
+      var cookieString = cookieStrings[i];
+      if (!cookieString) {
+        continue;
+      }
+
+      if (!cookieString.match(/domain\=/i)) {
+        cookieString += '; domain=' + request.host;
+      }
+
+      if (!cookieString.match(/path\=/i)) {
+        cookieString += '; path=' + request.path;
+      }
+
+      try {
+        cookie = new Cookie(cookieStr);
+        if (cookie) {
+          cookieObjs.push(cookie);
         }
-        
-        if (!cookies[cookieIndex].match(/path\=/i)) {
-            cookies[cookieIndex] += '; path=' + request.path;
-        }
+      } catch (e) {
+        console.warn("Tried to set bad cookie: " + cookieString);
+      }
     }
+
     request.cookieJar.setCookies(cookies);
   }
 
@@ -3700,11 +3660,67 @@ var xhrHttp = (function () {
     }
 })();
 
+http.STATUS_CODES = {
+    100 : 'Continue',
+    101 : 'Switching Protocols',
+    102 : 'Processing', // RFC 2518, obsoleted by RFC 4918
+    200 : 'OK',
+    201 : 'Created',
+    202 : 'Accepted',
+    203 : 'Non-Authoritative Information',
+    204 : 'No Content',
+    205 : 'Reset Content',
+    206 : 'Partial Content',
+    207 : 'Multi-Status', // RFC 4918
+    300 : 'Multiple Choices',
+    301 : 'Moved Permanently',
+    302 : 'Moved Temporarily',
+    303 : 'See Other',
+    304 : 'Not Modified',
+    305 : 'Use Proxy',
+    307 : 'Temporary Redirect',
+    400 : 'Bad Request',
+    401 : 'Unauthorized',
+    402 : 'Payment Required',
+    403 : 'Forbidden',
+    404 : 'Not Found',
+    405 : 'Method Not Allowed',
+    406 : 'Not Acceptable',
+    407 : 'Proxy Authentication Required',
+    408 : 'Request Time-out',
+    409 : 'Conflict',
+    410 : 'Gone',
+    411 : 'Length Required',
+    412 : 'Precondition Failed',
+    413 : 'Request Entity Too Large',
+    414 : 'Request-URI Too Large',
+    415 : 'Unsupported Media Type',
+    416 : 'Requested Range Not Satisfiable',
+    417 : 'Expectation Failed',
+    418 : 'I\'m a teapot', // RFC 2324
+    422 : 'Unprocessable Entity', // RFC 4918
+    423 : 'Locked', // RFC 4918
+    424 : 'Failed Dependency', // RFC 4918
+    425 : 'Unordered Collection', // RFC 4918
+    426 : 'Upgrade Required', // RFC 2817
+    500 : 'Internal Server Error',
+    501 : 'Not Implemented',
+    502 : 'Bad Gateway',
+    503 : 'Service Unavailable',
+    504 : 'Gateway Time-out',
+    505 : 'HTTP Version not supported',
+    506 : 'Variant Also Negotiates', // RFC 2295
+    507 : 'Insufficient Storage', // RFC 4918
+    509 : 'Bandwidth Limit Exceeded',
+    510 : 'Not Extended' // RFC 2774
+};
+
 });
 
 require.define("/node_modules/http-browserify/lib/request.js", function (require, module, exports, __dirname, __filename) {
 var EventEmitter = require('events').EventEmitter;
 var Response = require('./response');
+var isSafeHeader = require('./isSafeHeader');
 
 var Request = module.exports = function (xhr, params) {
     var self = this;
@@ -3721,7 +3737,7 @@ var Request = module.exports = function (xhr, params) {
     
     if (params.headers) {
         Object.keys(params.headers).forEach(function (key) {
-            if (!self.isSafeRequestHeader(key)) return;
+            if (!isSafeHeader(key)) return;
             var value = params.headers[key];
             if (Array.isArray(value)) {
                 value.forEach(function (v) {
@@ -3765,40 +3781,11 @@ Request.prototype.end = function (s) {
     this.xhr.send(this.body);
 };
 
-// Taken from http://dxr.mozilla.org/mozilla/mozilla-central/content/base/src/nsXMLHttpRequest.cpp.html
-Request.unsafeHeaders = [
-    "accept-charset",
-    "accept-encoding",
-    "access-control-request-headers",
-    "access-control-request-method",
-    "connection",
-    "content-length",
-    "cookie",
-    "cookie2",
-    "content-transfer-encoding",
-    "date",
-    "expect",
-    "host",
-    "keep-alive",
-    "origin",
-    "referer",
-    "te",
-    "trailer",
-    "transfer-encoding",
-    "upgrade",
-    "user-agent",
-    "via"
-];
-
-Request.prototype.isSafeRequestHeader = function (headerName) {
-    if (!headerName) return false;
-    return (Request.unsafeHeaders.indexOf(headerName.toLowerCase()) === -1)
-};
-
 });
 
 require.define("/node_modules/http-browserify/lib/response.js", function (require, module, exports, __dirname, __filename) {
 var EventEmitter = require('events').EventEmitter;
+var isSafeHeader = require('./isSafeHeader');
 
 var Response = module.exports = function (xhr) {
     this.xhr = xhr;
@@ -3845,11 +3832,15 @@ function parseHeaders (xhr) {
 
 Response.prototype.getHeader = function (key) {
     var header = this.headers[key.toLowerCase()];
+    if (header) return header;
 
     // Work around Mozilla bug #608735 [https://bugzil.la/608735], which causes
     // getAllResponseHeaders() to return {} if the response is a CORS request.
     // xhr.getHeader still works correctly.
-    return header || this.xhr.getResponseHeader(key);
+    if (isSafeHeader(key)) {
+      return this.xhr.getResponseHeader(key);
+    }
+    return null;
 };
 
 Response.prototype.handle = function () {
@@ -3904,6 +3895,40 @@ Response.prototype.write = function () {
         this.emit('data', xhr.responseText.slice(this.offset));
         this.offset = xhr.responseText.length;
     }
+};
+
+});
+
+require.define("/node_modules/http-browserify/lib/isSafeHeader.js", function (require, module, exports, __dirname, __filename) {
+// Taken from http://dxr.mozilla.org/mozilla/mozilla-central/content/base/src/nsXMLHttpRequest.cpp.html
+var unsafeHeaders = [
+    "accept-charset",
+    "accept-encoding",
+    "access-control-request-headers",
+    "access-control-request-method",
+    "connection",
+    "content-length",
+    "cookie",
+    "cookie2",
+    "content-transfer-encoding",
+    "date",
+    "expect",
+    "host",
+    "keep-alive",
+    "origin",
+    "referer",
+    "set-cookie",
+    "te",
+    "trailer",
+    "transfer-encoding",
+    "upgrade",
+    "user-agent",
+    "via"
+];
+
+module.exports = function (headerName) {
+    if (!headerName) return false;
+    return (unsafeHeaders.indexOf(headerName.toLowerCase()) === -1)
 };
 
 });
