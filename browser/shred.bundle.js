@@ -3831,7 +3831,7 @@ function parseHeaders (xhr) {
 }
 
 Response.prototype.getHeader = function (key) {
-    var header = this.headers[key.toLowerCase()];
+    var header = this.headers ? this.headers[key.toLowerCase()] : null;
     if (header) return header;
 
     // Work around Mozilla bug #608735 [https://bugzil.la/608735], which causes
