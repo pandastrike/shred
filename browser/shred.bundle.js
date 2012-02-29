@@ -26,7 +26,8 @@ require.resolve = (function () {
         
         if (require._core[x]) return x;
         var path = require.modules.path();
-        var y = cwd || '.';
+        cwd = path.resolve('/', cwd);
+        var y = cwd || '/';
         
         if (x.match(/^(?:\.\.?\/|\/)/)) {
             var m = loadAsFileSync(path.resolve(y, x))
@@ -1439,12 +1440,11 @@ var makeLogger = function(level,fn) {
 var Logger = function(options) {
   var logger = this;
 	var options = options||{};
-  // this.level = options.level;
-  // this.colors = options.colors || this.colors;
 
   // Default options
   logger.options = _.defaults(options, {
       level: 'info'
+    , timestamp: true
     , colors: {
         info: 'green'
       , warn: 'yellow'
@@ -1461,7 +1461,7 @@ var Logger = function(options) {
   //    //=> Haiku: this is going to be awesome!
   //
   if (logger.options.module){
-    logger.options.prefix = logger.options.module + ': ';
+    logger.options.prefix = logger.options.module;
   }
 
   // Write to stderr or a file
@@ -1471,7 +1471,10 @@ var Logger = function(options) {
       if(process.title === "node")
 	  logger.stream = process.stderr;
       else if(process.title === "browser")
-	  logger.stream = console[logger.options.level];
+	  logger.stream = function () {
+      // Work around weird console context issue: http://code.google.com/p/chromium/issues/detail?id=48662
+      return console[logger.options.level].apply(console, arguments);
+    };
   }
 
   switch(logger.options.level){
@@ -1512,12 +1515,11 @@ Logger.prototype = {
 
     var logger = this
       , prefix = logger.options.prefix
+      , timestamp = logger.options.timestamp ? " " + (new Date().toISOString()) : ""
       , color = logger.options.colors[level]
     ;
 
-    // TODO: maybe this should handle
-
-    return (prefix + message)[color];
+    return (prefix + timestamp + ": " + message)[color];
   }
 };
 
@@ -2878,7 +2880,271 @@ module.exports = Request;
 });
 
 require.define("http", function (require, module, exports, __dirname, __filename) {
-// todo
+module.exports = require("http-browserify")
+});
+
+require.define("/node_modules/browserify/node_modules/http-browserify/package.json", function (require, module, exports, __dirname, __filename) {
+module.exports = {"main":"index.js","browserify":"index.js"}
+});
+
+require.define("/node_modules/browserify/node_modules/http-browserify/index.js", function (require, module, exports, __dirname, __filename) {
+var http = module.exports;
+var EventEmitter = require('events').EventEmitter;
+var Request = require('./lib/request');
+
+http.request = function (params, cb) {
+    if (!params) params = {};
+    if (!params.host) params.host = window.location.host.split(':')[0];
+    if (!params.port) params.port = window.location.port;
+    
+    var req = new Request(new xhrHttp, params);
+    if (cb) req.on('response', cb);
+    return req;
+};
+
+http.get = function (params, cb) {
+    params.method = 'GET';
+    var req = http.request(params, cb);
+    req.end();
+    return req;
+};
+
+http.Agent = function () {};
+http.Agent.defaultMaxSockets = 4;
+
+var xhrHttp = (function () {
+    if (typeof window === 'undefined') {
+        throw new Error('no window object present');
+    }
+    else if (window.XMLHttpRequest) {
+        return window.XMLHttpRequest;
+    }
+    else if (window.ActiveXObject) {
+        var axs = [
+            'Msxml2.XMLHTTP.6.0',
+            'Msxml2.XMLHTTP.3.0',
+            'Microsoft.XMLHTTP'
+        ];
+        for (var i = 0; i < axs.length; i++) {
+            try {
+                var ax = new(window.ActiveXObject)(axs[i]);
+                return function () {
+                    if (ax) {
+                        var ax_ = ax;
+                        ax = null;
+                        return ax_;
+                    }
+                    else {
+                        return new(window.ActiveXObject)(axs[i]);
+                    }
+                };
+            }
+            catch (e) {}
+        }
+        throw new Error('ajax not supported in this browser')
+    }
+    else {
+        throw new Error('ajax not supported in this browser');
+    }
+})();
+
+});
+
+require.define("/node_modules/browserify/node_modules/http-browserify/lib/request.js", function (require, module, exports, __dirname, __filename) {
+var EventEmitter = require('events').EventEmitter;
+var Response = require('./response');
+
+var Request = module.exports = function (xhr, params) {
+    var self = this;
+    self.xhr = xhr;
+    self.body = '';
+    
+    var uri = params.host + ':' + params.port + (params.path || '/');
+    
+    xhr.open(
+        params.method || 'GET',
+        (params.scheme || 'http') + '://' + uri,
+        true
+    );
+    
+    if (params.headers) {
+        Object.keys(params.headers).forEach(function (key) {
+            if (!self.isSafeRequestHeader(key)) return;
+            var value = params.headers[key];
+            if (Array.isArray(value)) {
+                value.forEach(function (v) {
+                    xhr.setRequestHeader(key, v);
+                });
+            }
+            else xhr.setRequestHeader(key, value)
+        });
+    }
+    
+    var res = new Response;
+    res.on('ready', function () {
+        self.emit('response', res);
+    });
+    
+    xhr.onreadystatechange = function () {
+        res.handle(xhr);
+    };
+};
+
+Request.prototype = new EventEmitter;
+
+Request.prototype.setHeader = function (key, value) {
+    if ((Array.isArray && Array.isArray(value))
+    || value instanceof Array) {
+        for (var i = 0; i < value.length; i++) {
+            this.xhr.setRequestHeader(key, value[i]);
+        }
+    }
+    else {
+        this.xhr.setRequestHeader(key, value);
+    }
+};
+
+Request.prototype.write = function (s) {
+    this.body += s;
+};
+
+Request.prototype.end = function (s) {
+    if (s !== undefined) this.write(s);
+    this.xhr.send(this.body);
+};
+
+// Taken from http://dxr.mozilla.org/mozilla/mozilla-central/content/base/src/nsXMLHttpRequest.cpp.html
+Request.unsafeHeaders = [
+    "accept-charset",
+    "accept-encoding",
+    "access-control-request-headers",
+    "access-control-request-method",
+    "connection",
+    "content-length",
+    "cookie",
+    "cookie2",
+    "content-transfer-encoding",
+    "date",
+    "expect",
+    "host",
+    "keep-alive",
+    "origin",
+    "referer",
+    "te",
+    "trailer",
+    "transfer-encoding",
+    "upgrade",
+    "user-agent",
+    "via"
+];
+
+Request.prototype.isSafeRequestHeader = function (headerName) {
+    if (!headerName) return false;
+    return (Request.unsafeHeaders.indexOf(headerName.toLowerCase()) === -1)
+};
+
+});
+
+require.define("/node_modules/browserify/node_modules/http-browserify/lib/response.js", function (require, module, exports, __dirname, __filename) {
+var EventEmitter = require('events').EventEmitter;
+
+var Response = module.exports = function (res) {
+    this.offset = 0;
+};
+
+Response.prototype = new EventEmitter;
+
+var capable = {
+    streaming : true,
+    status2 : true
+};
+
+function parseHeaders (res) {
+    var lines = res.getAllResponseHeaders().split(/\r?\n/);
+    var headers = {};
+    for (var i = 0; i < lines.length; i++) {
+        var line = lines[i];
+        if (line === '') continue;
+        
+        var m = line.match(/^([^:]+):\s*(.*)/);
+        if (m) {
+            var key = m[1].toLowerCase(), value = m[2];
+            
+            if (headers[key] !== undefined) {
+                if ((Array.isArray && Array.isArray(headers[key]))
+                || headers[key] instanceof Array) {
+                    headers[key].push(value);
+                }
+                else {
+                    headers[key] = [ headers[key], value ];
+                }
+            }
+            else {
+                headers[key] = value;
+            }
+        }
+        else {
+            headers[line] = true;
+        }
+    }
+    return headers;
+}
+
+Response.prototype.getHeader = function (key) {
+    return this.headers[key.toLowerCase()];
+};
+
+Response.prototype.handle = function (res) {
+    if (res.readyState === 2 && capable.status2) {
+        try {
+            this.statusCode = res.status;
+            this.headers = parseHeaders(res);
+        }
+        catch (err) {
+            capable.status2 = false;
+        }
+        
+        if (capable.status2) {
+            this.emit('ready');
+        }
+    }
+    else if (capable.streaming && res.readyState === 3) {
+        try {
+            if (!this.statusCode) {
+                this.statusCode = res.status;
+                this.headers = parseHeaders(res);
+                this.emit('ready');
+            }
+        }
+        catch (err) {}
+        
+        try {
+            this.write(res);
+        }
+        catch (err) {
+            capable.streaming = false;
+        }
+    }
+    else if (res.readyState === 4) {
+        if (!this.statusCode) {
+            this.statusCode = res.status;
+            this.emit('ready');
+        }
+        this.write(res);
+        
+        if (res.error) {
+            this.emit('error', res.responseText);
+        }
+        else this.emit('end');
+    }
+};
+
+Response.prototype.write = function (res) {
+    if (res.responseText.length > this.offset) {
+        this.emit('data', res.responseText.slice(this.offset));
+        this.offset = res.responseText.length;
+    }
+};
 
 });
 
@@ -3285,7 +3551,7 @@ Object.defineProperties(Response.prototype, {
 //   400 or greater.
   isError: {
     get: function() {
-      return (this.status>399)
+      return (this.status === 0 || this.status > 399)
     },
     enumerable: true
   }
