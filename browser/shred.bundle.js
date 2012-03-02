@@ -2841,6 +2841,10 @@ var createRequest = function(request) {
     request.emitter.emit("request_error", error);
   });
 
+  request._raw.on("socket", function(socket) {
+    request.emitter.emit("socket", socket);
+  });
+
   // TCP timeouts should also trigger the "response_error" event.
   request._raw.on('socket', function () {
     request._raw.socket.on('timeout', function () {
