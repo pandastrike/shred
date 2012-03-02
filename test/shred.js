@@ -527,5 +527,24 @@ vows.describe('Shred').addBatch({
     "should call the agent's methods": function (response) {
       assert.equal(response, true);
     }
+  },
+  "A request with a 'socket' event listener": {
+    topic: function () {
+      var promise = new(Emitter);
+
+      var shred = new Shred();
+
+      shred.get({
+        url: "http://localhost:1337"
+      }).on('socket', function () {
+        promise.emit("success", true);
+      });
+
+      return promise;
+    },
+
+    "should call the socket listener": function (response) {
+      assert.equal(response, true);
+    }
   }
 }).export(module);
