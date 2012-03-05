@@ -3442,7 +3442,7 @@ var Response = function(raw, request, callback) {
       }
 
       try {
-        cookie = new Cookie(cookieStr);
+        cookie = new Cookie(cookieString);
         if (cookie) {
           cookieObjs.push(cookie);
         }
@@ -3451,7 +3451,7 @@ var Response = function(raw, request, callback) {
       }
     }
 
-    request.cookieJar.setCookies(cookies);
+    request.cookieJar.setCookies(cookieObjs);
   }
 
   this.request = request;
