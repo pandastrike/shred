@@ -3705,7 +3705,7 @@ Object.defineProperties(Content.prototype,{
 // - **length**. Typically accessed as `content.length`, returns the length in
 //   bytes of the raw content entity.
   length: {
-    get: function() { return this.body.length; }
+    get: function() { return Buffer.byteLength(this.body); }
   }
 });
 
