@@ -148,8 +148,45 @@ Shred has 4 methods: `shred.get`, `shred.put`, `shred.delete`, and `shred.post`.
 * `port`: port to send the request to
 * `query`: hash or string to send as the query parameters
 * `content`: data to send in the body of the request (also aliased to `body`)
-* `timeout`: length of time in ms to wait before killing the connection
+* `timeout`: length of time in ms (or a date structure with hours/minutes/seconds/millis) to wait before killing the connection
 * `proxy`: url of http proxy to use
+
+## Even more examples!
+
+### timeouts
+
+```javascript
+var req = shred.get({
+  url: "http://api.spire.io/",
+  timeout: 1000, // time out in just 1 second
+  on: {
+    response: function(response) {
+      console.log(response.content.data);
+    },
+    // let's watch for a timeout
+    timeout: function( request ) {
+      // note: we get the request here, not the response (since there was no response, silly!)
+      console.log( 'Ooops, we timed out!' );
+    }
+  }
+});
+
+// or we can pass an object with values like 'minutes', 'seconds' and 'milliseconds'
+var req = shred.get({
+  url: "http://api.spire.io/",
+  timeout: { minutes: 1, seconds: 30 }, // time out in 1 minute and 30 seconds
+  on: {
+    response: function(response) {
+      console.log(response.content.data);
+    },
+    // let's watch for a timeout
+    timeout: function( request ) {
+      console.log( 'Ooops, we timed out!' );
+    }
+  }
+});
+
+```
 
 ## Events
 
