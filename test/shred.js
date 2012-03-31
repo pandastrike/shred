@@ -423,6 +423,68 @@ vows.describe('Shred').addBatch({
       assert.equal(requestErrorFired,true);
     }
   },
+  'A request that should timeout in 1 second, set using an integer': {
+    topic: function() {
+
+      var shred = new Shred({ logger: log })
+        , promise = new(Emitter)
+      ;
+      var timedOut = false;
+
+      var req = shred.get({
+        url: "http://localhost:99999/timeout",
+        timeout: 1000,
+        on: {
+          success: function (response) {
+            console.log("success");
+          },
+          error: function (response) {
+            console.log("we got an http error");
+          },
+          timeout: function() {
+            timedOut = true;
+            promise.emit("success", timedOut);
+          }
+        }
+      });
+
+      return promise;
+    },
+    "should timeout": function(response, timedOut) {
+      assert.equal(timedOut,true);
+    }
+  },
+  'A request that should timeout in 1 second, set using an object': {
+    topic: function() {
+    
+      var shred = new Shred({ logger: log })
+        , promise = new(Emitter)
+      ; 
+      var timedOut = false;
+
+      var req = shred.get({
+        url: "http://localhost:99999/timeout",
+        timeout: { seconds: 1 },
+        on: {
+          success: function (response) {
+            console.log("success");
+          },
+          error: function (response) {
+            console.log("we got an http error");
+          },
+          timeout: function() {
+            timedOut = true;
+            promise.emit("success", timedOut);
+          }
+        }
+      });
+
+      return promise;
+    },
+    "should timeout": function(response, timedOut) {
+      assert.equal(timedOut,true);
+    }
+  },
   "A request with Accept-Encoding 'gzip'": {
     topic: function() {
 
