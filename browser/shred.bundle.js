@@ -2728,7 +2728,7 @@ var processOptions = function(request,options) {
   }
 
   // Set the remaining options.
-  request.query = options.query||options.parameters;
+  request.query = options.query||options.parameters||request.query ;
   request.method = options.method;
   request.setHeader("user-agent",options.agent||"Shred for Node.js, Version 0.5.0");
   request.setHeaders(options.headers);
