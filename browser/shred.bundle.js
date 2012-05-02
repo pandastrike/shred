@@ -3402,7 +3402,6 @@ var _ = require("underscore")
   , Content = require("./content")
   , HeaderMixins = require("./mixins/headers")
   , CookieJarLib = require( "cookiejar" )
-  , Iconv = require("iconv-lite")
   , Cookie = CookieJarLib.Cookie
 ;
 
@@ -3412,6 +3411,14 @@ try {
   zlib = require('zlib');
 } catch (e) {
   console.warn("no zlib library");
+}
+
+// Iconv doesn't work in browser
+var Iconv = null;
+try {
+  Iconv = require('iconv-lite');
+} catch (e) {
+  console.warn("no iconv library");
 }
 
 // Construct a `Response` object. You should never have to do this directly. The
@@ -3497,13 +3504,11 @@ var Response = function(raw, request, callback) {
 
     if (zlib && response.getHeader("Content-Encoding") === 'gzip'){
       zlib.gunzip(body, function (err, gunzippedBody) {
-        if (response.request.encoding){
-            body = Iconv.fromEncoding(gunzippedBody,response.request.encoding);
+        if (Iconv && response.request.encoding){
+          body = Iconv.fromEncoding(gunzippedBody,response.request.encoding);
+        } else {
+          body = gunzippedBody.toString();
         }
-          else{
-            body = gunzippedBody.toString();
-        }
-        
         setBodyAndFinish(body);
       })
     }
@@ -3719,7 +3724,12 @@ Object.defineProperties(Content.prototype,{
 // - **length**. Typically accessed as `content.length`, returns the length in
 //   bytes of the raw content entity.
   length: {
-    get: function() { return Buffer.byteLength(this.body); }
+    get: function() {
+      if (typeof Buffer !== 'undefined') {
+        return Buffer.byteLength(this.body);
+      }
+      return this.body.length;
+    }
   }
 });
 
