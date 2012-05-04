@@ -1853,7 +1853,7 @@ var EventEmitter = exports.EventEmitter = process.EventEmitter;
 var isArray = typeof Array.isArray === 'function'
     ? Array.isArray
     : function (xs) {
-        return Object.toString.call(xs) === '[object Array]'
+        return Object.prototype.toString.call(xs) === '[object Array]'
     }
 ;
 
@@ -2026,11 +2026,11 @@ require.define("fs", function (require, module, exports, __dirname, __filename) 
 
 });
 
-require.define("/node_modules/ax/node_modules/colors/package.json", function (require, module, exports, __dirname, __filename) {
+require.define("/node_modules/colors/package.json", function (require, module, exports, __dirname, __filename) {
 module.exports = {"main":"colors"}
 });
 
-require.define("/node_modules/ax/node_modules/colors/colors.js", function (require, module, exports, __dirname, __filename) {
+require.define("/node_modules/colors/colors.js", function (require, module, exports, __dirname, __filename) {
 /*
 colors.js
 
