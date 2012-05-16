@@ -363,6 +363,7 @@ var Shred = function(options) {
   this.defaults = options.defaults||{};
   this.log = options.logger||(new Ax({ level: "info" }));
   this._sharedCookieJar = new CookieJar();
+  this.logCurl = options.logCurl || false;
 };
 
 // Most of the real work is done in the request and reponse classes.
@@ -376,6 +377,7 @@ Shred.Response = require("./shred/response");
 Shred.prototype = {
   request: function(options) {
     options.logger = this.log;
+    options.logCurl = options.logCurl || this.logCurl;
     options.cookieJar = ( 'cookieJar' in options ) ? options.cookieJar : this._sharedCookieJar; // let them set cookieJar = null
     options.agent = options.agent || this.agent;
     return new Shred.Request(_.defaults(options,this.defaults));
@@ -1990,6 +1992,7 @@ var Request = function(options) {
   this.log = options.logger;
   this.cookieJar = options.cookieJar;
   this.encoding = options.encoding;
+  this.logCurl = options.logCurl;
   processOptions(this,options||{});
   createRequest(this);
 };
@@ -2291,6 +2294,10 @@ var createRequest = function(request) {
     agent: request.agent
   };
 
+  if (request.logCurl) {
+    logCurl(request);
+  }
+
   var http = request.scheme == "http" ? HTTP : HTTPS;
 
   // Set up the real request using the selected library. The request won't be
@@ -2392,6 +2399,32 @@ var createRequest = function(request) {
   request.log.debug("Sending request ...");
   request._raw.end();
 };
+
+// Logs the curl command for the request.
+var logCurl = function (req) {
+  var headers = req.getHeaders();
+  var headerString = "";
+
+  for (var key in headers) {
+    headerString += '-H "' + key + ": " + headers[key] + '" ';
+  }
+
+  var bodyString = ""
+
+  if (req.content) {
+    bodyString += "-d '" + req.content.body + " ";
+  }
+
+  var query = req.query ? '?' + req.query : "";
+
+  console.log("curl " +
+    "-X " + req.method.toUpperCase() + " " +
+    req.scheme + "://" + req.host + ":" + req.port + req.path + query + " " +
+    headerString +
+    bodyString
+  );
+};
+
 
 module.exports = Request;
 
