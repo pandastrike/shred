@@ -180,7 +180,7 @@ To enable this logging, set the `logCurl` option when initializing Shred.
 
 Here is sample output from a shred request:
 
-    curl -X GET http://localhost:1337 -H "User-Agent: Shred for Node.js, Version 0.5.0" -H "Accept: application/json" 
+    curl -X GET http://localhost:1337 -H "Accept: application/json" 
 
 
 # Feedback
