@@ -169,6 +169,20 @@ It has the following properties.
 * `response.content.body`: string representation of the response body
 * `response.content.data`: javascript object for the response body (if the Content-Type is JSON)
 
+# Curl Logging
+
+Shred can log all of the requests it makes as [curl][curl] commands.
+You can use this to make requests from the command line with curl.
+
+To enable this logging, set the `logCurl` option when initializing Shred.
+
+    var shred = new Shred({ logCurl: true });
+
+Here is sample output from a shred request:
+
+    curl -X GET http://localhost:1337 -H "User-Agent: Shred for Node.js, Version 0.5.0" -H "Accept: application/json" 
+
+
 # Feedback
 
 Feedback is highly encouraged in the form of [tickets][tickets] or pull requests. Thank you!
@@ -207,4 +221,4 @@ That code was adapted and converted into a separate Node.js library by [Dan Yode
 [suria]: mailto:vsuria@spire.io
 [docs]: http://www.spire.io/docs/shred/
 [blog]: http://www.spire.io/posts/introducing-shred.html
-
+[curl]: http://curl.haxx.se/
