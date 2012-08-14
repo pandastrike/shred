@@ -16,7 +16,7 @@ vows.describe('Shred').addBatch({
       ;
 
       var req = shred.get({
-        url: "http://localhost:1337/200",
+        url: "http://localhost:31337/200",
         on: {
           response: function(response) {
             promise.emit("success", response);
@@ -50,7 +50,7 @@ vows.describe('Shred').addBatch({
       ;
 
       shred.post({
-        url: "http://localhost:1337/200",
+        url: "http://localhost:31337/200",
         on: {
           response: function(response) {
             promise.emit("success",response);
@@ -79,7 +79,7 @@ vows.describe('Shred').addBatch({
       ;
 
       shred.post({
-        url: "http://localhost:1337/200",
+        url: "http://localhost:31337/200",
   body: "Hello",
         on: {
           response: function(response) {
@@ -110,7 +110,7 @@ vows.describe('Shred').addBatch({
         , promise = new(Emitter)
       ;
       shred.post({
-        url: "http://localhost:1337/201",
+        url: "http://localhost:31337/201",
   headers: {
     content_type: "application/json"
   },
@@ -148,7 +148,7 @@ vows.describe('Shred').addBatch({
         , promise = new(Emitter)
       ;
       shred.get({
-        url: "http://localhost:1337/301",
+        url: "http://localhost:31337/301",
         on: {
           response: function(response) {
             promise.emit("success",response);
@@ -173,7 +173,7 @@ vows.describe('Shred').addBatch({
         , promise = new(Emitter)
       ;
       shred.get({
-        url: "http://localhost:1337/302",
+        url: "http://localhost:31337/302",
         on: {
           response: function(response) {
             promise.emit("success",response);
@@ -200,7 +200,7 @@ vows.describe('Shred').addBatch({
       var handleCount = 0;
 
       var req = shred.get({
-        url: "http://localhost:1337/200",
+        url: "http://localhost:31337/200",
         on: {
           200: function(response) {
             handleCount++;
@@ -252,7 +252,7 @@ vows.describe('Shred').addBatch({
       };
 
       var req = shred.get({
-        url: "http://localhost:1337/200",
+        url: "http://localhost:31337/200",
         // Handler defined in the request options hash
         on: {
           response: createHandlerFunction(),
@@ -294,7 +294,7 @@ vows.describe('Shred').addBatch({
       var numberOfFiredCallbacks = 0;
 
       var req = shred.get({
-        url: "http://localhost:1337/200",
+        url: "http://localhost:31337/200",
         on: {
           200: function(response) {
             numberOfFiredCallbacks++
@@ -347,7 +347,7 @@ vows.describe('Shred').addBatch({
       var numberOfFiredCallbacks = 0;
 
       var req = shred.get({
-        url: "http://localhost:1337/404",
+        url: "http://localhost:31337/404",
         on: {
           404: function(response) {
             numberOfFiredCallbacks++
@@ -396,7 +396,7 @@ vows.describe('Shred').addBatch({
       var requestErrorFired = false;
 
       var req = shred.get({
-        url: "http://localhost:1337/timeout",
+        url: "http://localhost:31337/timeout",
         on: {
           success: function (response) {
             console.log("success");
@@ -493,7 +493,7 @@ vows.describe('Shred').addBatch({
       ;
 
       var req = shred.get({
-        url: "http://www.writeonglass.com",
+        url: "http://www.example.com",
         headers: {
           "Accept-Encoding": "gzip"
         },
@@ -519,7 +519,7 @@ vows.describe('Shred').addBatch({
       ;
     
       var req = shred.get({
-        url: "http://localhost:1337/200",
+        url: "http://localhost:31337/200",
         on: {
           ok: function (res) {
             handleCount ++;
@@ -559,7 +559,7 @@ vows.describe('Shred').addBatch({
       });
 
       shred.get({
-        url: "http://localhost:1337",
+        url: "http://localhost:31337",
       });
       return promise;
     },
@@ -580,7 +580,7 @@ vows.describe('Shred').addBatch({
       var shred = new Shred();
 
       shred.get({
-        url: "http://localhost:1337",
+        url: "http://localhost:31337",
         agent: mockAgent
       });
       return promise;
@@ -597,7 +597,7 @@ vows.describe('Shred').addBatch({
       var shred = new Shred();
 
       shred.get({
-        url: "http://localhost:1337"
+        url: "http://localhost:31337"
       }).on('socket', function () {
         promise.emit("success", true);
       });
