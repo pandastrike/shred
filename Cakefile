@@ -60,7 +60,6 @@ task 'test:server', 'launch a server for the browser tests', (o)->
   app = express.createServer()
   libSrc = path.join __dirname, 'browser/shred.bundle.js'
   http = require 'http'
-  _ = require 'underscore'
 
   app.get '/shred.bundle.js', (req, res)->
     TaskHelpers.makeBundle ->

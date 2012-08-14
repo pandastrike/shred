@@ -1,5 +1,5 @@
 { "name": "shred"
-, "version": "0.8.4"
+, "version": "0.8.5"
 , "description": "A simple HTTP client for nodejs and browsers.  Supports gzip, cookies, redirects, and https."
 , "keywords": [ "http", "client" ]
 , "licenses": [
@@ -49,9 +49,8 @@
                   , "test" : "./test"
                   , "examples" : "./examples"
                   }
-, "dependencies": {  "underscore": "1.3.0"
-    , "sprintf": "0.1.1"
-    , "ax": ">= 0.1.5"
+, "dependencies": {  "sprintf": "0.1.1"
+    , "ax": "git://github.com/automatthew/ax.git#master"
     , "cookiejar": "1.3.x"
     , "iconv-lite":">= 0.1.2"
   }
