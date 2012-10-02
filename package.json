@@ -9,12 +9,12 @@
    "licenses":[
       {
          "type":"MIT",
-         "url":"https://github.com/spire-io/shred/blob/master/LICENSE"
+         "url":"https://github.com/automatthew/shred/blob/master/LICENSE"
       }
    ],
-   "homepage":"https://github.com/spire-io/shred",
+   "homepage":"https://github.com/automatthew/shred",
    "bugs":{
-      "url":"https://github.com/spire-io/shred/issues"
+      "url":"https://github.com/automatthew/shred/issues"
    },
    "author":{
       "name":"Dan Yoder",
@@ -51,7 +51,7 @@
    "main":"./lib/shred.js",
    "repository":{
       "type":"git",
-      "url":"git://github.com/spire-io/shred.git"
+      "url":"git://github.com/automatthew/shred.git"
    },
    "files": [
     "lib"
