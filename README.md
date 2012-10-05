@@ -191,7 +191,7 @@ Feedback is highly encouraged in the form of [tickets][tickets] or pull requests
 
 [Browse the annotated source.][docs]
 
-We'd love [your contributions](repo) - don't hesitate to send us pull requests. We'll also happily add you as a committer after we've accepted it.
+We'd love your contributions - don't hesitate to send us pull requests. We'll also happily add you as a committer after we've accepted it.
 
 # Tests
 
@@ -208,8 +208,10 @@ Shred is MIT licensed.
 
 # Authors
 
-Shred is based on code originally written by [Matthew King][king].
-That code was adapted and converted into a separate Node.js library by [Dan Yoder][yoder], Jason Campbell, Nick LaCasse, and Vicent Piquer Suria.
+Shred is based on code originally written by Matthew King.
+That code was adapted and converted into a separate Node.js library by Dan Yoder, Jason Campbell, Nick LaCasse, and Vicent Piquer Suria.
+
+Current maintainers:  [Dan Yoder][yoder], [Matthew King][king]
 
 [code]: https://github.com/automatthew/shred
 [tickets]: https://github.com/automatthew/shred/issues
@@ -217,3 +219,4 @@ That code was adapted and converted into a separate Node.js library by [Dan Yode
 [yoder]: mailto:daniel.yoder@gmail.com
 [king]: mailto:automatthew@gmail.com
 [curl]: http://curl.haxx.se/
+[blog]: http://webcache.googleusercontent.com/search?q=cache:6RFaj1yLIZEJ:www.spire.io/posts/introducing-shred.html+http://www.spire.io/posts/introducing-shred.html&cd=1&hl=en&ct=clnk&gl=us
