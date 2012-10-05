@@ -1272,7 +1272,7 @@ var logCurl = function (req) {
   var bodyString = ""
 
   if (req.content) {
-    bodyString += "-d '" + req.content.body + " ";
+    bodyString += "-d '" + req.content.body + "' ";
   }
 
   var query = req.query ? '?' + req.query : "";
