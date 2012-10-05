@@ -133,7 +133,7 @@ req.on(
 });
 ```
 
-See [the wiki](https://github.com/spire-io/shred/wiki) for more examples.
+See [the wiki](https://github.com/automatthew/shred/wiki) for more examples.
 
 Also, we wrote [a blog post][blog] on why we wrote Shred instead of going with existing libraries.
 
@@ -209,16 +209,11 @@ Shred is MIT licensed.
 # Authors
 
 Shred is based on code originally written by [Matthew King][king].
-That code was adapted and converted into a separate Node.js library by [Dan Yoder][yoder], [Jason Campbell][campbell], [Nick LaCasse][lacasse], and [Vicent Piquer Suria][suria].
+That code was adapted and converted into a separate Node.js library by [Dan Yoder][yoder], Jason Campbell, Nick LaCasse, and Vicent Piquer Suria.
 
-[code]: https://github.com/spire-io/shred
-[tickets]: https://github.com/spire-io/shred/issues
-[license]: https://github.com/spire-io/shred/blob/master/LICENSE
-[yoder]: mailto:dan@spire.io
-[king]: mailto:mking@spire.io
-[campbell]: mailto:jason@spire.io
-[lacasse]: mailto:nlacasse@spire.io
-[suria]: mailto:vsuria@spire.io
-[docs]: http://www.spire.io/docs/shred/
-[blog]: http://www.spire.io/posts/introducing-shred.html
+[code]: https://github.com/automatthew/shred
+[tickets]: https://github.com/automatthew/shred/issues
+[license]: https://github.com/automatthew/shred/blob/master/LICENSE
+[yoder]: mailto:daniel.yoder@gmail.com
+[king]: mailto:automatthew@gmail.com
 [curl]: http://curl.haxx.se/
