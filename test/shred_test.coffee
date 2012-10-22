@@ -28,7 +28,6 @@ Testify.test "Shred", (context) ->
             assert.equal(response.content.body.constructor, String)
           context.test "response.content._body is a Buffer", ->
             assert.ok(Buffer.isBuffer(response.content._body))
-          context.done()
 
   context.test "A minimal valid POST request", (context) ->
     shred.post
@@ -41,7 +40,6 @@ Testify.test "Shred", (context) ->
             assert.equal response.status, 200
           context.test "response does not have a content-type header", ->
             assert.ok(!response.content.data.headers["Content-Type"])
-          context.done()
 
 
   context.test "A minimal valid POST request", (context) ->
@@ -59,7 +57,6 @@ Testify.test "Shred", (context) ->
               response.content.data.headers["Content-Type"],
               "text/plain"
             )
-          context.done()
 
 
   context.test "A POST with content type of 'application/json' and status 201", (context) ->
@@ -79,7 +76,6 @@ Testify.test "Shred", (context) ->
               response.content.data.headers["Content-Type"],
               "application/json"
             )
-          context.done()
 
   context.test "A GET that receives a redirect (301)", (context) ->
     shred.get
@@ -90,7 +86,6 @@ Testify.test "Shred", (context) ->
         response: (response) ->
           context.test "transparently handles the redirect", ->
             assert.equal response.status, 200
-          context.done()
 
   context.test "A GET that receives a redirect (302)", (context) ->
     shred.get
@@ -101,21 +96,7 @@ Testify.test "Shred", (context) ->
         response: (response) ->
           context.test "transparently handles the redirect", ->
             assert.equal response.status, 200
-          context.done()
 
-  context.test "A request with status-based event handler", (context) ->
-    shred.get
-      url: "http://localhost:31337/200"
-      on:
-        request_error: request_error_handler
-        error: http_error_handler(context)
-        200: (response) ->
-          context.test "triggers the correct callback", ->
-          context.done()
-        response: (response) ->
-          context.test "triggers the correct callback", ->
-            assert.equal response.status, 200
-          context.done()
 
   context.test "Requests with specific and generic status handlers", (context) ->
 
@@ -153,14 +134,10 @@ Testify.test "Shred", (context) ->
           request_error: (error) ->
             context.test "The callback argument is an Error", ->
               assert.equal error.constructor, Error
-            context.done()
           error: (response) ->
             context.fail "generic error handler fired"
-            context.done()
           response: (response) ->
             context.fail "generic response handler fired"
-            context.done()
-
 
 
   context.test "Request with timeout set using an Integer", (context) ->
@@ -172,16 +149,12 @@ Testify.test "Shred", (context) ->
         on:
           request_error: (error) ->
             context.fail "request_error handler fired"
-            context.done()
           error: (response) ->
             context.fail "generic error handler fired"
-            context.done()
           response: (response) ->
             context.fail "generic response handler fired"
-            context.done()
           timeout: ->
-            context.pass "Fires the 'timeout' handler"
-            context.done()
+            context.pass()
 
 
   context.test "Request with a timeout set using an object", (context) ->
@@ -192,32 +165,28 @@ Testify.test "Shred", (context) ->
         on:
           request_error: (error) ->
             context.fail "request_error handler fired"
-            context.done()
           error: (response) ->
             context.fail "generic error handler fired"
-            context.done()
           response: (response) ->
             context.fail "generic response handler fired"
-            context.done()
           timeout: ->
-            context.pass "Fires the 'timeout' handler"
-            context.done()
+            context.pass()
 
 
-  #context.test "Request with Accept-Encoding 'gzip'", (context) ->
-    #shred.get
-      #url: "http://www.example.com/"
-      #headers:
-        #"Accept-Encoding": "gzip"
-      #on:
-        #request_error: request_error_handler
-        #error: http_error_handler(context)
-        #200: (response) ->
-          #context.test "has proper gzip data", ->
-            ## TODO: this test doesn't appear to be really helpful
-            #assert.ok (response.content._body.toString().length > 0)
-          #context.done()
+  context.test "Request with Accept-Encoding 'gzip'", (context) ->
+    shred.get
+      url: "http://www.example.com/"
+      headers:
+        "Accept-Encoding": "gzip"
+      on:
+        request_error: request_error_handler
+        error: http_error_handler(context)
+        200: (response) ->
+          context.test "has proper gzip data", ->
+            # TODO: this test doesn't appear to be really helpful
+            assert.ok (response.content._body.toString().length > 0)
 
+# pending
 ##Testify.test "A request from Shred with its own agent"
 ##Testify.test "A request using an passed in agent"
 ##Testify.test "A request with a 'socket' event listener"
