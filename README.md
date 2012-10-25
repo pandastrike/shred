@@ -133,7 +133,7 @@ req.on(
 });
 ```
 
-See [the wiki](https://github.com/spire-io/shred/wiki) for more examples.
+See [the wiki](https://github.com/automatthew/shred/wiki) for more examples.
 
 Also, we wrote [a blog post][blog] on why we wrote Shred instead of going with existing libraries.
 
@@ -206,6 +206,20 @@ It has the following properties.
 * `response.content.body`: string representation of the response body
 * `response.content.data`: javascript object for the response body (if the Content-Type is JSON)
 
+# Curl Logging
+
+Shred can log all of the requests it makes as [curl][curl] commands.
+You can use this to make requests from the command line with curl.
+
+To enable this logging, set the `logCurl` option when initializing Shred.
+
+    var shred = new Shred({ logCurl: true });
+
+Here is sample output from a shred request:
+
+    curl -X GET http://localhost:1337 -H "Accept: application/json" 
+
+
 # Feedback
 
 Feedback is highly encouraged in the form of [tickets][tickets] or pull requests. Thank you!
@@ -214,7 +228,7 @@ Feedback is highly encouraged in the form of [tickets][tickets] or pull requests
 
 [Browse the annotated source.][docs]
 
-We'd love [your contributions](repo) - don't hesitate to send us pull requests. We'll also happily add you as a committer after we've accepted it.
+We'd love your contributions - don't hesitate to send us pull requests. We'll also happily add you as a committer after we've accepted it.
 
 # Tests
 
@@ -231,17 +245,15 @@ Shred is MIT licensed.
 
 # Authors
 
-Shred is based on code originally written by [Matthew King][king].
-That code was adapted and converted into a separate Node.js library by [Dan Yoder][yoder], [Jason Campbell][campbell], [Nick LaCasse][lacasse], and [Vicent Piquer Suria][suria].
+Shred is based on code originally written by Matthew King.
+That code was adapted and converted into a separate Node.js library by Dan Yoder, Jason Campbell, Nick LaCasse, and Vicent Piquer Suria.
 
-[code]: https://github.com/spire-io/shred
-[tickets]: https://github.com/spire-io/shred/issues
-[license]: https://github.com/spire-io/shred/blob/master/LICENSE
-[yoder]: mailto:dan@spire.io
-[king]: mailto:mking@spire.io
-[campbell]: mailto:jason@spire.io
-[lacasse]: mailto:nlacasse@spire.io
-[suria]: mailto:vsuria@spire.io
-[docs]: http://www.spire.io/docs/shred/
-[blog]: http://www.spire.io/posts/introducing-shred.html
+Current maintainers:  [Dan Yoder][yoder], [Matthew King][king]
 
+[code]: https://github.com/automatthew/shred
+[tickets]: https://github.com/automatthew/shred/issues
+[license]: https://github.com/automatthew/shred/blob/master/LICENSE
+[yoder]: mailto:daniel.yoder@gmail.com
+[king]: mailto:automatthew@gmail.com
+[curl]: http://curl.haxx.se/
+[blog]: http://webcache.googleusercontent.com/search?q=cache:6RFaj1yLIZEJ:www.spire.io/posts/introducing-shred.html+http://www.spire.io/posts/introducing-shred.html&cd=1&hl=en&ct=clnk&gl=us
