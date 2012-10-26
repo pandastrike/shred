@@ -63,7 +63,7 @@
       "iconv-lite":">= 0.1.2"
    },
    "devDependencies":{
-      "vows":"0.6.1",
+      "testify":"0.1.0",
       "express":"2.5.10",
       "rephraser":">= 0.1.6",
       "browserify":"1.8.3",
