@@ -1,8 +1,5 @@
 var vows = require('vows')
   , assert = require('assert')
-  , Emitter = require("events").EventEmitter
-  , Ax = require("ax")
-  , log = new Ax({ level: "debug", file: "log/specs/content.log" })
   , Content = require("../lib/shred/content")
 ;
 
