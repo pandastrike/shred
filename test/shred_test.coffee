@@ -42,10 +42,10 @@ Testify.test "Shred", (context) ->
             assert.ok(!response.content.data.headers["Content-Type"])
 
 
-  context.test "A minimal valid POST request", (context) ->
+  context.test "A minimal valid POST request with a body", (context) ->
     shred.post
       url: "http://localhost:31337/200"
-      body: "Hello"
+      content: "Hello"
       on:
         request_error: request_error_handler
         error: http_error_handler(context)
@@ -59,23 +59,48 @@ Testify.test "Shred", (context) ->
             )
 
 
-  context.test "A POST with content type of 'application/json' and status 201", (context) ->
-    shred.post
-      url: "http://localhost:31337/201"
-      body: {foo: 1, bar: 2}
-      headers:
-        "Content-Type": "application/json"
-      on:
-        request_error: request_error_handler
-        error: http_error_handler(context)
-        response: (response) ->
-          context.test "response status is 201", ->
-            assert.equal response.status, 201
-          context.test "response has content-type header: 'application/json'", ->
-            assert.equal(
-              response.content.data.headers["Content-Type"],
-              "application/json"
-            )
+  context.test "A POST with content type of 'application/json'", (context) ->
+
+    context.test "Setting the body using an object as the content property", (context) ->
+      object = content: {foo: 1, bar: 2}
+      shred.post
+        url: "http://localhost:31337/201"
+        content: object
+        headers:
+          "Content-Type": "application/json"
+        on:
+          request_error: request_error_handler
+          error: http_error_handler(context)
+          response: (response) ->
+            context.test "response status is 201", ->
+              assert.equal response.status, 201
+            context.test "response body is as expected", ->
+              assert.deepEqual response.content.data.body, object
+            context.test "response has content-type header: 'application/json'", ->
+              assert.equal(
+                response.content.data.headers["Content-Type"],
+                "application/json"
+              )
+
+    context.test "Setting the body directly with a string as the body property", (context) ->
+      object = content: {foo: 1, bar: 2}
+      string = JSON.stringify(object)
+      shred.post
+        url: "http://localhost:31337/201"
+        body: string
+        headers:
+          "Content-Type": "application/json"
+        on:
+          request_error: request_error_handler
+          error: http_error_handler(context)
+          response: (response) ->
+            context.test "response body is as expected", ->
+              assert.deepEqual response.content.data.body, object
+            context.test "response has content-type header: 'application/json'", ->
+              assert.equal(
+                response.content.data.headers["Content-Type"],
+                "application/json"
+              )
 
   context.test "A GET that receives a redirect (301)", (context) ->
     shred.get
