@@ -37,7 +37,8 @@ task 'test', 'run all the specs', ->
             commands.server.child.kill()
     },
     specs: {
-      line: "node_modules/vows/bin/vows --spec test/*.js",
+      line: "coffee test/tests.coffee"
+      #line: "node_modules/vows/bin/vows --spec test/*.js",
     }
   }
   exec "mkdir log ; mkdir log/specs",(error,stdin,stdout) ->

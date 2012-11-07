@@ -62,19 +62,19 @@ Testify.test "Content constructor", (context) ->
       assert.equal(content.length, content.body.length)
 
 
-  context.test "An instance constructed with a String and type application/json", (context) ->
+  #context.test "An instance constructed with a String and type application/json", (context) ->
 
-    data = JSON.stringify({foo: "Hello"})
-    content = new Content
-      type: "application/json"
-      body: data
+    #data = JSON.stringify({foo: "Hello"})
+    #content = new Content
+      #type: "application/json"
+      #body: data
 
-    context.test "has a body equal to the data", ->
-      assert.equal(content.body.constructor, String)
-      assert.equal(content.body, data)
+    #context.test "has a body equal to the data", ->
+      #assert.equal(content.body.constructor, String)
+      #assert.equal(content.body, data)
 
-    context.test "has a length property equal to body's length", ->
-      assert.equal(content.length, content.body.length)
+    #context.test "has a length property equal to body's length", ->
+      #assert.equal(content.length, content.body.length)
 
 
   context.test "An instance constructed with composite media-type", (context) ->
