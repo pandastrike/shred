@@ -51,7 +51,7 @@ Testify.test "Shred", (context) ->
             assert.ok(!response.content.data.headers["Content-Type"])
 
 
-  context.test "A minimal valid POST request", (context) ->
+  context.test "A POST request with a body", (context) ->
     shred.post
       url: "http://localhost:31337/200"
       body: "Hello"
@@ -85,6 +85,28 @@ Testify.test "Shred", (context) ->
               response.content.data.headers["Content-Type"],
               "application/json"
             )
+
+  context.test "A POST with content type of 'application/x-www-form-urlencoded'", (context) ->
+    shred.post
+      url: "http://localhost:31337/201"
+      content: {foo: 1, bar: 2}
+      headers:
+        "Content-Type": "application/x-www-form-urlencoded"
+      on:
+        request_error: request_error_handler
+        error: http_error_handler(context)
+        response: (response) ->
+          request_data = response.content.data
+
+          context.test "response status is 201", ->
+            assert.equal response.status, 201
+
+          context.test "request has content-type header: 'application/x-www-form-urlencoded'", ->
+            assert.equal(request_data.headers["Content-Type"], "application/x-www-form-urlencoded")
+
+          context.test "request body is properly encoded", ->
+            assert.equal response.request.body.body, "foo=1&bar=2"
+
 
   context.test "A GET that receives a redirect (301)", (context) ->
     shred.get
@@ -196,7 +218,7 @@ Testify.test "Shred", (context) ->
             assert.ok (response.content._body.toString().length > 0)
 
 # pending
-##Testify.test "A request from Shred with its own agent"
-##Testify.test "A request using an passed in agent"
-##Testify.test "A request with a 'socket' event listener"
+# Testify.test "A request from Shred with its own agent"
+# Testify.test "A request using an passed in agent"
+# Testify.test "A request with a 'socket' event listener"
 
