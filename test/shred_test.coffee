@@ -22,10 +22,19 @@ Testify.test "Shred", (context) ->
         response: (response) ->
           context.test "response status is 200", ->
             assert.equal response.status, 200
-          context.test "response does not have a content-type header", ->
+
+          context.test "request (as represented in response data) does not have a content-type header", ->
             assert.ok(!response.content.data.headers["Content-Type"])
+
           context.test "response.content.body is a String", ->
             assert.equal(response.content.body.constructor, String)
+
+          context.test "response.content.body.length is correct", ->
+            assert.equal response.headers["Content-Length"], response.content.body.length
+
+          context.test "response.content.length is correct", ->
+            assert.equal response.headers["Content-Length"], response.content.length
+
           context.test "response.content._body is a Buffer", ->
             assert.ok(Buffer.isBuffer(response.content._body))
 
