@@ -1,0 +1,50 @@
+body {
+  background: #1B1F2B;
+  color: white;
+  padding-left: 100px;
+  padding-left: 100px;
+}
+
+#testify_status {
+  font-weight: bold;
+  font-size: large;
+}
+
+#testify pre {
+  margin-left: 2em;
+  color: silver;
+  font-size: 0.9em;
+  /*display: none;*/
+}
+
+.testify_suite {
+  font-family: monospace;
+  margin-bottom: 4em;
+}
+
+.testify_suite li {
+  list-style: none;
+}
+
+.testify_suite .stack {
+  margin: 0;
+  padding: 0;
+  color: white;
+}
+
+.testify_suite .pass {
+  color: green;
+}
+
+.testify_suite .failure {
+  color: red;
+}
+
+.testify_suite .error {
+  color: yellow;
+}
+
+.testify_suite .incomplete {
+  color: magenta;
+}
+
