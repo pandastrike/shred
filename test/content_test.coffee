@@ -1,6 +1,6 @@
 Testify = require "testify"
 assert = require "assert"
-Content = require "../lib/shred/content"
+Content = require "../src/shred/content"
 
 
 Testify.test "Content constructor", (context) ->
@@ -83,8 +83,9 @@ Testify.test "Content constructor", (context) ->
       type: "application/vnd.foo.bar+json;version=1.1"
       data: {foo: "Hello"}
 
-    context.test "has a body equal to the JSON form of the data", ->
+    context.test "has a String body", ->
       assert.equal(content.body.constructor, String)
+    context.test "has a body equal to the JSON form of the data", ->
       assert.equal(content.body, JSON.stringify(content.data))
 
     context.test "has a length property equal to body's length", ->

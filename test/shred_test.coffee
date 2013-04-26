@@ -1,4 +1,4 @@
-Shred = require "../lib/shred"
+Shred = require "../src/shred"
 Testify = require "testify"
 assert = require "assert"
 

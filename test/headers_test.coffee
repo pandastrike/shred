@@ -1,6 +1,6 @@
 Testify = require "testify"
 assert = require "assert"
-Headers = require("../lib/shred/mixins/headers")
+Headers = require("../src/shred/mixins/headers")
 
 class HeaderUser
   constructor: ->
