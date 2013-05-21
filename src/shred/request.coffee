@@ -191,6 +191,7 @@ Object.defineProperties Request::,
     set: (value) ->
       @_body = new Content(
         data: value
+        encoding: @getHeader("Content-Encoding")
         type: @getHeader("Content-Type")
       )
       @setHeader "Content-Type", @content.type
@@ -440,8 +441,8 @@ createRequest = (request) ->
   if request.timeout
     timeoutId = setTimeout(->
       request.log.debug "Timeout fired, aborting request ..."
-      request._raw.abort()
       request.emitter.emit "timeout", request
+      request._raw.abort()
     , request.timeout)
   
   # The `.end()` method will cause the request to fire. Technically, it might

@@ -91,3 +91,15 @@ Testify.test "Content constructor", (context) ->
     context.test "has a length property equal to body's length", ->
       assert.equal(content.length, content.body.length)
 
+  context.test "An instance constructed with an unknown type", (context) ->
+
+    content = new Content
+      type: "application/monkeys"
+      data: {foo: "Hello"}
+
+    context.test "identity processor", ->
+      # This test is based on the current implementation.  The wisdom
+      # of this behavior is arguable.
+      assert.equal(content.body, "[object Object]")
+
+

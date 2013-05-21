@@ -47,12 +47,9 @@
       "iconv-lite": ">= 0.1.2"
    },
    "devDependencies": {
-      "testify": "0.1.0",
       "express": "2.5.10",
+      "testify": "0.2.x",
       "rephraser": ">= 0.1.6",
-      "browserify": "1.8.3",
-      "http-browserify": "https://github.com/spire-io/http-browserify/tarball/master",
-      "uglify-js": ">= 1.2.5",
       "docco": ">= 0.3.0"
    },
   "scripts": {

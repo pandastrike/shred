@@ -1,3 +1,4 @@
+querystring = require("querystring")
 
 # The purpose of the `Content` object is to abstract away the data conversions
 # to and from raw content entities as strings. For example, you want to be able
@@ -11,12 +12,34 @@
 # The `Content` constructor takes an options object, which *must* have either a
 # `body` or `data` property and *may* have a `type` property indicating the
 # media type. If there is no `type` attribute, a default will be inferred.
-Content = (options) ->
-  @body = options.body
-  @data = options.data
-  @type = options.type
 
-Content:: = {}
+module.exports = class Content
+
+  @processors = {}
+
+  # The `registerProcessor` function allows you to add your own processors to
+  # convert content entities. Each processor consists of a Javascript object with
+  # two properties:
+  # - **parser**. The function used to parse a raw content entity and convert it
+  #   into a Javascript data type.
+  # - **stringify**. The function used to convert a Javascript data type into a
+  #   raw content entity.
+  @registerProcessor = (types, processor) ->
+    # You can pass an array of types that will trigger this processor, or just one.
+    # We determine the array via duck-typing here.
+    if types.forEach
+      types.forEach (type) ->
+        Content.processors[type] = processor
+    else
+      # If you didn't pass an array, we just use what you pass in.
+      Content.processors[types] = processor
+
+
+  constructor: (options) ->
+    @body = options.body
+    @data = options.data
+    @_type = options.type
+
 
 # Treat `toString()` as asking for the `content.body`. That is, the raw content entity.
 #
@@ -34,19 +57,15 @@ Object.defineProperties Content::,
   type:
     get: ->
       if @_type
-        return @_type
+        @_type
+      else if @_data
+        t = typeof(@_data)
+        if t == "string"
+          "text/plain"
+        else if t == "object"
+          "application/json"
       else
-        if @_data
-          switch typeof @_data
-            when "string"
-              return "text/plain"
-            when "object"
-              return "application/json"
-      "text/plain"
-
-    set: (value) ->
-      @_type = value
-      this
+        "text/plain"
 
     enumerable: true
 
@@ -65,9 +84,12 @@ Object.defineProperties Content::,
         @_data
 
     set: (data) ->
-      Errors.setDataWithBody this  if @_body and data
+      if @_body && data
+        throw new Error(
+          "Attempt to set data attribute of a content object " +
+          "when the body attributes was already set."
+        )
       @_data = data
-      this
 
     enumerable: true
 
@@ -84,7 +106,11 @@ Object.defineProperties Content::,
         @_body.toString()
 
     set: (body) ->
-      Errors.setBodyWithData this  if @_data and body
+      if @_data and body
+        throw new Error(
+          "Attempt to set body attribute of a content object " +
+          "when the data attributes was already set."
+        )
       @_body = body
       this
 
@@ -114,7 +140,7 @@ Object.defineProperties Content::,
           processor = Content.processors[parts[i]]
           i++
 
-        processor || { parser: identity, stringify: => toString}
+        processor || Content.processors["default"]
 
     enumerable: true
 
@@ -123,42 +149,19 @@ Object.defineProperties Content::,
   #   bytes of the raw content entity.
   length:
     get: ->
-      return Buffer.byteLength(@body)  if typeof Buffer isnt "undefined"
-      @body.length
-
-Content.processors = {}
-
-# The `registerProcessor` function allows you to add your own processors to
-# convert content entities. Each processor consists of a Javascript object with
-# two properties:
-# - **parser**. The function used to parse a raw content entity and convert it
-#   into a Javascript data type.
-# - **stringify**. The function used to convert a Javascript data type into a
-#   raw content entity.
-Content.registerProcessor = (types, processor) ->
-  
-  # You can pass an array of types that will trigger this processor, or just one.
-  # We determine the array via duck-typing here.
-  if types.forEach
-    types.forEach (type) ->
-      Content.processors[type] = processor
-
-  else
-    
-    # If you didn't pass an array, we just use what you pass in.
-    Content.processors[types] = processor
+      if typeof(Buffer) != "undefined"
+        @body.length
+      else
+        Buffer.byteLength(@body)
 
 
-# Register the identity processor, which is used for text-based media types.
-identity = (x) ->
-  x
-
-toString = (x) ->
-  x.toString()
+Content.registerProcessor "default",
+  parser: (x) -> x
+  stringify: (x) -> x.toString()
 
 Content.registerProcessor ["text/html", "text/plain", "text"],
-  parser: identity
-  stringify: toString
+  parser: (x) -> x
+  stringify: (x) -> x.toString()
 
 
 # Register the JSON processor, which is used for JSON-based media types.
@@ -169,21 +172,10 @@ Content.registerProcessor ["application/json; charset=utf-8", "application/json"
   stringify: (data) ->
     JSON.stringify data
 
-qs = require("querystring")
 
 # Register the post processor, which is used for JSON-based media types.
 Content.registerProcessor ["application/x-www-form-urlencoded"],
-  parser: qs.parse
-  stringify: qs.stringify
+  parser: querystring.parse
+  stringify: querystring.stringify
 
 
-# Error functions are defined separately here in an attempt to make the code
-# easier to read.
-Errors =
-  setDataWithBody: (object) ->
-    throw new Error("Attempt to set data attribute of a content object " + "when the body attributes was already set.")
-
-  setBodyWithData: (object) ->
-    throw new Error("Attempt to set body attribute of a content object " + "when the data attributes was already set.")
-
-module.exports = Content

@@ -57,29 +57,14 @@ Response = (raw, request, callback) ->
   # Store the incoming data in a array of Buffers which we concatinate into one
   # buffer at the end.  We need to use buffers instead of strings here in order
   # to preserve binary data.
-  chunkBuffers = []
+  chunks = []
   dataLength = 0
   raw.on "data", (chunk) ->
-    chunkBuffers.push chunk
+    chunks.push chunk
     dataLength += chunk.length
 
   raw.on "end", ->
-    body = undefined
-    if typeof Buffer is "undefined"
-      
-      # Just concatinate into a string
-      body = chunkBuffers.join("")
-    else
-      
-      # Initialize new buffer and add the chunks one-at-a-time.
-      body = new Buffer(dataLength)
-      i = 0
-      pos = 0
-
-      while i < chunkBuffers.length
-        chunkBuffers[i].copy body, pos
-        pos += chunkBuffers[i].length
-        i++
+    body = chunks.join("")
     setBodyAndFinish = (body) ->
       response._body = new Content(
         body: body
