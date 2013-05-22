@@ -1,6 +1,6 @@
 {
    "name": "shred",
-   "version": "0.8.8",
+   "version": "0.8.9",
    "description": "A simple HTTP client for nodejs and browsers.  Supports gzip, cookies, redirects, and https.",
    "keywords":[
       "http",
