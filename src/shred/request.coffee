@@ -223,6 +223,16 @@ Object.defineProperties Request::,
 
     enumerable: true
 
+  sslStrict:
+    get: -> @_sslStrict
+    set: (value) ->
+      if typeof value != "boolean"
+        return @
+      @_sslStrict = value
+      return @
+    enumerable: true
+
+
 
 # Alias `body` property to `content`. Since the [content object](./content.html)
 # has a `body` attribute, it's preferable to use `content` since you can then
@@ -321,6 +331,11 @@ processOptions = (request, options) ->
   request.content = options.body or options.content  if options.body or options.content
   request.timeout = options.timeout
 
+  if typeof(options.sslStrict) == "undefined"
+    request.sslStrict = true
+  else
+    request.sslStrict = options.sslStrict
+
 
 # `createRequest` is also called by the constructor, after `processOptions`.
 # This actually makes the request and processes the response, so `createRequest`
@@ -335,6 +350,7 @@ createRequest = (request) ->
     method: request.method
     path: request.path + ((if request.query then "?" + request.query else ""))
     headers: request.getHeaders()
+    rejectUnauthorize: request._sslStrict
     
     # Node's HTTP/S modules will ignore this, but we are using the
     # browserify-http module in the browser for both HTTP and HTTPS, and this
