@@ -47,13 +47,14 @@
       "iconv-lite": ">= 0.1.2"
    },
    "devDependencies": {
+      "coffee-script": "1.4.x",
       "express": "2.5.10",
       "testify": "0.2.x",
       "rephraser": ">= 0.1.6",
       "docco": ">= 0.3.0"
    },
   "scripts": {
-    "test": "cake test"
+    "test": "node_modules/.bin/cake test"
   },
    "engine": "node >= 0.8.x"
 }

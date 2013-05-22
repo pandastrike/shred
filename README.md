@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/automatthew/shred.png)](https://travis-ci.org/automatthew/[shred])
+
 # Introduction
 
 Shred is an HTTP client library for node.js and browsers.
