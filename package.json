@@ -22,7 +22,7 @@
    },
    "maintainers":[
       { "name": "Dan Yoder", "email": "dan@spire.io" },
-      { "name": "Matthew King", "email": "mking@spire.io" },
+      { "name": "Matthew King", "email": "mking@spire.io" }
    ],
    "contributors":[
       { "name": "Dan Yoder", "email": "dyoder@spire.io" },
