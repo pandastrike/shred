@@ -74,7 +74,7 @@ need to do this directly.</p>             </td>             <td class="code">   
 URL parsing or defaulting the port for the request.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperties</span><span class="p">(</span><span class="nx">Request</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <ul>
 <li><strong>url</strong>. You can set the <code>url</code> property with a valid URL string and all the
 URL-related properties (host, port, etc.) will be automatically set on the
-request object.</li>
+request object. The source URL is used if the requested URL is missing any URL-related properties.  This allows URLs such as: "/path/1" or "//server/path/2".</li>
 </ul>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">url</span><span class="o">:</span> <span class="p">{</span>
     <span class="nx">get</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
       <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">scheme</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span> <span class="p">}</span>
