@@ -22,11 +22,6 @@ task 'bundle:min', 'create the bundled and minified version of shred.js for brow
       fs.writeFile 'browser/shred.bundle.min.js', minified, (err)->
         throw err if err
 
-task 'test', 'run all the specs', ->
-  p = exec "coffee test/tests.coffee", (error) ->
-  p.stdout.on "data", (data) -> process.stdout.write data
-
-
 task 'docs', 'generate the inline documentation', ->
   exec "rm -rf docs/*.html", (error) -> 
   exec "node_modules/docco/bin/docco lib/*.js lib/shred/*.js lib/shred/mixins/*.js examples/*.js", (error) ->

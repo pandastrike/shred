@@ -55,7 +55,7 @@
       "docco": "~0.3.0"
    },
   "scripts": {
-    "test": "node_modules/.bin/cake test"
+    "test": "node_modules/.bin/coffee test/tests.coffee"
   },
    "engine": "node >= 0.8.x"
 }
