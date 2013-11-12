@@ -11,11 +11,13 @@ http_error_handler = (context) ->
   (response) ->
     context.fail "Unexpected HTTP error: #{response.status}"
 
+base = "http://rephraser.pandastrike.com"
+
 Testify.test "Shred", (context) ->
 
   context.test "A minimal valid GET", (context) ->
     shred.get
-      url: "http://localhost:31337/200"
+      url: "#{base}/200"
       on:
         request_error: request_error_handler
         error: http_error_handler(context)
@@ -23,7 +25,7 @@ Testify.test "Shred", (context) ->
           context.test "response status is 200", ->
             assert.equal response.status, 200
 
-          context.test "request (as represented in response data) does not have a content-type header", ->
+          context.test "request did not send content-type header", ->
             assert.ok(!response.content.data.headers["Content-Type"])
 
           context.test "response.content.body is a String", ->
@@ -40,7 +42,7 @@ Testify.test "Shred", (context) ->
 
   context.test "A minimal valid POST request", (context) ->
     shred.post
-      url: "http://localhost:31337/200"
+      url: "#{base}/200"
       on:
         request_error: request_error_handler
         error: http_error_handler(context)
@@ -53,7 +55,7 @@ Testify.test "Shred", (context) ->
 
   context.test "A POST request with a body", (context) ->
     shred.post
-      url: "http://localhost:31337/200"
+      url: "#{base}/200"
       body: "Hello"
       on:
         request_error: request_error_handler
@@ -70,7 +72,7 @@ Testify.test "Shred", (context) ->
 
   context.test "A POST with content type of 'application/json' and status 201", (context) ->
     shred.post
-      url: "http://localhost:31337/201"
+      url: "#{base}/201"
       body: {foo: 1, bar: 2}
       headers:
         "Content-Type": "application/json"
@@ -88,7 +90,7 @@ Testify.test "Shred", (context) ->
 
   context.test "A POST with content type of 'application/x-www-form-urlencoded'", (context) ->
     shred.post
-      url: "http://localhost:31337/201"
+      url: "#{base}/201"
       content: {foo: 1, bar: 2}
       headers:
         "Content-Type": "application/x-www-form-urlencoded"
@@ -110,7 +112,7 @@ Testify.test "Shred", (context) ->
 
   context.test "A GET that receives a redirect (301)", (context) ->
     shred.get
-      url: "http://localhost:31337/301"
+      url: "#{base}/301"
       on:
         request_error: request_error_handler
         error: http_error_handler(context)
@@ -120,7 +122,7 @@ Testify.test "Shred", (context) ->
 
   context.test "A GET that receives a redirect (302)", (context) ->
     shred.get
-      url: "http://localhost:31337/302"
+      url: "#{base}/302"
       on:
         request_error: request_error_handler
         error: http_error_handler(context)
@@ -134,7 +136,7 @@ Testify.test "Shred", (context) ->
 
     context.test "On success, only exact status handler fires", (context) ->
       shred.get
-        url: "http://localhost:31337/200"
+        url: "#{base}/200"
         on:
           request_error: request_error_handler
           error: http_error_handler(context)
@@ -146,7 +148,7 @@ Testify.test "Shred", (context) ->
 
     context.test "On error, only the exact error status handler fires", (context) ->
       shred.get
-        url: "http://localhost:31337/404"
+        url: "#{base}/404"
         on:
           request_error: (error) ->
             context.fail "request_error handler fired"
@@ -160,7 +162,7 @@ Testify.test "Shred", (context) ->
 
     context.test "On non-HTTP failure, only the request_error handler fires", (context) ->
       shred.get
-        url: "http://localhost:65535/"
+        url: "#{base}/"
         on:
           request_error: (error) ->
             context.test "The callback argument is an Error", ->
@@ -175,7 +177,7 @@ Testify.test "Shred", (context) ->
 
     context.test "Only the timeout handler fires", (context) ->
       shred.get
-        url: "http://localhost:31337/timeout"
+        url: "#{base}/timeout"
         timeout: 100
         on:
           request_error: (error) ->
@@ -191,7 +193,7 @@ Testify.test "Shred", (context) ->
   context.test "Request with a timeout set using an object", (context) ->
     context.test "Only the timeout handler fires", (context) ->
       shred.get
-        url: "http://localhost:31337/timeout"
+        url: "#{base}/timeout"
         timeout: { seconds: 1 }
         on:
           request_error: (error) ->
