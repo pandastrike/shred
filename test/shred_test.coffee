@@ -2,6 +2,7 @@ Shred = require "../lib/shred"
 Testify = require "testify"
 assert = require "assert"
 
+#shred = new Shred(logCurl: true)
 shred = new Shred()
 
 request_error_handler = (error) ->
@@ -32,10 +33,10 @@ Testify.test "Shred", (context) ->
             assert.equal(response.content.body.constructor, String)
 
           context.test "response.content.body.length is correct", ->
-            assert.equal response.headers["Content-Length"], response.content.body.length
+            assert.equal response.getHeader("Content-Length"), response.content.body.length
 
           context.test "response.content.length is correct", ->
-            assert.equal response.headers["Content-Length"], response.content.length
+            assert.equal response.getHeader("Content-Length"), response.content.length
 
           context.test "response.content._body is a Buffer", ->
             assert.ok(Buffer.isBuffer(response.content._body))
