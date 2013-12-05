@@ -1,7 +1,7 @@
 {
    "name": "shred",
-   "version": "0.8.9",
-   "description": "A simple HTTP client for nodejs and browsers.  Supports gzip, cookies, redirects, and https.",
+   "version": "0.8.10",
+   "description": "A simple HTTP client for Node.js and browsers.  Supports gzip, cookies, redirects, and https.",
    "keywords":[
       "http",
       "client"
@@ -18,17 +18,17 @@
    },
    "author": {
       "name": "Dan Yoder",
-      "email": "dan@spire.io"
+      "email": "daniel.yoder@gmail.com"
    },
    "maintainers":[
-      { "name": "Dan Yoder", "email": "dan@spire.io" },
-      { "name": "Matthew King", "email": "mking@spire.io" }
+      { "name": "Dan Yoder", "email": "daniel.yoder@gmail.com" },
+      { "name": "Matthew King", "email": "automatthew@gmail.com" }
    ],
    "contributors":[
-      { "name": "Dan Yoder", "email": "dyoder@spire.io" },
-      { "name": "Jason Campbell", "email": "jason@spire.io" },
-      { "name": "Matthew King", "email": "mking@spire.io" },
-      { "name": "Nicolas LaCasse", "email": "nicolas@spire.io" },
+      { "name": "Dan Yoder", "email": "daniel.yoder@gmail.com" },
+      { "name": "Jason Campbell" },
+      { "name": "Matthew King", "email": "automatthew@gmail.com" },
+      { "name": "Nicolas LaCasse" },
       { "name": "Andy Burke", "email": "aburke@bitflood.org" }
    ],
    "main": "./lib/shred.js",
@@ -47,16 +47,15 @@
    },
    "devDependencies": {
       "coffee-script": "1.4.x",
-      "testify": "0.1.0",
+      "testify": "0.2.x",
       "express": "2.5.10",
-      "rephraser": ">= 0.1.6",
       "browserify": "1.8.3",
       "http-browserify": "https://github.com/spire-io/http-browserify/tarball/master",
-      "uglify-js": ">= 1.2.5",
-      "docco": ">= 0.3.0"
+      "uglify-js": "~1.2.5",
+      "docco": "~0.3.0"
    },
   "scripts": {
-    "test": "node_modules/.bin/cake test"
+    "test": "node_modules/.bin/coffee test/tests.coffee"
   },
    "engine": "node >= 0.8.x"
 }
