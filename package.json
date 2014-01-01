@@ -42,7 +42,7 @@
    "dependencies": {
       "sprintf": "0.1.1",
       "ax": "0.1.8",
-      "cookiejar": "1.3.x",
+      "tough-cookie": ">=0.9.15",
       "iconv-lite": ">= 0.1.2"
    },
    "devDependencies": {
