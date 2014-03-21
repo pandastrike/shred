@@ -234,7 +234,7 @@ We'd love your contributions - don't hesitate to send us pull requests. We'll al
 
 You can run the tests in node with
 
-    cake test
+    npm test
 
 There is currently no way to run the tests in the browser (coming soon...)
 
