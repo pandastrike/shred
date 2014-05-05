@@ -37,7 +37,8 @@
   "dependencies": {
     "typely": "0.0.0",
     "fairmont": "^0.7.4",
-    "evie": "^0.1.2"
+    "evie": "^0.1.2",
+    "mutual": "^0.4.12"
   },
   "devDependencies": {
     "coffee-script": "1.7.x",
