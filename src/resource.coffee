@@ -9,31 +9,33 @@ querystring = require "querystring"
 method = ({name, url, events}) ->
   fn = (body=null) ->
     fn.events.source (events) ->
-      handler = (response) ->
-        switch response.statusCode
-          when fn.expect
-            expected response
-          when 301, 302, 303, 305, 307
-            request(response.headers.location)
-          else
-            unexpected response
-      expected = (response) ->
-        events.emit "success", response
-        body = ""
-        response.on "data", (data) -> body += data
-        response.on "end", ->
-          content_type = response.headers["content-type"]
-          if content_type? and content_type.match(/json/)
-            body = JSON.parse(body)
-          events.emit "ready", body
-      unexpected = (response) ->
-        {statusCode} = response
-        events.emit "error",
-          "Expected #{fn.expect}, got #{statusCode}"
-      request = (url) ->
-        try
+      events.safely ->
+        handler = (response) ->
+          switch response.statusCode
+            when fn.expect
+              expected response
+            when 301, 302, 303, 305, 307
+              request(response.headers.location)
+            else
+              unexpected response
+        expected = (response) ->
+          events.emit "success", response
+          body = ""
+          response.on "data", (data) -> body += data
+          response.on "end", ->
+            # TODO: this is not a safe way to check for a JSON
+            # content-type. We should also make the parser
+            # extensible.
+            if response.headers["content-type"]?.match(/json/)
+              body = JSON.parse(body)
+            events.emit "ready", body
+        unexpected = (response) ->
+          {statusCode} = response
+          events.emit "error",
+            "Expected #{fn.expect}, got #{statusCode}"
+        request = (url) ->
           {protocol, hostname, port, path} = parse_url url
-          scheme = protocol[0..-2] # remote trailing :
+          scheme = protocol[0..-2] # remove trailing :
           (require scheme).request
             hostname: hostname
             port: port || (if scheme is 'https' then 443 else 80)
@@ -44,9 +46,7 @@ method = ({name, url, events}) ->
           .on "error", (error) ->
             events.emit "error", error
           .end()
-        catch error
-          events.emit "error", error
-      request fn.url
+        request fn.url
   fn.method = name
   fn.url = url
   fn.events = events
@@ -57,6 +57,9 @@ method = ({name, url, events}) ->
   fn
 
 resource = (url=null, events = new EventChannel) ->
+  # TODO: We might want to inherit the methods when
+  # creating a resource from another. Or at least
+  # for the case when using query parameters?
   fn = overload (match) ->
     match "string", "object", (path, query) ->
       resource(resolve(url, path) +

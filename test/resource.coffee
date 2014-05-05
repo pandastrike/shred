@@ -4,6 +4,8 @@ assert = require "assert"
 
 {resource} = require "../src/resource.coffee"
 
+# TODO: Why doesn't the test return when it's done?
+
 Testify.test "Resource", (context) ->
   context.test "Creating a resource", (context) ->
     target = resource "http://google.com"
