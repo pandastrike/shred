@@ -9,6 +9,7 @@ querystring = require "querystring"
 method = ({name, url, events}) ->
   fn = (body=null) ->
     fn.events.source (events) ->
+      # TODO: Need to wrap things inside callbacks, too
       events.safely ->
         handler = (response) ->
           switch response.statusCode
@@ -28,12 +29,15 @@ method = ({name, url, events}) ->
             # extensible.
             if response.headers["content-type"]?.match(/json/)
               body = JSON.parse(body)
+            # TODO: Consider using a separate event channel for this?
             events.emit "ready", body
         unexpected = (response) ->
           {statusCode} = response
+          # TODO: This should be a real error
           events.emit "error",
             "Expected #{fn.expect}, got #{statusCode}"
         request = (url) ->
+          # TODO: Check for a null or invalid URL
           {protocol, hostname, port, path} = parse_url url
           scheme = protocol[0..-2] # remove trailing :
           (require scheme).request
@@ -53,6 +57,8 @@ method = ({name, url, events}) ->
   fn.describe = ({headers, expect}) ->
     fn.headers = headers
     fn.headers["user-agent"] ?= "shred v0.9.0"
+    # TODO: this should be normalized as an array to account
+    # for cases where there are multiple valid responses
     fn.expect = expect
   fn
 
