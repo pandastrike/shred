@@ -77,10 +77,19 @@ class Resource
   resource: (path, events = @events.source()) ->
     new Resource(resolve(@url, path), events)
 
+  query: (query, events = @events.source()) ->
+    query = querystring.stringify(query)
+    resource = new Resource("#{@url}?#{query}", events)
+    for key, value of @ when (value.method instanceof Method)
+      resource[key] = value
+    resource
+
+
   describe: (actions) ->
     for action, description of actions when action not in reserved
       do (method = new Method(@, description)) =>
         @[action] = (args...) -> method.request(args...)
+        @[action].method = method
     @
 
 resource = (args...) -> new Resource(args...)

@@ -30,3 +30,14 @@ Testify.test "Resource", (context) ->
           .on "ready", (issues) ->
             assert.equal type(issues), "array"
             context.pass()
+
+        context.test "creating a resource from a query", (context) ->
+          milestone  = issues.query
+            milestone: 1
+            status: "open"
+
+          console.log milestone
+          milestone.list()
+          .on "ready", (issues) ->
+            assert.equal type(issues), "array"
+            context.pass()

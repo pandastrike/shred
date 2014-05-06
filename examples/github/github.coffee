@@ -34,3 +34,11 @@ issues.list()
 .on "ready", (issues) ->
   for issue in issues
     console.log issue.number, issue.title
+
+issues.query
+  milestone: 1
+  status: "open"
+.list()
+.on "ready", (issues) ->
+  for issue in issues
+    console.log issue.number, issue.title
