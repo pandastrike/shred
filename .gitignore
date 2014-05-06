@@ -4,3 +4,4 @@ tmp
 node_modules
 npm_debug.log
 .*
+examples/github/token

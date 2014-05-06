@@ -1,4 +1,4 @@
-{include} = require "fairmont"
+{include, type} = require "fairmont"
 {EventChannel} = require "mutual"
 url = require "url"
 parse_url = url.parse
@@ -19,20 +19,20 @@ schemes =
 # - Add cookie support (for spoofing Web sites)
 
 class Method
-  constructor: (@_resource, {method, headers, expect}) ->
-    @_events = @_resource._events.source()
-    @_method = method
-    @_headers = headers
+  constructor: (@resource, {@method, @headers, @expect}) ->
     # load version from file instead of hard-coding
-    @_headers["user-agent"] ?= "shred v0.9.0"
-    @_expect = expect
-  _request: (body=null) ->
-    @_events.source (events) =>
+    @headers["user-agent"] ?= "shred v0.9.0"
+
+  request: (body=null) ->
+    @resource.events.source (events) =>
+      if body?
+        unless type(body) is "string"
+          body = JSON.stringify(body)
       events.safely =>
         handler = (response) =>
           events.safely =>
             switch response.statusCode
-              when @_expect
+              when @expect
                 expected response
               when 301, 302, 303, 305, 307
                 request(response.headers.location)
@@ -41,6 +41,15 @@ class Method
 
         expected = (response) =>
           events.emit "success", response
+          read response
+
+        unexpected = (response) =>
+          {statusCode} = response
+          events.emit "error",
+            new Error "Expected #{@expect}, got #{statusCode}"
+          read response
+
+        read = (response) ->
           data = ""
           response.on "data", (chunk) -> data += chunk
           response.on "end", ->
@@ -52,15 +61,8 @@ class Method
             # TODO: Consider using a separate event channel for this?
             events.emit "ready", data
 
-        unexpected = (response) =>
-          {statusCode} = response
-          # TODO: This should be a real error
-          events.emit "error",
-            "Expected #{@_expect}, got #{statusCode}"
-
         request = (url) =>
           # TODO: Check for a null or invalid URL
-          console.log url
           {protocol, hostname, port, path} = parse_url url
           scheme = protocol[0..-2] # remove trailing :
           schemes[scheme]
@@ -68,33 +70,29 @@ class Method
             hostname: hostname
             port: port || (if scheme is 'https' then 443 else 80)
             path: path
-            method: @_method.toUpperCase()
-            headers: @_headers
+            method: @method.toUpperCase()
+            headers: @headers
           .on "response", handler
           .on "error", (error) =>
             events.emit "error", error
-          .end()
+          .end(body)
 
-        request @_resource._url
+        request @resource.url
 
+reserved = ["url", "events"]
 class Resource
 
-  constructor: (args...) ->
-    switch args.length
-      when 1
-        [@_url] = args
-        @_events = new EventChannel
-      when 2
-        [resource, path] = args
-        @_url = resolve(resource._url, path)
-        @_events = resource._events.source()
+  constructor: (@url, @events = new EventChannel) ->
 
-method = (args...) ->
-  method = new Method(args...)
-  (args...) -> method._request(args...)
+  resource: (path, events = @events.source()) ->
+    new Resource(resolve(@url, path), events)
 
-resource = (args...)-> new Resource(args...)
+  describe: (actions) ->
+    for action, description of actions when action not in reserved
+      do (method = new Method(@, description)) =>
+        @[action] = (args...) -> method.request(args...)
+    @
 
-events = (object) -> object._events
+resource = (args...) -> new Resource(args...)
 
-module.exports = {resource, method, events}
+module.exports = {resource}
