@@ -1,7 +1,7 @@
 {
   "name": "shred",
   "version": "0.9.0",
-  "description": "A resource-oriented JavaScript HTTP client.  Supports gzip, cookies, redirects, and https.",
+  "description": "A resource-oriented JavaScript HTTP client.",
   "keywords": [
     "http",
     "client"
@@ -23,7 +23,7 @@
     },
     {
       "name": "Matthew King",
-      "email": "dan@pandastrike.com"
+      "email": "matthew@pandastrike.com"
     }
   ],
   "main": "./lib/shred.js",
@@ -31,21 +31,17 @@
     "type": "git",
     "url": "git://github.com/pandastrike/shred.git"
   },
-  "files": [
-    "lib"
-  ],
+  "scripts": {
+    "prepublish": "coffee -o lib/ -c src/*.coffee",
+    "test": "coffee test/shred.coffee"
+  },
   "dependencies": {
-    "typely": "0.0.0",
     "fairmont": "^0.7.4",
-    "evie": "^0.1.2",
     "mutual": "^0.4.12"
   },
   "devDependencies": {
     "coffee-script": "1.7.x",
     "testify": "0.2.x"
-  },
-  "scripts": {
-    "test": ""
   },
   "engine": "node >= 0.10.x"
 }
