@@ -1,19 +1,18 @@
-{resource} = require "../src/resource.coffee"
-
+{resource, method, events} = require "../src/shred"
 github = resource "https://api.github.com/"
-github.events.on "error", (error) -> console.log error
 
-shred = github "/repos/pandastrike/shred/"
+events github
+.on "error", (error) -> console.log error
 
-issues = shred "issues"
-
-issues.get.describe
+issues = resource github, "repos/pandastrike/shred/issues"
+issues.list = method issues,
+  method: "get"
   headers:
     accept: "application/vnd.github.v3.raw+json"
   expect: 200
 
-# The 'success' event will give you the raw response,
-# whereas 'ready' gives you the (possibly parsed) response
-# body
-issues.get().on "ready", (issues) ->
-  console.log issues
+issues.list()
+.on "ready", (issues) ->
+  console.log "issues:"
+  for issue in issues
+    console.log issue.id, issue.title
