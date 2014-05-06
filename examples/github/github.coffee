@@ -3,7 +3,7 @@
 {base64, read} = require "fairmont"
 github = resource "https://api.github.com/"
 
-token = read(resolve(__dirname, "token")).trim()
+token = read(resolve(__dirname, ".token")).trim()
 
 github.events
 .on "error", (error) -> console.log error
@@ -23,10 +23,12 @@ issues = github.resource "repos/pandastrike/shred/issues"
       accept: "application/vnd.github.v3.raw+json"
     expect: 201
 
-issues.create
-  title: "Add Support for GZip"
-  body: "We want to be able to handle compressed content."
-  labels: [ "ng" ]
+# create a new ticket...
+# issues.create
+#   title: "Create a Shred logo"
+#   body: "We need a cool logo so we can go into the
+#     T-shirt business like Docker."
+#   labels: [ "ng" ]
 
 issues.list()
 .on "ready", (issues) ->

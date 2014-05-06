@@ -8,16 +8,6 @@ schemes =
   http: require "http"
   https: require "https"
 
-# TODO:
-# - Add a way to control the agent
-# - Verify that we can support auth correctly
-# - Add support for piping the results to/from streams
-# - Auto-marshal the body if it's an object and the
-#   content-type is JSON-based
-# - Add pre-build step to generate JavaScript
-# - Add gzip and caching support
-# - Add cookie support (for spoofing Web sites)
-
 class Method
   constructor: (@resource, {@method, @headers, @expect}) ->
     # load version from file instead of hard-coding
