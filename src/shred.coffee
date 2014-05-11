@@ -16,6 +16,7 @@ class Method
 
   request: (body=null) ->
     @resource.events.source (events) =>
+      events.pipe = (pipe) -> @_pipe = pipe
       if body?
         unless type(body) is "string"
           body = JSON.stringify(body)
@@ -24,7 +25,7 @@ class Method
           events.safely =>
             if response.statusCode in @expect
               expected response
-            else if response.statusCode in [301, 302, 303, 305, 307]
+            else if response.statusCode in [ 301, 302, 303, 305, 307 ]
               request(response.headers.location)
             else
               unexpected response
@@ -39,10 +40,9 @@ class Method
             new Error "Expected #{@expect}, got #{statusCode}"
           read response
 
-        read = (response) ->
+        read = (response) =>
           stream = switch response.headers["content-encoding"]
             when 'gzip'
-              console.log "gzip"
               zlib = require "zlib"
               response.pipe zlib.createGunzip()
             when 'deflate'
@@ -52,15 +52,21 @@ class Method
               response
 
           data = ""
-          stream.on "data", (chunk) -> data += chunk
-          stream.on "end", ->
-            # TODO: this is not a safe way to check for a JSON
-            # content-type. We should also make the parser
-            # extensible.
-            if response.headers["content-type"]?.match(/json/)
-              data = JSON.parse(data)
-            # TODO: Consider using a separate event channel for this?
-            events.emit "ready", data
+          if events._pipe?
+            stream.pipe events._pipe
+          else
+            if response.statusCode in @expect
+              response.on "ready", (data) ->
+                events.emit "ready", data
+            stream.on "data", (chunk) -> data += chunk
+            stream.on "end", ->
+              # TODO: this is not a safe way to check for a JSON
+              # content-type. We should also make the parser
+              # extensible.
+              if response.headers["content-type"]?.match(/json/)
+                data = JSON.parse(data)
+              # TODO: Consider using a separate event channel for this?
+              response.emit "ready", data
 
         request = (url) =>
           # TODO: Check for a null or invalid URL
@@ -94,7 +100,6 @@ class Resource
     for key, value of @ when (value.method instanceof Method)
       resource[key] = value
     resource
-
 
   describe: (actions) ->
     for action, description of actions when action not in reserved

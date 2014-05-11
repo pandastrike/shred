@@ -41,7 +41,8 @@
   },
   "devDependencies": {
     "coffee-script": "1.7.x",
-    "testify": "0.2.x"
+    "testify": "0.2.x",
+    "through": "^2.3.4"
   },
   "engine": "node >= 0.10.x"
 }

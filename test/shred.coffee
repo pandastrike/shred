@@ -54,8 +54,9 @@ Testify.test "Resource", (context) ->
       .on "ready", (html) ->
         assert.equal type(html), "string"
         context.pass()
+
   context.test "Handle multiple expected values", (context) ->
-    site = resource "http://pandastrike.com"
+    site = resource "http://google.com"
     .describe
       get:
         method: "get"
@@ -66,3 +67,14 @@ Testify.test "Resource", (context) ->
     .on "ready", (html) ->
       assert.equal type(html), "string"
       context.pass()
+
+  context.test "Allow for streaming responses", (context) ->
+    site = resource "http://google.com"
+    .describe
+      get:
+        method: "get"
+        headers:
+          accept: "text/html"
+        expect: [ 200 ]
+    through = require "through"
+    site.get().pipe(through (->), -> context.pass())
