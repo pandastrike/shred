@@ -12,6 +12,7 @@ class Method
   constructor: (@resource, {@method, @headers, @expect}) ->
     # load version from file instead of hard-coding
     @headers["user-agent"] ?= "shred v0.9.0"
+    @expect = [ @expect ] unless type(@expect) is "array"
 
   request: (body=null) ->
     @resource.events.source (events) =>
@@ -21,13 +22,12 @@ class Method
       events.safely =>
         handler = (response) =>
           events.safely =>
-            switch response.statusCode
-              when @expect
-                expected response
-              when 301, 302, 303, 305, 307
-                request(response.headers.location)
-              else
-                unexpected response
+            if response.statusCode in @expect
+              expected response
+            else if response.statusCode in [301, 302, 303, 305, 307]
+              request(response.headers.location)
+            else
+              unexpected response
 
         expected = (response) =>
           events.emit "success", response

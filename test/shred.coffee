@@ -54,3 +54,15 @@ Testify.test "Resource", (context) ->
       .on "ready", (html) ->
         assert.equal type(html), "string"
         context.pass()
+  context.test "Handle multiple expected values", (context) ->
+    site = resource "http://pandastrike.com"
+    .describe
+      get:
+        method: "get"
+        headers:
+          accept: "text/html"
+        expect: [ 200 ]
+    site.get()
+    .on "ready", (html) ->
+      assert.equal type(html), "string"
+      context.pass()
