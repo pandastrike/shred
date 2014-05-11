@@ -1,6 +1,10 @@
 # Introduction
 
-Shred is an HTTP client that wraps HTTP interfaces so you can easily create JavaScript clients. No one wants the low-level details of HTTP calls mucking up their code. So what do we typically do? We wrap the calls in functions. Shred just makes that easier.
+Shred is an HTTP client that wraps HTTP interfaces so you can easily create CoffeeScript or JavaScript clients.
+
+HTTP is a rich protocol, but the low-level details of setting headers and checking response codes muck up our code. So we either ignore these nuances or write wrapper functions to hide the details.
+
+Shred makes it easy to declaratively create API wrapper functions. Shred also features support for URL templates, response compression, authorization, and streaming responses. And more features are coming soon!
 
 ## Example: GitHub API
 
@@ -21,7 +25,8 @@ github.events
 .on "error", (error) -> console.log error
 
 # create the issues resource, with some actions
-issues = github.resource "repos/pandastrike/shred/issues"
+# we define the path as a template, to be expanded later
+issues = github.path "repos/{owner}/{repo}/issues"
 .describe
   list:
     method: "get"
@@ -31,25 +36,34 @@ issues = github.resource "repos/pandastrike/shred/issues"
   create:
     method: "post"
     headers:
-      authorization: "Basic " +
-        base64("#{token}:")
       accept: "application/vnd.github.v3.raw+json"
     expect: 201
 
+# list the existing tickets
+issues
+.expand
+  owner: "pandastrike"
+  repo: "shred-ng"
+.list()
+.on "ready", (issues) ->
+  for issue in issues
+    console.log issue.number, issue.title
+
 # create a new ticket...
-issues.create
-  title: "Create a Shred logo"
+# this requires authorization
+issues
+.expand
+  owner: "pandastrike"
+  repo: "shred-ng"
+.create
+.authorize basic: { username: token, password: ""}
+.request
+  title: "Create a Shred T-shirt Design"
   body: "We need a cool logo so we can go into the
     T-shirt business like Docker."
   labels: [ "ng" ]
 
-issues.list()
-.on "ready", (issues) ->
-  for issue in issues
-    console.log issue.number, issue.title
 ```
-
-Basically, the idea is that we can describe an API in one place and we now have a simple JavaScript client we can use wherever.
 
 # Install
 

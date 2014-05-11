@@ -22,7 +22,11 @@ issues = github.path "repos/{owner}/{repo}/issues"
     expect: 201
 
 # create a new ticket...
-# issues.create
+# issues.
+# .expand
+#   owner: "pandastrike"
+#   repo: "shred-ng"
+# create
 # .authorize
 #   basic: username: token, password: ""
 # .request
