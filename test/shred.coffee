@@ -36,8 +36,21 @@ Testify.test "Resource", (context) ->
             milestone: 1
             status: "open"
 
-          console.log milestone
           milestone.list()
           .on "ready", (issues) ->
             assert.equal type(issues), "array"
             context.pass()
+
+  context.test "Automatically decode Gzipped responses", (context) ->
+      site = resource "http://pandastrike.com"
+      .describe
+        get:
+          method: "get"
+          headers:
+            accept: "text/html"
+            "accept-encoding": "gzip"
+          expect: 200
+      site.get()
+      .on "ready", (html) ->
+        assert.equal type(html), "string"
+        context.pass()

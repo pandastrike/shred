@@ -40,9 +40,20 @@ class Method
           read response
 
         read = (response) ->
+          stream = switch response.headers["content-encoding"]
+            when 'gzip'
+              console.log "gzip"
+              zlib = require "zlib"
+              response.pipe zlib.createGunzip()
+            when 'deflate'
+              zlib = require "zlib"
+              response.pipe zlib.createInflate()
+            else
+              response
+
           data = ""
-          response.on "data", (chunk) -> data += chunk
-          response.on "end", ->
+          stream.on "data", (chunk) -> data += chunk
+          stream.on "end", ->
             # TODO: this is not a safe way to check for a JSON
             # content-type. We should also make the parser
             # extensible.
