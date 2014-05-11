@@ -18,14 +18,15 @@ issues = github.path "repos/{owner}/{repo}/issues"
   create:
     method: "post"
     headers:
-      authorization: "Basic " +
-        base64("#{token}:")
       accept: "application/vnd.github.v3.raw+json"
     expect: 201
 
 # create a new ticket...
 # issues.create
-#   title: "Create a Shred logo"
+# .authorize
+#   basic: username: token, password: ""
+# .request
+#   title: "Create a Shred T-shirt Design"
 #   body: "We need a cool logo so we can go into the
 #     T-shirt business like Docker."
 #   labels: [ "ng" ]

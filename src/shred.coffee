@@ -1,4 +1,4 @@
-{include, type} = require "fairmont"
+{include, type, base64} = require "fairmont"
 {EventChannel} = require "mutual"
 url = require "url"
 parse_url = url.parse
@@ -8,6 +8,10 @@ schemes =
   http: require "http"
   https: require "https"
 returning = (value, block) -> block value ;  value
+
+Authorization =
+  basic: ({username, password}) ->
+    "Basic " + base64("#{username}:#{password}")
 
 class Method
   constructor: ({@resource, @method, @headers, @expect}) ->
@@ -89,7 +93,8 @@ class Method
 
 class Resource
 
-  @reserved: ["url", "events"]
+  @reserved: ["url", "events", "path", "query",
+    "expand", "describe"]
 
   @actions: (resource) ->
     returning {}, (_actions) ->
@@ -101,6 +106,11 @@ class Resource
     method = new Method(description)
     resource[name] = (args...) -> method.request(args...)
     resource[name].method = method
+    resource[name].authorize = (credentials) ->
+      returning method, ->
+        [scheme] = Object.keys(credentials)
+        transform = Authorization[scheme]
+        method.headers["authorization"] = transform(credentials[scheme])
 
   constructor: ({@url, @events}) ->
 

@@ -14,7 +14,7 @@ Testify.test "Resource", (context) ->
       issues = github.path "repos/pandastrike/shred-ng/issues"
       assert.equal issues.describe?, true
 
-      context.test "describing resource actions", (context) ->
+      context.test "describing resource actions", ->
 
         issues.describe
           list:
@@ -95,3 +95,6 @@ Testify.test "Resource", (context) ->
         expect: [ 200 ]
     through = require "through"
     site.get().pipe(through (->), -> context.pass())
+
+  context.test "Use basic authoriziation", (context) ->
+    context.fail("pending")
