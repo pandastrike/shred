@@ -1,6 +1,8 @@
-log
+log/
 *.log
-tmp
-node_modules
-npm_debug.log
+tmp/
+*.tmp
+node_modules/
+*.log
 .*
+lib/
