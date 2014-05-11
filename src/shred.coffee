@@ -7,9 +7,10 @@ querystring = require "querystring"
 schemes =
   http: require "http"
   https: require "https"
+returning = (value, block) -> block value ;  value
 
 class Method
-  constructor: (@resource, {@method, @headers, @expect}) ->
+  constructor: ({@resource, @method, @headers, @expect}) ->
     # load version from file instead of hard-coding
     @headers["user-agent"] ?= "shred v0.9.0"
     @expect = [ @expect ] unless type(@expect) is "array"
@@ -86,28 +87,45 @@ class Method
 
         request @resource.url
 
-reserved = ["url", "events"]
 class Resource
 
-  constructor: (@url, @events = new EventChannel) ->
+  @reserved: ["url", "events"]
 
-  resource: (path, events = @events.source()) ->
-    new Resource(resolve(@url, path), events)
+  @actions: (resource) ->
+    returning {}, (_actions) ->
+      for key, value of resource when (value.method instanceof Method)
+        _actions[key] = value.method
 
-  query: (query, events = @events.source()) ->
+  @action: (resource, name, description) ->
+    description.resource = resource
+    method = new Method(description)
+    resource[name] = (args...) -> method.request(args...)
+    resource[name].method = method
+
+  constructor: ({@url, @events}) ->
+
+  path: (path) ->
+    returning (new Resource @), (resource) =>
+      resource.url = resolve(@url, path)
+      resource.describe(Resource.actions(@))
+
+  query: (query) ->
     query = querystring.stringify(query)
-    resource = new Resource("#{@url}?#{query}", events)
-    for key, value of @ when (value.method instanceof Method)
-      resource[key] = value
-    resource
+    returning (new Resource @), (resource) =>
+      resource.url = "#{@url}?#{query}"
+      resource.describe(Resource.actions(@))
+
+  expand: (parameters) ->
+    template = (require "url-template").parse @url
+    returning (new Resource @), (resource) =>
+      resource.url = template.expand parameters
+      resource.describe(Resource.actions(@))
 
   describe: (actions) ->
-    for action, description of actions when action not in reserved
-      do (method = new Method(@, description)) =>
-        @[action] = (args...) -> method.request(args...)
-        @[action].method = method
-    @
+    returning @, (resource) ->
+      for name, description of actions when name not in Resource.reserved
+        Resource.action(resource, name, description)
 
-resource = (args...) -> new Resource(args...)
+resource = (url, events = new EventChannel) -> new Resource({url, events})
 
 module.exports = {resource}

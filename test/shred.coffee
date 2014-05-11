@@ -11,7 +11,7 @@ Testify.test "Resource", (context) ->
     github.events.on "error", (error) -> console.log error
 
     context.test "creating a resource from a resource", (context) ->
-      issues = github.resource "repos/pandastrike/shred/issues"
+      issues = github.path "repos/pandastrike/shred-ng/issues"
       assert.equal issues.describe?, true
 
       context.test "describing resource actions", (context) ->
@@ -40,6 +40,23 @@ Testify.test "Resource", (context) ->
           .on "ready", (issues) ->
             assert.equal type(issues), "array"
             context.pass()
+
+        context.test "creating a resource from a template", (context) ->
+          github.path "repos/{owner}/{repo}/issues"
+          .describe
+            list:
+              method: "get"
+              headers:
+                accept: "application/vnd.github.v3.raw+json"
+              expect: 200
+          .expand
+            owner: "pandastrike"
+            repo: "shred-ng"
+          .list()
+          .on "ready", (issues) ->
+            assert.equal type(issues), "array"
+            context.pass()
+
 
   context.test "Automatically decode Gzipped responses", (context) ->
       site = resource "http://pandastrike.com"

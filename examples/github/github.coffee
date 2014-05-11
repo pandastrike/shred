@@ -8,7 +8,7 @@ token = read(resolve(__dirname, ".token")).trim()
 github.events
 .on "error", (error) -> console.log error
 
-issues = github.resource "repos/pandastrike/shred/issues"
+issues = github.path "repos/{owner}/{repo}/issues"
 .describe
   list:
     method: "get"
@@ -30,12 +30,18 @@ issues = github.resource "repos/pandastrike/shred/issues"
 #     T-shirt business like Docker."
 #   labels: [ "ng" ]
 
-issues.list()
+issues.expand
+  owner: "pandastrike"
+  repo: "shred-ng"
+.list()
 .on "ready", (issues) ->
   for issue in issues
     console.log issue.number, issue.title
 
-issues.query
+issues.expand
+  owner: "pandastrike"
+  repo: "shred-ng"
+.query
   milestone: 1
   status: "open"
 .list()

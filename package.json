@@ -37,7 +37,8 @@
   },
   "dependencies": {
     "fairmont": "^0.7.4",
-    "mutual": "^0.4.12"
+    "mutual": "^0.4.12",
+    "url-template": "^2.0.4"
   },
   "devDependencies": {
     "coffee-script": "1.7.x",
