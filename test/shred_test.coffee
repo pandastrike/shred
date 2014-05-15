@@ -163,7 +163,7 @@ Testify.test "Shred", (context) ->
 
     context.test "On non-HTTP failure, only the request_error handler fires", (context) ->
       shred.get
-        url: "#{base}/"
+        url: "#{base}:8000/"
         on:
           request_error: (error) ->
             context.test "The callback argument is an Error", ->
