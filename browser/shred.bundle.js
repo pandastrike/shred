@@ -544,7 +544,7 @@ require.define("/node_modules/cookiejar/package.json", function (require, module
 });
 
 require.define("/node_modules/cookiejar/cookiejar.js", function (require, module, exports, __dirname, __filename) {
-    exports.CookieAccessInfo=CookieAccessInfo=function CookieAccessInfo(domain,path,secure,script) {
+    var CookieAccessInfo=exports.CookieAccessInfo=function CookieAccessInfo(domain,path,secure,script) {
     if(this instanceof CookieAccessInfo) {
     	this.domain=domain||undefined;
     	this.path=path||"/";
@@ -557,7 +557,7 @@ require.define("/node_modules/cookiejar/cookiejar.js", function (require, module
     }
 }
 
-exports.Cookie=Cookie=function Cookie(cookiestr) {
+var Cookie=exports.Cookie=function Cookie(cookiestr) {
 	if(cookiestr instanceof Cookie) {
 		return cookiestr;
 	}
@@ -571,7 +571,9 @@ exports.Cookie=Cookie=function Cookie(cookiestr) {
         	this.secure = false; //how to define?
         	this.noscript = false; //httponly
         	if(cookiestr) {
-        		this.parse(cookiestr)
+            try {
+              this.parse(cookiestr)
+            } catch(e) {}
         	}
         	return this;
         }
@@ -606,7 +608,7 @@ Cookie.prototype.toValueString = function toValueString() {
 var cookie_str_splitter=/[:](?=\s*[a-zA-Z0-9_\-]+\s*[=])/g
 Cookie.prototype.parse = function parse(str) {
 	if(this instanceof Cookie) {
-    	var parts=str.split(";")
+    	var parts=str.split(";").filter(function(value){return !!value})
     	, pair=parts[0].match(/([^=]+)=((?:.|\n)*)/)
     	, key=pair[1]
     	, value=pair[2];
@@ -679,7 +681,7 @@ Cookie.prototype.collidesWith = function collidesWith(access_info) {
 	return true;
 }
 
-exports.CookieJar=CookieJar=function CookieJar() {
+var CookieJar=exports.CookieJar=function CookieJar() {
 	if(this instanceof CookieJar) {
     	var cookies = {} //name: [Cookie]
     
@@ -720,6 +722,7 @@ exports.CookieJar=CookieJar=function CookieJar() {
     	//returns a cookie
     	this.getCookie = function getCookie(cookie_name,access_info) {
     		var cookies_list = cookies[cookie_name];
+        if (!cookies_list) return;
     		for(var i=0;i<cookies_list.length;i++) {
     			var cookie = cookies_list[i];
     			if(cookie.expiration_date <= Date.now()) {
@@ -753,7 +756,7 @@ exports.CookieJar=CookieJar=function CookieJar() {
 }
 
 
-//returns list of cookies that were set correctly
+//returns list of cookies that were set correctly. Cookies that are expired and removed are not returned.
 CookieJar.prototype.setCookies = function setCookies(cookies) {
 	cookies=Array.isArray(cookies)
 		?cookies
@@ -778,6 +781,7 @@ var HTTP = require("http")
   , HTTPS = require("https")
   , parseUri = require("./parseUri")
   , Emitter = require('events').EventEmitter
+  , CookieAccessInfo = require('cookiejar').CookieAccessInfo
   , sprintf = require("sprintf").sprintf
   , Response = require("./response")
   , HeaderMixins = require("./mixins/headers")
@@ -839,6 +843,16 @@ var STATUS_CODES = HTTP.STATUS_CODES || {
     510 : 'Not Extended' // RFC 2774
 };
 
+var getPortString = function(scheme, port) {
+  // HTTPS implies port 443, and HTTP implies 80. The port number is extraneous
+  // if these conditions are met.
+
+  if (scheme === "https" && port === 443) { return ""; }
+  if (scheme === "http" && port === 80) { return ""; }
+
+  return ":" + port;
+};
+
 // The Shred object itself constructs the `Request` object. You should rarely
 // need to do this directly.
 
@@ -863,8 +877,9 @@ Object.defineProperties(Request.prototype, {
   url: {
     get: function() {
       if (!this.scheme) { return null; }
-      return sprintf("%s://%s:%s%s",
-          this.scheme, this.host, this.port,
+      return sprintf("%s://%s%s%s",
+          this.scheme, this.host,
+          getPortString(this.scheme, this.port),
           (this.proxy ? "/" : this.path) +
           (this.query ? ("?" + this.query) : ""));
     },
@@ -1927,7 +1942,7 @@ Object.defineProperties(Response.prototype, {
 
   headers: {
     get: function() {
-      return this._headers;
+      return this.getHeaders();
     },
     enumerable: true
   },
@@ -2442,46 +2457,54 @@ var corsetCase = function(string) {
 
 // We suspect that `initializeHeaders` was once more complicated ...
 var initializeHeaders = function(object) {
-  return {};
+  return {input: {}, normalized: {}};
 };
 
 // Access the `_headers` property using lazy initialization. **Warning:** If you
 // mix this into an object that is using the `_headers` property already, you're
 // going to have trouble.
 var $H = function(object) {
-  return object._headers||(object._headers=initializeHeaders(object));
+  if (typeof(object._headers) === "undefined") {
+    object._headers = initializeHeaders(object);
+    return object._headers;
+  } else {
+    return object._headers;
+  }
 };
 
 // Hide the implementations as private functions, separate from how we expose them.
 
 // The "real" `getHeader` function: get the header after normalizing the name.
-var getHeader = function(object,name) {
-  return $H(object)[corsetCase(name)];
+var getHeader = function(object, name) {
+  var headers = $H(object);
+  return headers.normalized[corsetCase(name)] || headers.input[name]
 };
 
 // The "real" `getHeader` function: get one or more headers, or all of them
 // if you don't ask for any specifics. 
-var getHeaders = function(object,names) {
-  var keys = (names && names.length>0) ? names : Object.keys($H(object));
-  var hash = {};
+var getHeaders = function(object, names) {
+  var headers = $H(object);
+  var keys = (names && names.length>0) ? names : Object.keys(headers.input);
+  var output = {};
   for (var i=0,l=keys.length;i<l;i++) {
     var key = keys[i];
-    hash[key] = getHeader(object, key);
+    output[key] = getHeader(object, key);
   }
-  Object.freeze(hash);
-  return hash;
+  Object.freeze(output);
+  return output;
 };
 
 // The "real" `setHeader` function: set a header, after normalizing the name.
-var setHeader = function(object,name,value) {
-  $H(object)[name] = value;
-  $H(object)[corsetCase(name)] = value;
+var setHeader = function(object, name, value) {
+  var headers = $H(object);
+  headers.input[name] = value;
+  headers.normalized[corsetCase(name)] = value;
   return object;
 };
 
 // The "real" `setHeaders` function: set multiple headers based on a hash.
-var setHeaders = function(object,hash) {
-  for( var key in hash ) { setHeader(object,key,hash[key]); };
+var setHeaders = function(object, hash) {
+  for( var key in hash ) { setHeader(object, key, hash[key]); };
   return this;
 };
 
@@ -2491,25 +2514,25 @@ module.exports = {
   
   // Add getters.
   getters: function(constructor) {
-    constructor.prototype.getHeader = function(name) { return getHeader(this,name); };
-    constructor.prototype.getHeaders = function() { return getHeaders(this,arguments); };
+    constructor.prototype.getHeader = function(name) { return getHeader(this, name); };
+    constructor.prototype.getHeaders = function() { return getHeaders(this, arguments); };
   },
   // Add setters but as "private" methods.
   privateSetters: function(constructor) {
-    constructor.prototype._setHeader = function(key,value) { return setHeader(this,key,value); };
-    constructor.prototype._setHeaders = function(hash) { return setHeaders(this,hash); };
+    constructor.prototype._setHeader = function(key, value) { return setHeader(this, key, value); };
+    constructor.prototype._setHeaders = function(hash) { return setHeaders(this, hash); };
   },
   // Add setters.
   setters: function(constructor) {
-    constructor.prototype.setHeader = function(key,value) { return setHeader(this,key,value); };
-    constructor.prototype.setHeaders = function(hash) { return setHeaders(this,hash); };
+    constructor.prototype.setHeader = function(key, value) { return setHeader(this, key, value); };
+    constructor.prototype.setHeaders = function(hash) { return setHeaders(this, hash); };
   },
   // Add both getters and setters.
   gettersAndSetters: function(constructor) {
-    constructor.prototype.getHeader = function(name) { return getHeader(this,name); };
-    constructor.prototype.getHeaders = function() { return getHeaders(this,arguments); };
-    constructor.prototype.setHeader = function(key,value) { return setHeader(this,key,value); };
-    constructor.prototype.setHeaders = function(hash) { return setHeaders(this,hash); };
+    constructor.prototype.getHeader = function(name) { return getHeader(this, name); };
+    constructor.prototype.getHeaders = function() { return getHeaders(this, arguments); };
+    constructor.prototype.setHeader = function(key, value) { return setHeader(this, key, value); };
+    constructor.prototype.setHeaders = function(hash) { return setHeaders(this, hash); };
   },
 };
 
