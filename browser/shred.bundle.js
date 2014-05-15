@@ -858,7 +858,9 @@ Object.defineProperties(Request.prototype, {
 
 // - **url**. You can set the `url` property with a valid URL string and all the
 //   URL-related properties (host, port, etc.) will be automatically set on the
-//   request object.
+//   request object. The source URL is used if the requested URL is missing any 
+//   URL-related properties.  This allows URLs such as: "/path/1" or 
+//   "//server/path/2".
 
   url: {
     get: function() {
@@ -870,9 +872,10 @@ Object.defineProperties(Request.prototype, {
     },
     set: function(_url) {
       _url = parseUri(_url);
-      this.scheme = _url.protocol;
-      this.host = _url.host;
-      this.port = _url.port;
+      var _sourceUrl = typeof window === "undefined" ? parseUri("") : parseUri(window.location.href);
+      this.scheme = _url.protocol === "" ? _sourceUrl.protocol : _url.protocol;
+      this.host = _url.host === "" ? _sourceUrl.host : _url.host;
+      this.port = _url.port === "" && _url.host === "" ? _sourceUrl.port : _url.port;
       this.path = _url.path;
       this.query = _url.query;
       return this;
@@ -1927,7 +1930,7 @@ Object.defineProperties(Response.prototype, {
 
   headers: {
     get: function() {
-      return this._headers;
+      return this.getHeaders();
     },
     enumerable: true
   },
@@ -2442,46 +2445,54 @@ var corsetCase = function(string) {
 
 // We suspect that `initializeHeaders` was once more complicated ...
 var initializeHeaders = function(object) {
-  return {};
+  return {input: {}, normalized: {}};
 };
 
 // Access the `_headers` property using lazy initialization. **Warning:** If you
 // mix this into an object that is using the `_headers` property already, you're
 // going to have trouble.
 var $H = function(object) {
-  return object._headers||(object._headers=initializeHeaders(object));
+  if (typeof(object._headers) === "undefined") {
+    object._headers = initializeHeaders(object);
+    return object._headers;
+  } else {
+    return object._headers;
+  }
 };
 
 // Hide the implementations as private functions, separate from how we expose them.
 
 // The "real" `getHeader` function: get the header after normalizing the name.
-var getHeader = function(object,name) {
-  return $H(object)[corsetCase(name)];
+var getHeader = function(object, name) {
+  var headers = $H(object);
+  return headers.normalized[corsetCase(name)] || headers.input[name]
 };
 
 // The "real" `getHeader` function: get one or more headers, or all of them
 // if you don't ask for any specifics. 
-var getHeaders = function(object,names) {
-  var keys = (names && names.length>0) ? names : Object.keys($H(object));
-  var hash = {};
+var getHeaders = function(object, names) {
+  var headers = $H(object);
+  var keys = (names && names.length>0) ? names : Object.keys(headers.input);
+  var output = {};
   for (var i=0,l=keys.length;i<l;i++) {
     var key = keys[i];
-    hash[key] = getHeader(object, key);
+    output[key] = getHeader(object, key);
   }
-  Object.freeze(hash);
-  return hash;
+  Object.freeze(output);
+  return output;
 };
 
 // The "real" `setHeader` function: set a header, after normalizing the name.
-var setHeader = function(object,name,value) {
-  $H(object)[name] = value;
-  $H(object)[corsetCase(name)] = value;
+var setHeader = function(object, name, value) {
+  var headers = $H(object);
+  headers.input[name] = value;
+  headers.normalized[corsetCase(name)] = value;
   return object;
 };
 
 // The "real" `setHeaders` function: set multiple headers based on a hash.
-var setHeaders = function(object,hash) {
-  for( var key in hash ) { setHeader(object,key,hash[key]); };
+var setHeaders = function(object, hash) {
+  for( var key in hash ) { setHeader(object, key, hash[key]); };
   return this;
 };
 
@@ -2491,25 +2502,25 @@ module.exports = {
   
   // Add getters.
   getters: function(constructor) {
-    constructor.prototype.getHeader = function(name) { return getHeader(this,name); };
-    constructor.prototype.getHeaders = function() { return getHeaders(this,arguments); };
+    constructor.prototype.getHeader = function(name) { return getHeader(this, name); };
+    constructor.prototype.getHeaders = function() { return getHeaders(this, arguments); };
   },
   // Add setters but as "private" methods.
   privateSetters: function(constructor) {
-    constructor.prototype._setHeader = function(key,value) { return setHeader(this,key,value); };
-    constructor.prototype._setHeaders = function(hash) { return setHeaders(this,hash); };
+    constructor.prototype._setHeader = function(key, value) { return setHeader(this, key, value); };
+    constructor.prototype._setHeaders = function(hash) { return setHeaders(this, hash); };
   },
   // Add setters.
   setters: function(constructor) {
-    constructor.prototype.setHeader = function(key,value) { return setHeader(this,key,value); };
-    constructor.prototype.setHeaders = function(hash) { return setHeaders(this,hash); };
+    constructor.prototype.setHeader = function(key, value) { return setHeader(this, key, value); };
+    constructor.prototype.setHeaders = function(hash) { return setHeaders(this, hash); };
   },
   // Add both getters and setters.
   gettersAndSetters: function(constructor) {
-    constructor.prototype.getHeader = function(name) { return getHeader(this,name); };
-    constructor.prototype.getHeaders = function() { return getHeaders(this,arguments); };
-    constructor.prototype.setHeader = function(key,value) { return setHeader(this,key,value); };
-    constructor.prototype.setHeaders = function(hash) { return setHeaders(this,hash); };
+    constructor.prototype.getHeader = function(name) { return getHeader(this, name); };
+    constructor.prototype.getHeaders = function() { return getHeaders(this, arguments); };
+    constructor.prototype.setHeader = function(key, value) { return setHeader(this, key, value); };
+    constructor.prototype.setHeaders = function(hash) { return setHeaders(this, hash); };
   },
 };
 
