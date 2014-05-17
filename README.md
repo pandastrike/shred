@@ -2,6 +2,8 @@
 
 Shred is an HTTP client that wraps HTTP interfaces so you can easily create CoffeeScript or JavaScript clients.
 
+**Note** Shred 1.0.x is a complete reboot of the project. The goal is the same, but the interface has changed drastically. Shred 1.0.x is _not_ backwards compatible with earlier versions.
+
 HTTP is a rich protocol, but the low-level details of setting headers and checking response codes muck up our code. So we either ignore these nuances or write wrapper functions to hide the details.
 
 Shred makes it easy to declaratively create API wrapper functions. Shred also features support for URL templates, response compression, authorization, and streaming responses. And more features are coming soon!

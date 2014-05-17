@@ -1,6 +1,6 @@
 {
   "name": "shred",
-  "version": "0.9.0",
+  "version": "1.0.0-alpha-01",
   "description": "A resource-oriented JavaScript HTTP client.",
   "keywords": [
     "http",
@@ -42,7 +42,6 @@
   },
   "devDependencies": {
     "coffee-script": "1.7.x",
-    "testify": "0.2.x",
     "through": "^2.3.4",
     "colors": "^0.6.2"
   },
