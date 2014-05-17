@@ -37,7 +37,7 @@ issues = github.path "repos/{owner}/{repo}/issues"
 
 issues.expand
   owner: "pandastrike"
-  repo: "shred-ng"
+  repo: "shred"
 .list()
 .on "ready", (issues) ->
   for issue in issues
@@ -45,7 +45,7 @@ issues.expand
 
 issues.expand
   owner: "pandastrike"
-  repo: "shred-ng"
+  repo: "shred"
 .query
   milestone: 1
   status: "open"

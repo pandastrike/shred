@@ -43,7 +43,7 @@ issues = github.path "repos/{owner}/{repo}/issues"
 issues
 .expand
   owner: "pandastrike"
-  repo: "shred-ng"
+  repo: "shred"
 .list()
 .on "ready", (issues) ->
   for issue in issues
@@ -54,7 +54,7 @@ issues
 issues
 .expand
   owner: "pandastrike"
-  repo: "shred-ng"
+  repo: "shred"
 .create
 .authorize basic: { username: token, password: ""}
 .request

@@ -1,20 +1,24 @@
-Testify = require "testify"
 assert = require "assert"
+
 {type} = require "fairmont"
 {resolve} = require "path"
-{resource} = require "../src/shred.coffee"
+{resource} = require "../src/shred"
+{describe, test} = require "./test"
 
-Testify.test "Resource", (context) ->
-  context.test "Creating a resource from a URL", (context) ->
+describe "Resources", ->
+
+  test "Create a resource from a URL", ->
+
     github = resource "https://api.github.com/"
-    assert.equal github.describe?, true
-    github.events.on "error", (error) -> console.log error
 
-    context.test "creating a resource from a resource", (context) ->
-      issues = github.path "repos/pandastrike/shred-ng/issues"
+    assert.equal github.describe?, true
+
+    test "Create a resource from another resource", ->
+
+      issues = github.path "repos/pandastrike/shred/issues"
       assert.equal issues.describe?, true
 
-      context.test "describing resource actions", ->
+      test "Describe a resource", ->
 
         issues.describe
           list:
@@ -25,23 +29,27 @@ Testify.test "Resource", (context) ->
 
         assert.equal issues.list?, true
 
-        context.test "invoking resource actions", (context) ->
+        test "Invoke an action", ({pass}) ->
+
           issues.list()
           .on "ready", (issues) ->
-            assert.equal type(issues), "array"
-            context.pass()
+            pass ->
+              assert.equal type(issues), "array"
 
-        context.test "creating a resource from a query", (context) ->
+
+        test "Create a resource from a query", ({pass}) ->
+
           milestone  = issues.query
             milestone: 1
             status: "open"
 
           milestone.list()
           .on "ready", (issues) ->
-            assert.equal type(issues), "array"
-            context.pass()
+            pass ->
+              assert.equal type(issues), "array"
 
-        context.test "creating a resource from a template", (context) ->
+        test "Create a resource from a template", ({pass}) ->
+
           github.path "repos/{owner}/{repo}/issues"
           .describe
             list:
@@ -51,28 +59,30 @@ Testify.test "Resource", (context) ->
               expect: 200
           .expand
             owner: "pandastrike"
-            repo: "shred-ng"
+            repo: "shred"
           .list()
           .on "ready", (issues) ->
-            assert.equal type(issues), "array"
-            context.pass()
+            pass ->
+              assert.equal type(issues), "array"
 
+  test "Automatically decode Gzipped responses", ({pass}) ->
 
-  context.test "Automatically decode Gzipped responses", (context) ->
-      site = resource "http://pandastrike.com"
-      .describe
-        get:
-          method: "get"
-          headers:
-            accept: "text/html"
-            "accept-encoding": "gzip"
-          expect: 200
-      site.get()
-      .on "ready", (html) ->
+    site = resource "http://pandastrike.com/"
+    .describe
+      get:
+        method: "get"
+        headers:
+          accept: "text/html"
+          "accept-encoding": "gzip"
+        expect: 200
+
+    site.get()
+    .on "ready", (html) ->
+      pass ->
         assert.equal type(html), "string"
-        context.pass()
 
-  context.test "Handle multiple expected values", (context) ->
+  test "Handle multiple expected values", ({pass}) ->
+
     site = resource "http://google.com"
     .describe
       get:
@@ -82,10 +92,10 @@ Testify.test "Resource", (context) ->
         expect: [ 200 ]
     site.get()
     .on "ready", (html) ->
-      assert.equal type(html), "string"
-      context.pass()
+      pass -> assert.equal type(html), "string"
 
-  context.test "Allow for streaming responses", (context) ->
+  test "Allow for streaming responses", ({pass}) ->
+
     site = resource "http://google.com"
     .describe
       get:
@@ -94,7 +104,6 @@ Testify.test "Resource", (context) ->
           accept: "text/html"
         expect: [ 200 ]
     through = require "through"
-    site.get().pipe(through (->), -> context.pass())
+    site.get().pipe(through (->), -> pass())
 
-  context.test "Use basic authoriziation", (context) ->
-    context.fail("pending")
+  test "Use basic authoriziation",  ->
