@@ -21,63 +21,59 @@ resource = overload (match) ->
 
   match "object", ({url, events, description}) ->
 
+    from_path = (path, _description=description) ->
+      resource
+        url: resolve_url(url, path)
+        events: events.source()
+        description: _description
+
+    from_parameters = do ->
+      template = (require "url-template").parse url
+      (parameters, _description=description) ->
+        resource
+          url: template.expand(parameters)
+          events: events.source()
+          description: _description
+
+    make_request = (definition) ->
+      definition.events ?= events
+      definition.url ?= url
+      fn = -> request(definition, arguments...)
+      fn.invoke = -> fn.apply(null, arguments)
+      include fn,
+        authorize: (credentials) ->
+          [scheme] = Object.keys(credentials)
+          transform = Authorization[scheme]
+          authorization = transform(credentials[scheme])
+          _definition = clone definition
+          _definition.headers.authorization = authorization
+          make_request(_definition)
+      fn
+
     events ?= new EventChannel
-    listen = ->
 
-    returning
-      _url: url,
-      on: (args...)->
-        returning @, -> events.on(args...)
-      (object) ->
+    _resource = overload (match) ->
 
-        return unless description?
+      match "string", (path) -> from_path path
+      match "string", "object", (path, description) ->
+        from_path path, description
 
-        make_request = (definition) ->
-          definition.events ?= events
-          definition.url ?= url
-          returning (-> request(definition, arguments...)), (fn) ->
-            include fn,
-              authorize: (credentials) ->
-                [scheme] = Object.keys(credentials)
-                transform = Authorization[scheme]
-                authorization = transform(credentials[scheme])
-                _definition = clone definition
-                _definition.headers.authorization = authorization
-                make_request(_definition)
+      match "object", (parameters) ->
+        from_parameters parameters
 
-        for method, definition of description
+      match "object", "object", (parameters, description) ->
+        from_parameters parameters, description
 
-          object[method] =
+    _resource._url = url
+    _resource.on = (args...) -> events.on(args...); _resource
 
-            switch type(definition)
+    for method, definition of description
+      _resource[method] = switch type(definition)
+        when "object"
+          make_request(clone definition)
+        when "function"
+          definition _resource
 
-              when "object" then make_request(clone definition)
-
-              when "function"
-
-                definition
-
-                  path: (path, description) ->
-                    resource
-                      url: resolve_url(url, path)
-                      events: events.source()
-                      description: description
-
-                  query: (description) ->
-                    params = querystring.stringify(params)
-                    (parameters) ->
-                      resource
-                        url: "#{url}?#{params}"
-                        events: events.source()
-                        description: description
-
-                  expand: (description)->
-                    template = (require "url-template").parse url
-                    (parameters) ->
-                      resource
-                        url: template.expand(parameters)
-                        events: events.source()
-                        description: description
-
+    _resource
 
 module.exports = {resource}
