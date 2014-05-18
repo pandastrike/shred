@@ -44,7 +44,8 @@
   "devDependencies": {
     "coffee-script": "1.7.x",
     "through": "^2.3.4",
-    "colors": "^0.6.2"
+    "colors": "^0.6.2",
+    "nodegit": "^0.1.3"
   },
   "engine": "node >= 0.10.x"
 }

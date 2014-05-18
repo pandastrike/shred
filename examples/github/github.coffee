@@ -1,10 +1,8 @@
 {resolve} = require "path"
 {resource} = require "../../src/shred"
-{base64, read} = require "fairmont"
+{base64} = require "fairmont"
 
-token = read(resolve(__dirname, ".token")).trim()
-
-github = resource "https://api.github.com/",
+module.exports = resource "https://api.github.com/",
   repo: (resource) ->
     resource "repos/{owner}/{repo}/",
       issues: (resource) ->
@@ -20,16 +18,16 @@ github = resource "https://api.github.com/",
               accept: "application/vnd.github.v3.raw+json"
             expect: 200
 
-github
-.on "error", (error) ->
-  console.log error
-.repo owner: "pandastrike", repo: "shred"
-.issues
-.list()
-.on "ready", (issues) ->
-  for {number, title} in issues
-    console.log number, title
-
+# github
+# .on "error", (error) ->
+#   console.log error
+# .repo owner: "pandastrike", repo: "shred"
+# .issues
+# .list()
+# .on "ready", (issues) ->
+#   for {number, title} in issues
+#     console.log number, title
+#
 # create a new ticket...
 # github
 # .issues owner: "pandastrike", repo: "shred"

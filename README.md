@@ -1,4 +1,4 @@
-# Introduction
+# Overview
 
 Shred is an HTTP client that wraps HTTP interfaces so you can easily create CoffeeScript or JavaScript clients.
 
