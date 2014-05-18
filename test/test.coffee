@@ -81,7 +81,7 @@ module.exports = do ->
       else
         fn(); pass()
     catch error
-      fail()
+      fail(error)
 
     pop()
 
