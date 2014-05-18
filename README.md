@@ -19,47 +19,45 @@ Here's how we would access the issues for the Shred project on Github:
 # read our personal github token from a file
 token = read(resolve(__dirname, "token")).trim()
 
-# create the main github API resource
-github = resource "https://api.github.com/"
+# define our API client
+github = resource "https://api.github.com/",
+  issues: ({path}) ->
+    path "repos/{owner}/{repo}/issues",
+      for: ({expand}) ->
+        expand
+          create:
+            method: "post"
+            headers:
+              accept: "application/vnd.github.v3.raw+json"
+            expect: 201
+          list:
+            method: "get"
+            headers:
+              accept: "application/vnd.github.v3.raw+json"
+            expect: 200
 
-# provide top-level event handler
-github.events
-.on "error", (error) -> console.log error
-
-# create the issues resource, with some actions
-# we define the path as a template, to be expanded later
-issues = github.path "repos/{owner}/{repo}/issues"
-.describe
-  list:
-    method: "get"
-    headers:
-      accept: "application/vnd.github.v3.raw+json"
-    expect: 200
-  create:
-    method: "post"
-    headers:
-      accept: "application/vnd.github.v3.raw+json"
-    expect: 201
-
-# list the existing tickets
-issues
-.expand
-  owner: "pandastrike"
-  repo: "shred"
+# later, use the API client -- here, we'll just list some issues
+github
+.on "error", (error) ->
+  console.log error
+.issues
+.for(owner: "pandastrike", repo: "shred")
 .list()
 .on "ready", (issues) ->
-  for issue in issues
-    console.log issue.number, issue.title
+  for {number, title} in issues
+    console.log number, title
 
-# create a new ticket...
+
+# let's create a new ticket...
 # this requires authorization
-issues
-.expand
+github
+.issues
+.for
   owner: "pandastrike"
   repo: "shred"
 .create
 .authorize basic: { username: token, password: ""}
-.request
+.invoke
   title: "Create a Shred T-shirt Design"
   body: "We need a cool logo so we can go into the
     T-shirt business like Docker."
