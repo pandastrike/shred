@@ -61,7 +61,9 @@ github
 
 # Install
 
-`npm install shred`
+<del>`npm install shred`</del>
+
+The 1.0.x version of Shred is not yet available as an NPM. You'll have to `git clone` it and then `npm link` to it.
 
 # Introduction
 
