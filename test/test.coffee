@@ -34,7 +34,7 @@ colors = require "colors"
       if context.error?
         console.log "#{context.description} #{inspect(context.error)}".red
       else
-        color = (if context.result then "green" else "red")
+        color = (if context.result then "green" else "yellow")
         console.log context.description[color]
     else
       console.log context.description.green.bold
@@ -49,22 +49,20 @@ module.exports = do ->
 
   {start, finish} = do (pending=0) ->
     start: -> pending++
-    finish: ->
-      if --pending is 0
-        process.exit(0)
+    finish: -> process.exit(0) if --pending is 0
 
   test: (description, fn) ->
 
+    start()
     context = push(description)
     context.result = false
-    start()
 
     pass = (assert) ->
       try
         assert?()
         context.result = true
-      catch
-        context.result = false
+      catch error
+        fail error
 
       finish()
 
@@ -74,12 +72,11 @@ module.exports = do ->
       finish()
 
     try
-      if fn.length > 0
-        value = fn({pass,fail})
-        if value?.on?
-          value.on "error", fail
-      else
-        fn(); pass()
+      if fn?
+        if fn.length > 0
+          fn({pass,fail})
+        else
+          fn(); pass()
     catch error
       fail(error)
 

@@ -20,7 +20,9 @@ user_agent = do ->
 
 redirects = [ 301, 302, 303, 305, 307 ]
 
+counter = 0
 request = ({events, url, method, headers, redirect, pipe, expect}, body) ->
+  id = ++counter
   redirect ?= true
   headers["user-agent"] ?= user_agent
   expect = [ expect ] unless type(expect) is "array"
@@ -46,17 +48,17 @@ request = ({events, url, method, headers, redirect, pipe, expect}, body) ->
       # for an expected response, emit success and begin processing body
       expected = (response) ->
         _events.emit "success", response
-        read response
+        readBody response
 
       # an unexpected response is an error
       unexpected = (response) ->
         {statusCode} = response
         _events.emit "error",
           new Error "Expected #{@expect}, got #{statusCode}"
-        read response
+        readBody response
 
       # actually read the body of the respone, decoding if necessary
-      read = (response) ->
+      readBody = (response) ->
         stream = switch response.headers["content-encoding"]
           when 'gzip'
             zlib = require "zlib"

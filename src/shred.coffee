@@ -21,7 +21,7 @@ resource = overload (match) ->
 
   match "object", ({url, events, description}) ->
 
-    from_path = (path, _description=description) ->
+    from_path = (path, _description) ->
       resource
         url: resolve_url(url, path)
         events: events.source()
@@ -64,7 +64,6 @@ resource = overload (match) ->
       match "object", "object", (parameters, description) ->
         from_parameters parameters, description
 
-    _resource._url = url
     _resource.on = (args...) -> events.on(args...); _resource
 
     for method, definition of description
