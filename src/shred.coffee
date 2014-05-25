@@ -38,6 +38,7 @@ resource = overload (match) ->
     make_request = (definition) ->
       definition.events ?= events
       definition.url ?= url
+      definition.headers ?= {}
       fn = -> request(definition, arguments...)
       fn.invoke = -> fn.apply(null, arguments)
       include fn,

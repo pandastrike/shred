@@ -90,6 +90,7 @@ request = ({events, url, method, headers, redirect, pipe, expect}, body) ->
 
       # a nice function actually, you know, make the request
       _request = (url) ->
+        console.log url
         # TODO: Check for a null or invalid URL
         {protocol, hostname, port, path} = parse_url url
         scheme = protocol[0..-2] # remove trailing :
