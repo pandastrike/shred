@@ -53,8 +53,10 @@ request = ({events, url, method, headers, redirect, pipe, expect}, body) ->
       # an unexpected response is an error
       unexpected = (response) ->
         {statusCode} = response
-        _events.emit "error",
-          new Error "Expected #{@expect}, got #{statusCode}"
+        _error = new Error "Expected #{expect}, got #{statusCode}"
+        _error.response = response
+        _events.emit "error", _error
+
         readBody response
 
       # actually read the body of the respone, decoding if necessary
@@ -90,7 +92,6 @@ request = ({events, url, method, headers, redirect, pipe, expect}, body) ->
 
       # a nice function actually, you know, make the request
       _request = (url) ->
-        console.log url
         # TODO: Check for a null or invalid URL
         {protocol, hostname, port, path} = parse_url url
         scheme = protocol[0..-2] # remove trailing :
