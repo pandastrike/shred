@@ -26,6 +26,7 @@ build = ({singular, plural}) ->
       .invoke()
       .on "ready", ready (response) ->
         events.emit "success", response[plural]
+        
   add: ({id, key, description}) ->
     events.source (events) ->
       api(noun: plural, verb: "new", id: id, key: key, query: description)

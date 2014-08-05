@@ -3,24 +3,24 @@ assert = require "assert"
 {type} = require "fairmont"
 {resolve} = require "path"
 {resource} = require "../src/shred"
-{describe, test} = require "./test"
+amen = require "amen"
 
-describe "Resources", ->
+amen.describe "Resources", (context) ->
 
-  test "Create a resource from a URL", ->
+  context.test "Create a resource from a URL", ->
     github = resource "https://api.github.com/"
     assert.equal type(github), "function"
 
-    test "Create a subordinate resource with a path", ->
+    context.test "Create a subordinate resource with a path", ->
       repo = github "repos/pandastrike/shred"
       assert.equal type(repo), "function"
 
-    test "Create a subordinate resource with a template", ->
+    context.test "Create a subordinate resource with a template", ->
       repo = github "repos/{owner}/{repo}/"
       shredRepo = repo owner: "pandastrike", repo: "shred"
       assert.equal type(shredRepo), "function"
 
-      test "Create a subordinate resource with an initializer", ->
+      context.test "Create a subordinate resource with an initializer", ->
         github = resource "https://api.github.com/",
           repo: (resource) ->
             resource "repos/{owner}/{repo}/"
@@ -28,8 +28,8 @@ describe "Resources", ->
         shredRepo = github.repo owner: "pandastrike", repo: "shred"
         assert.equal type(shredRepo), "function"
 
-        test "Create a subordinate resource
-          with a request description", ({pass}) ->
+        context.test "Create a subordinate resource
+          with a request description", (context) ->
 
           shredRepo =
             resource "https://api.github.com/repos/pandastrike/shred/issues",
@@ -42,10 +42,10 @@ describe "Resources", ->
           shredRepo
           .list()
           .on "ready", (issues) ->
-            pass -> assert.equal type(issues), "array"
+            context.pass -> assert.equal type(issues), "array"
 
-        test "Create a nested subordinate resource
-          using an initializer with a request description", ({pass})->
+        context.test "Create a nested subordinate resource
+          using an initializer with a request description", (context)->
 
           github = resource "https://api.github.com/",
             repo: (resource) ->
@@ -63,6 +63,6 @@ describe "Resources", ->
           .issues
           .list()
           .on "ready", (issues) ->
-            pass -> assert.equal type(issues), "array"
+            context.pass -> assert.equal type(issues), "array"
 
-          test "Make an authorized request"
+          context.test "Make an authorized request", ->
