@@ -1,6 +1,6 @@
 {
   "name": "shred",
-  "version": "1.0.0-alpha-01",
+  "version": "1.0.0-alpha-02",
   "description": "A resource-oriented JavaScript HTTP client.",
   "keywords": [
     "http",
