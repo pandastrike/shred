@@ -2,7 +2,47 @@
 
 Shred is an HTTP client that wraps HTTP interfaces so you can easily create CoffeeScript or JavaScript clients.
 
-**Note** Shred 1.0.x is a complete reboot of the project. The goal is the same, but the interface has changed drastically. Shred 1.0.x is _not_ backwards compatible with earlier versions.
+Define your client:
+
+```coffeescript
+github = resource "https://api.github.com/",
+  issues: (resource) ->
+    resource "repos/{owner}/{repo}/issues",
+      create:
+        method: "post"
+        headers:
+          accept: "application/vnd.github.v3.raw+json"
+        expect: 201
+      list:
+        method: "get"
+        headers:
+          accept: "application/vnd.github.v3.raw+json"
+        expect: 200
+```
+
+And then use it like a normal JavaScript library:
+
+```coffeescript
+github
+.issues owner: "pandastrike", repo: "shred"
+.list()
+.on "ready", (issues) ->
+  for {number, title} in issues
+    console.log number, title
+
+## Installation
+
+```
+npm install shred
+```
+
+## Status
+
+Shred 1.0.x is a complete reboot of the project. The goal is the same, but the interface has changed drastically. Shred 1.0.x is _not_ backwards compatible with earlier versions.
+
+Shred is presently `alpha` quality code, as designated by the version suffix.
+
+## Description
 
 HTTP is a rich protocol, but the low-level details of setting headers and checking response codes muck up our code. So we either ignore these nuances or write wrapper functions to hide the details.
 
@@ -59,13 +99,7 @@ github
 
 ```
 
-# Install
-
-<del>`npm install shred`</del>
-
-The 1.0.x version of Shred is not yet available as an NPM. You'll have to `git clone` it and then `npm link` to it.
-
-# Introduction
+## API
 
 Shred exports one function: `resource`. That's it.
 
