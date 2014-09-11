@@ -3,15 +3,22 @@ resolve_url = (require "url").resolve
 
 {include, clone, type, base64} = require "fairmont"
 {overload} = require "typely"
-{EventChannel} = require "mutual"
+Evie = require "evie"
 
 {request} = require "./request"
-
-returning = (value, block) -> block value ;  value
 
 Authorization =
   basic: ({username, password}) ->
     "Basic " + base64("#{username}:#{password}")
+
+
+clone_actions = (description) ->
+  _description = {}
+  for method, definition of description when type(definition) != "function"
+    _description[method] = definition
+  _description
+
+
 
 resource = overload (match) ->
 
@@ -22,6 +29,7 @@ resource = overload (match) ->
   match "object", ({url, events, description}) ->
 
     from_path = (path, _description) ->
+      _description ?= clone_actions description
       resource
         url: resolve_url(url, path)
         events: events.source()
@@ -51,7 +59,7 @@ resource = overload (match) ->
           make_request(_definition)
       fn
 
-    events ?= new EventChannel
+    events ?= new Evie
 
     _resource = overload (match) ->
 

@@ -1,6 +1,6 @@
 {
   "name": "shred",
-  "version": "1.0.0-alpha-04",
+  "version": "1.0.0-alpha-05",
   "description": "A resource-oriented JavaScript HTTP client.",
   "keywords": [
     "http",
@@ -40,10 +40,10 @@
   },
   "dependencies": {
     "fairmont": "^0.8.2",
-    "mutual": "^0.4.12",
     "url-template": "^2.0.4",
     "typely": "0.0.0",
-    "c50n": "^0.6.0"
+    "c50n": "^0.6.0",
+    "evie": "^0.2.0"
   },
   "devDependencies": {
     "coffee-script": "1.7.x",
