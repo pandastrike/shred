@@ -197,3 +197,17 @@ github
 .list()
 .on "ready", (issues) ->
   console.log number, title for {number, title} in issues
+```  
+
+## Discovery
+
+Sometimes we get back URLs in responses, either in the headers or sometimes as properties of data objects returned in the body. When this happens, we can just provide the URL to a resource function.
+
+```coffeescript
+github
+.repo repo_url
+.issues
+.list()
+.on "ready", (issues) ->
+  console.log number, title for {number, title} in issues
+```
