@@ -65,4 +65,11 @@ amen.describe "Resources", (context) ->
           .on "ready", (issues) ->
             context.pass -> assert.equal type(issues), "array"
 
+          context.test "Using a full URL for a nested resource", (context) ->
+            github
+            .repo
+            .issues("https://api.github.com/repos/pandastrike/shred/issues")
+            .list()
+            .on "ready", (issues) ->
+              context.pass -> assert.equal type(issues), "array"
           context.test "Make an authorized request", ->

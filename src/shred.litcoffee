@@ -29,14 +29,6 @@ We have a dictionary of authorization functions. We only support basic auth at t
       basic: ({username, password}) ->
         "Basic " + base64("#{username}:#{password}")
 
-We need a way to clone an object without its functions.
-
-    clone_actions = (description) ->
-      _description = {}
-      for method, definition of description when type(definition) != "function"
-        _description[method] = definition
-      _description
-
 Okay, now we're ready to get down to business.
 
 ## The `resource` Function
@@ -67,14 +59,11 @@ We define some more helper functions, which we do here because we need access to
 
 We need to be able to simply append a path to the resource we're defining. That's what `from_path` does.
 
-        from_path = (path, _description) ->
-          _description ?= clone_actions description
+        from_path = (path, _description=description) ->
           resource
             url: resolve_url(url, path)
             events: events.source()
             description: _description
-
-The `clone_actions` function effectively allows us to inherit the current resource's description without creating an infinite recursion. Otherwise, we could accidentally create a resource with a path like `/foo/bar/bar/bar/...`. This doesn't really come up too often, since you wouldn't normally define a resource `bar` with no description.
 
 The `events.source()` is the event-bubbling. We're creating a new event channel, but allowing it to bubble up to the current resource.
 
@@ -84,8 +73,7 @@ Another way to create a resource is by adding parameters for a URL template. Tha
 
         from_parameters = do ->
           template = (require "url-template").parse url
-          (parameters, _description) ->
-            _description ?= clone_actions description
+          (parameters, _description=description) ->
             resource
               url: template.expand(parameters)
               events: events.source()
@@ -143,12 +131,19 @@ We need a way to add event handlers to the resource. This is a little bit unfort
 
 We add actions or subsidiary resources based on the description. An object describes an action, so we call `make_request` for those. A function means we'er defining a subsidiary resource, so we call it, with the current resource as an argument for context.
 
-        for method, definition of description
-          _resource[method] = switch type(definition)
-            when "object"
-              make_request(clone definition)
-            when "function"
-              definition _resource
+When we're defining a subsidiary resource, we want to make sure there's a description of the resource so we don't try to use the current resource. Otherwise, we'd end up with an infinite recursion. So, in that case, we tack on an empty object to the argument list.
+
+        for name, definition of description
+          do (name, definition) ->
+            _resource[name] = switch type(definition)
+              when "object"
+                make_request(clone definition)
+              when "function"
+                definition ->
+                  if arguments.length == 1
+                    _resource arguments..., {}
+                  else
+                    _resource arguments...
 
 That's it. We're done. Just return the newly created resource function.
 

@@ -1,6 +1,6 @@
 {
   "name": "shred",
-  "version": "1.0.0-alpha-06",
+  "version": "1.0.0-alpha-07",
   "description": "A resource-oriented JavaScript HTTP client.",
   "keywords": [
     "http",
@@ -35,8 +35,9 @@
     "url": "git://github.com/pandastrike/shred.git"
   },
   "scripts": {
-    "prepublish": "coffee -o lib/ -c src/*.coffee",
-    "test": "coffee test/shred.coffee"
+    "prepublish": "coffee -o lib/ -c src/*.*coffee",
+    "test": "coffee test/shred.coffee",
+    "watch": "coffee -o lib/ -cw src/*.*coffee"
   },
   "dependencies": {
     "fairmont": "^0.8.2",
