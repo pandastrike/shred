@@ -15,10 +15,6 @@ Typely allows us to overload methods.
 
     {overload} = require "typely"
 
-Evie is an `EventEmitter`-like library that provides event bubbling.
-
-    Evie = require "evie"
-
 Our request library encapsulates Node's HTTP client library for us.
 
     {request} = require "./request"

@@ -5,6 +5,13 @@ assert = require "assert"
 {resource} = require "../src/shred"
 amen = require "amen"
 
+{promise, async, lift, call} = do ->
+  {promise} = require "when"
+  {lift, call} = require "when/generator"
+  {promise, async: lift, call}
+
+
+
 amen.describe "Resources", (context) ->
 
   context.test "Create a resource from a URL", ->
@@ -29,7 +36,7 @@ amen.describe "Resources", (context) ->
         assert.equal type(shredRepo), "function"
 
         context.test "Create a subordinate resource
-          with a request description", (context) ->
+          with a request description", async (context) ->
 
           shredRepo =
             resource "https://api.github.com/repos/pandastrike/shred/issues",
@@ -39,8 +46,7 @@ amen.describe "Resources", (context) ->
                   accept: "application/vnd.github.v3.raw+json"
                 expect: 200
 
-          shredRepo
-          .list()
+          (yield shredRepo.list())
           .on "ready", (issues) ->
             context.pass -> assert.equal type(issues), "array"
 
@@ -58,18 +64,22 @@ amen.describe "Resources", (context) ->
                         accept: "application/vnd.github.v3.raw+json"
                       expect: 200
 
-          github
+          response = yield github
           .repo owner: "pandastrike", repo: "shred"
           .issues
           .list()
+
+          response
           .on "ready", (issues) ->
             context.pass -> assert.equal type(issues), "array"
 
           context.test "Using a full URL for a nested resource", (context) ->
-            github
+            response = yield github
             .repo
             .issues("https://api.github.com/repos/pandastrike/shred/issues")
             .list()
+
+            response
             .on "ready", (issues) ->
               context.pass -> assert.equal type(issues), "array"
           context.test "Make an authorized request", ->

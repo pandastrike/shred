@@ -35,19 +35,18 @@
     "url": "git://github.com/pandastrike/shred.git"
   },
   "scripts": {
-    "prepublish": "coffee -o lib/ -c src/*.*coffee",
-    "test": "coffee test/shred.coffee",
-    "watch": "coffee -o lib/ -cw src/*.*coffee"
+    "prepublish": "coffee --nodejs --harmony -o lib/ -c src/*.*coffee",
+    "test": "coffee --nodejs --harmony test/shred.coffee",
+    "watch": "coffee --nodejs --harmony -o lib/ -cw src/*.*coffee"
   },
   "dependencies": {
     "fairmont": "^0.8.2",
     "url-template": "^2.0.4",
     "typely": "0.0.0",
-    "c50n": "^0.6.0",
-    "evie": "^0.2.0"
+    "c50n": "^0.7.0"
   },
   "devDependencies": {
-    "coffee-script": "1.7.x",
+    "coffee-script": "git://github.com/alubbe/coffee-script.git#efca28",
     "through": "^2.3.4",
     "colors": "^0.6.2",
     "nodegit": "^0.1.3",
