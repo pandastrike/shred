@@ -7,7 +7,7 @@ Our basic approach here is to provide a single function that creates self-simila
 We first just pick up a bunch of library code that we're going to need.
 
     querystring = require "querystring"
-    resolve_url = (require "url").resolve
+    resolve_url =
 
     {include, clone, type, base64} = require "fairmont"
 
@@ -18,6 +18,14 @@ Typely allows us to overload methods.
 Our request library encapsulates Node's HTTP client library for us.
 
     {request} = require "./request"
+
+We need a way to resolve URLs that doesn't automatically URL escape them (since URL templates have, by necessity, non-URL characters).
+
+    resolve = do ->
+      URL = require "url"
+      _resolve = URL.resolve
+      -> decodeURIComponent _resolve arguments...
+
 
 We have a dictionary of authorization functions. We only support basic auth at the moment.
 
@@ -47,7 +55,7 @@ We basically implement the first two of these in terms of the third.
 
 In other words, we don't really get to the good stuff until now. The object can include properties for the URL, the description, and an event emitter.
 
-      match "object", ({url, events, description}) ->
+      match "object", ({url, description}) ->
 
 We define some more helper functions, which we do here because we need access to the closure to implement them.
 
@@ -57,11 +65,8 @@ We need to be able to simply append a path to the resource we're defining. That'
 
         from_path = (path, _description=description) ->
           resource
-            url: resolve_url(url, path)
-            events: events.source()
+            url: resolve url, path
             description: _description
-
-The `events.source()` is the event-bubbling. We're creating a new event channel, but allowing it to bubble up to the current resource.
 
 ### Constructing a Resource Function From Parameters
 
@@ -72,7 +77,6 @@ Another way to create a resource is by adding parameters for a URL template. Tha
           (parameters, _description=description) ->
             resource
               url: template.expand(parameters)
-              events: events.source()
               description: _description
 
 ### Adding Operations to a Resource
@@ -80,12 +84,16 @@ Another way to create a resource is by adding parameters for a URL template. Tha
 Of course, we need to do more than simply define nested resources. The `make_request` function will take an action definition and decorate it so that we can reliable make an HTTP(S) request. We return a function that will actually make the request. The function itself is decorated with an `authorize` method and an `invoke` method (which we need if we call `authorize`).
 
         make_request = (definition) ->
-          definition.events ?= events
           definition.url ?= url
           definition.headers ?= {}
           fn = -> request(definition, arguments...)
-          fn.invoke = -> fn.apply(null, arguments)
           include fn,
+            invoke: -> fn.apply(null, arguments)
+            curl: ->
+              {url, method, headers} = definition
+              "curl -v -X#{method.toUpperCase()} #{url}" +
+                for key, value of headers
+                  " -H'#{key}: #{value}'"
             authorize: (credentials) ->
               [scheme] = Object.keys(credentials)
               transform = Authorization[scheme]
@@ -98,10 +106,6 @@ Of course, we need to do more than simply define nested resources. The `make_req
 ### Creating the New Resource
 
 We now can handle all the scenarios we need: creating subsidiary resources (via URLs, relative paths, or templates). We're ready to define the resource function that we'll return whenever we call `resource`.
-
-We create an event channel if we don't already have one.
-
-        events ?= new Evie
 
 The resource function is overloaded similarly to the top-level variant. The key differences are that we can now define a resource using query parameters.
 

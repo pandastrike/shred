@@ -63,8 +63,8 @@ request = ({url, method, headers, redirect, stream, expect}, body) ->
       if stream?
         transform.pipe stream
       else
-        stream.on "data", (chunk) -> data += chunk
-        stream.on "end", ->
+        response.on "data", (chunk) -> data += chunk
+        response.on "end", ->
           # TODO: this is not a safe way to check for a JSON
           # content-type. We should also make the parser
           # extensible.

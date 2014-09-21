@@ -36,7 +36,7 @@ amen.describe "Resources", (context) ->
         assert.equal type(shredRepo), "function"
 
         context.test "Create a subordinate resource
-          with a request description", async (context) ->
+          with a request description", (context) ->
 
           shredRepo =
             resource "https://api.github.com/repos/pandastrike/shred/issues",
@@ -46,9 +46,10 @@ amen.describe "Resources", (context) ->
                   accept: "application/vnd.github.v3.raw+json"
                 expect: 200
 
-          (yield shredRepo.list())
-          .on "ready", (issues) ->
-            context.pass -> assert.equal type(issues), "array"
+          call ->
+            (yield shredRepo.list())
+            .on "ready", (issues) ->
+              context.pass -> assert.equal type(issues), "array"
 
         context.test "Create a nested subordinate resource
           using an initializer with a request description", (context)->
@@ -64,22 +65,30 @@ amen.describe "Resources", (context) ->
                         accept: "application/vnd.github.v3.raw+json"
                       expect: 200
 
-          response = yield github
-          .repo owner: "pandastrike", repo: "shred"
-          .issues
-          .list()
+          call ->
 
-          response
-          .on "ready", (issues) ->
-            context.pass -> assert.equal type(issues), "array"
+            try
+              response = yield github
+              .repo owner: "pandastrike", repo: "shred"
+              .issues
+              .list()
+
+              response
+              .on "ready", (issues) ->
+                context.pass -> assert.equal type(issues), "array"
+
+            catch error
+              context.fail error
 
           context.test "Using a full URL for a nested resource", (context) ->
-            response = yield github
-            .repo
-            .issues("https://api.github.com/repos/pandastrike/shred/issues")
-            .list()
 
-            response
-            .on "ready", (issues) ->
-              context.pass -> assert.equal type(issues), "array"
+            call ->
+              response = yield github
+              .repo
+              .issues("https://api.github.com/repos/pandastrike/shred/issues")
+              .list()
+
+              response
+              .on "ready", (issues) ->
+                context.pass -> assert.equal type(issues), "array"
           context.test "Make an authorized request", ->
