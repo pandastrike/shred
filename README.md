@@ -29,7 +29,7 @@ github
 .on "ready", (issues) ->
   for {number, title} in issues
     console.log number, title
-
+```
 ## Installation
 
 ```
