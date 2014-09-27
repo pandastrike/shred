@@ -125,10 +125,6 @@ In either event, an optional second parameter describes the resource (basically,
           match "object", "object", (parameters, description) ->
             from_parameters parameters, description
 
-We need a way to add event handlers to the resource. This is a little bit unfortunate, because it means you can't have a resource named `on`.
-
-        _resource.on = (args...) -> events.on(args...); _resource
-
 We add actions or subsidiary resources based on the description. An object describes an action, so we call `make_request` for those. A function means we'er defining a subsidiary resource, so we call it, with the current resource as an argument for context.
 
 When we're defining a subsidiary resource, we want to make sure there's a description of the resource so we don't try to use the current resource. Otherwise, we'd end up with an infinite recursion. So, in that case, we tack on an empty object to the argument list.

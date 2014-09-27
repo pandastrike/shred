@@ -91,4 +91,5 @@ amen.describe "Resources", (context) ->
               response
               .on "ready", (issues) ->
                 context.pass -> assert.equal type(issues), "array"
+
           context.test "Make an authorized request", ->

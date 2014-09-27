@@ -36,9 +36,9 @@ request = ({url, method, headers, redirect, stream, expect}, body) ->
 
     # the main response handler
     handler = (response) ->
-      readBody response
+      data = readBody response
       if response.statusCode in expect
-        resolve response
+        resolve {response, data}
       else if response.statusCode in redirects && redirect is true
         request(response.headers.location)
       else
@@ -49,29 +49,29 @@ request = ({url, method, headers, redirect, stream, expect}, body) ->
 
     # actually read the body of the respone, decoding if necessary
     readBody = (response) ->
-      transform = switch response.headers["content-encoding"]
-        when 'gzip'
-          zlib = require "zlib"
-          response.pipe zlib.createGunzip()
-        when 'deflate'
-          zlib = require "zlib"
-          response.pipe zlib.createInflate()
-        else
-          response
-
-      data = ""
       if stream?
+        transform = switch response.headers["content-encoding"]
+          when 'gzip'
+            zlib = require "zlib"
+            response.pipe zlib.createGunzip()
+          when 'deflate'
+            zlib = require "zlib"
+            response.pipe zlib.createInflate()
+          else
+            response
         transform.pipe stream
       else
-        response.on "data", (chunk) -> data += chunk
-        response.on "end", ->
-          # TODO: this is not a safe way to check for a JSON
-          # content-type. We should also make the parser
-          # extensible.
-          if response.headers["content-type"]?.match(/json/)
-            data = JSON.parse(data)
-          # TODO: We probably shouldn't do this
-          response.emit "ready", data
+        promise (resolve, reject) ->
+          body = ""
+          response.on "data", (data) -> body += data
+          response.on "end", ->
+            # TODO: this is not a safe way to check for a JSON
+            # content-type. We should also make the parser
+            # extensible.
+            if response.headers["content-type"]?.match(/json/)
+              resolve JSON.parse body
+            else
+              resolve body
 
     # TODO: Check for a null or invalid URL
     {protocol, hostname, port, path} = parse_url url
