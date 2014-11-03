@@ -118,3 +118,27 @@ The `resource` function passed into the initializer functions works just as the 
 Typically, you'll want to use paths or template URLs to define subresources, which will be concatenated with the parent resources' URLs.
 
 Subresources defined using URL templates will be functions, allowing you to pass in an object whose key-value pairs will instantiate the template.
+
+### Shred Responses
+
+When you invoke a Shred request functions, you get back a response context. This contains both the HTTP response object and a data object. The data object is a promise that resolves when the response body is finished streaming. If the `content-type` appears to be JSON-based, Shred will parse the response body as JSON and return an object, otherwise, it will return a string.
+
+### Explicit Invocation
+
+You can explicit invoke Shred request functions using the `invoke` command. This is particularly useful when using helper functions defined on the request function, such as `authorize`.
+
+### Authorization With Shred
+
+You can use the `authorization` method defined on request functions to pass authorization information into the request. The `authorization` function takes a object describing the authorization scheme. Currently, `basic` and `bearer` are supported.
+
+#### Example
+
+```coffeescript
+try
+  yield github
+    .repo {owner, repo}
+    .issues
+    .create
+    .authorize basic: {username: token, password: ""}
+    .invoke {title, body}
+```
