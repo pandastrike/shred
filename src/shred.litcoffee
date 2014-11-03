@@ -32,6 +32,8 @@ We have a dictionary of authorization functions. We only support basic auth at t
     Authorization =
       basic: ({username, password}) ->
         "Basic " + base64("#{username}:#{password}")
+      bearer: (token) ->
+        "Bearer #{token}"
 
 Okay, now we're ready to get down to business.
 

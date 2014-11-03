@@ -44,7 +44,7 @@ request = ({url, method, headers, redirect, stream, expect}, body) ->
       else
         {statusCode} = response
         _error = new Error "Expected #{expect}, got #{statusCode}"
-        _error.response = response
+        _error.context = {response, data}
         reject _error
 
     # actually read the body of the respone, decoding if necessary

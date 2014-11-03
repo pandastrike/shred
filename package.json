@@ -1,6 +1,6 @@
 {
   "name": "shred",
-  "version": "1.0.0-alpha-07",
+  "version": "1.1.0-alpha-01",
   "description": "A resource-oriented JavaScript HTTP client.",
   "keywords": [
     "http",
@@ -20,14 +20,7 @@
     {
       "name": "Dan Yoder",
       "email": "dan@pandastrike.com"
-    },
-    {
-      "name": "Matthew King",
-      "email": "matthew@pandastrike.com"
     }
-  ],
-  "files": [
-    "lib"
   ],
   "main": "./lib/shred.js",
   "repository": {
@@ -46,11 +39,11 @@
     "when": "^3.4.6"
   },
   "devDependencies": {
+    "amen": "^1.0.0-alpha-01",
     "c50n": "^0.7.0",
-    "coffee-script": "git://github.com/alubbe/coffee-script.git#efca28",
-    "through": "^2.3.4",
+    "coffee-script": "git://github.com/jashkenas/coffeescript.git#4f82e59",
     "colors": "^0.6.2",
-    "amen": "0.0.1"
+    "through": "^2.3.4"
   },
   "engine": "node >= 0.11.x"
 }

@@ -6,6 +6,7 @@ usage = ->
 
 [_,_,args...] = process.argv
 options = {}
+
 list = ->
   while args.length > 0
     switch args.shift()

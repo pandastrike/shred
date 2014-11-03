@@ -5,16 +5,10 @@ assert = require "assert"
 {resource} = require "../src/shred"
 amen = require "amen"
 
-{promise, async, lift, call} = do ->
-  {promise} = require "when"
-  {lift, call} = require "when/generator"
-  {promise, async: lift, call}
-
-
-
 amen.describe "Resources", (context) ->
 
-  context.test "Create a resource from a URL", ->
+  context.test "Create a resource from a URL", (context) ->
+
     github = resource "https://api.github.com/"
     assert.equal type(github), "function"
 
@@ -23,73 +17,58 @@ amen.describe "Resources", (context) ->
       assert.equal type(repo), "function"
 
     context.test "Create a subordinate resource with a template", ->
-      repo = github "repos/{owner}/{repo}/"
-      shredRepo = repo owner: "pandastrike", repo: "shred"
-      assert.equal type(shredRepo), "function"
+      repo = (github "repos/{owner}/{repo}/")
+      assert.equal type(repo owner: "pandastrike", repo: "shred"), "function"
 
-      context.test "Create a subordinate resource with an initializer", ->
-        github = resource "https://api.github.com/",
-          repo: (resource) ->
-            resource "repos/{owner}/{repo}/"
+    context.test "Create a subordinate resource with an initializer", ->
+      github = resource "https://api.github.com/",
+        repo: (resource) ->
+          resource "repos/{owner}/{repo}/"
 
-        shredRepo = github.repo owner: "pandastrike", repo: "shred"
-        assert.equal type(shredRepo), "function"
+      assert.equal type(github.repo owner: "pandastrike", repo: "shred"),
+        "function"
 
-        context.test "Create a subordinate resource
-          with a request description", (context) ->
+    context.test "Create a subordinate resource with a request description", ->
 
-          shredRepo =
-            resource "https://api.github.com/repos/pandastrike/shred/issues",
-              list:
-                method: "get"
-                headers:
-                  accept: "application/vnd.github.v3.raw+json"
-                expect: 200
+      repo =
+        resource "https://api.github.com/repos/pandastrike/shred/issues",
+          list:
+            method: "get"
+            headers:
+              accept: "application/vnd.github.v3.raw+json"
+            expect: 200
 
-          call ->
-            (yield shredRepo.list())
-            .on "ready", (issues) ->
-              context.pass -> assert.equal type(issues), "array"
+      {data} = yield repo.list()
+      assert.equal type(yield data), "array"
 
-        context.test "Create a nested subordinate resource
-          using an initializer with a request description", (context)->
+    context.test "Create a nested subordinate resource
+      using an initializer with a request description", ->
 
-          github = resource "https://api.github.com/",
-            repo: (resource) ->
-              resource "repos/{owner}/{repo}/",
-                issues: (resource) ->
-                  resource "issues",
-                    list:
-                      method: "get"
-                      headers:
-                        accept: "application/vnd.github.v3.raw+json"
-                      expect: 200
+      github = resource "https://api.github.com/",
+        repo: (resource) ->
+          resource "repos/{owner}/{repo}/",
+            issues: (resource) ->
+              resource "issues",
+                list:
+                  method: "get"
+                  headers:
+                    accept: "application/vnd.github.v3.raw+json"
+                  expect: 200
 
-          call ->
+      {data} = yield github
+        .repo owner: "pandastrike", repo: "shred"
+        .issues
+        .list()
 
-            try
-              response = yield github
-              .repo owner: "pandastrike", repo: "shred"
-              .issues
-              .list()
+      assert.equal type(yield data), "array"
 
-              response
-              .on "ready", (issues) ->
-                context.pass -> assert.equal type(issues), "array"
+      context.test "Using a full URL for a nested resource", ->
 
-            catch error
-              context.fail error
+        {data} = yield github
+          .repo
+          .issues("https://api.github.com/repos/pandastrike/shred/issues")
+          .list()
 
-          context.test "Using a full URL for a nested resource", (context) ->
+        assert.equal type(yield data), "array"
 
-            call ->
-              response = yield github
-              .repo
-              .issues("https://api.github.com/repos/pandastrike/shred/issues")
-              .list()
-
-              response
-              .on "ready", (issues) ->
-                context.pass -> assert.equal type(issues), "array"
-
-          context.test "Make an authorized request", ->
+      context.test "Make an authorized request"
