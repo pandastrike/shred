@@ -98,7 +98,14 @@ Of course, we need to do more than simply define nested resources. The `make_req
                   " -H'#{key}: #{value}'"
             authorize: (credentials) ->
               [scheme] = Object.keys(credentials)
-              transform = Authorization[scheme]
+              transform = do ->
+                if definition.authorization?[scheme]?
+                  definition.authorization[scheme]
+                else if Authorization[scheme]?
+                  Authorization[scheme]
+                else
+                  ({k, v}) -> "#{k}: #{v}"
+
               authorization = transform(credentials[scheme])
               _definition = clone definition
               _definition.headers.authorization = authorization
