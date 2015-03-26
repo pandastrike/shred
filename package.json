@@ -1,6 +1,6 @@
 {
   "name": "shred",
-  "version": "1.1.0-alpha-01",
+  "version": "1.1.0-alpha-03",
   "description": "A resource-oriented JavaScript HTTP client.",
   "keywords": [
     "http",
@@ -22,6 +22,7 @@
       "email": "dan@pandastrike.com"
     }
   ],
+  "files": ["lib", "test", "examples", "src", "README.md"],
   "main": "./lib/shred.js",
   "repository": {
     "type": "git",
