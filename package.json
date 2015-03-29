@@ -1,6 +1,6 @@
 {
   "name": "shred",
-  "version": "1.1.0-alpha-04",
+  "version": "1.1.0-alpha-06",
   "description": "A resource-oriented JavaScript HTTP client.",
   "keywords": [
     "http",
@@ -37,10 +37,11 @@
   "scripts": {
     "prepublish": "coffee --nodejs --harmony -o lib/ -c src/*.*coffee",
     "test": "coffee --nodejs --harmony test/shred.coffee",
-    "watch": "coffee --nodejs --harmony -o lib/ -cw src/*.*coffee"
+    "watch": "coffee --nodejs --harmony -o lib/ -cw src/*.*coffee",
+    "tag": "(node_modules/.bin/json -f package.json version | xargs -I version git tag -am version version) && git push --tags"
   },
   "dependencies": {
-    "fairmont": "^0.8.2",
+    "fairmont": "^1.0.0-alpha-17",
     "typely": "0.0.0",
     "url-template": "^2.0.4",
     "when": "^3.4.6"
@@ -50,6 +51,7 @@
     "c50n": "^0.7.0",
     "coffee-script": "git://github.com/jashkenas/coffeescript.git#4f82e59",
     "colors": "^0.6.2",
+    "json": "^9.0.3",
     "through": "^2.3.4"
   },
   "engine": "node >= 0.11.x"

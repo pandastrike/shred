@@ -9,16 +9,7 @@ schemes =
 
 {read, type} = require "fairmont"
 
-user_agent = do ->
-  version = do ->
-    try
-      path = resolve __dirname, "..", "package.json"
-      JSON.parse(read(path)).version
-    catch
-      console.warn "Can't find version"
-      ""
-  "shred #{version}"
-
+user_agent = "Shred version 1.0"
 redirects = [ 301, 302, 303, 305, 307 ]
 
 counter = 0
