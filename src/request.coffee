@@ -7,21 +7,29 @@ schemes =
   http: require "http"
   https: require "https"
 
-{read, type} = require "fairmont"
+{read, type, is_array, is_string} = require "fairmont"
 
-user_agent = "Shred version 1.0"
+user_agent = "Shred v1.0.0-alpha"
 redirects = [ 301, 302, 303, 305, 307 ]
 
-counter = 0
-request = ({url, method, headers, redirect, stream, expect}, body) ->
-  id = ++counter
+request = ({url, method, headers, redirect, expect}, body) ->
+
+  url ?= window?.url
+  method ?= "GET"
+  headers ?= {}
   redirect ?= true
   headers["user-agent"] ?= user_agent
-  expect = [ expect ] unless type(expect) is "array"
+  expect ?= [ 200 ]
+  expect = if is_array expect then expect else [ expect ]
 
-  if body?
-    unless type(body) is "string"
-      body = JSON.stringify(body)
+
+
+  # TODO: handle streams
+  body =
+    if body?
+      if is_string body || is_stream body
+        body
+      else to_json body
 
   promise (resolve, reject) ->
 
@@ -31,7 +39,7 @@ request = ({url, method, headers, redirect, stream, expect}, body) ->
       if response.statusCode in expect
         resolve {response, data}
       else if response.statusCode in redirects && redirect is true
-        request(response.headers.location)
+        _request response.headers.location
       else
         {statusCode} = response
         _error = new Error "Expected #{expect}, got #{statusCode}"
@@ -51,6 +59,7 @@ request = ({url, method, headers, redirect, stream, expect}, body) ->
           else
             response
         transform.pipe stream
+
       else
         promise (resolve, reject) ->
           body = ""
@@ -60,22 +69,26 @@ request = ({url, method, headers, redirect, stream, expect}, body) ->
             # content-type. We should also make the parser
             # extensible.
             if response.headers["content-type"]?.match(/json/)
-              resolve JSON.parse body
+              try
+                resolve JSON.parse body
+              catch error
+                reject error
             else
               resolve body
 
-    # TODO: Check for a null or invalid URL
-    {protocol, hostname, port, path} = parse_url url
-    scheme = protocol[0..-2] # remove trailing :
-    schemes[scheme]
-    .request
-      hostname: hostname
-      port: port || (if scheme is 'https' then 443 else 80)
-      path: path
-      method: method.toUpperCase()
-      headers: headers
-    .on "response", handler
-    .on "error", (error) -> reject error
-    .end(body)
+    do _request = (url) ->
+      # TODO: Check for a null or invalid URL
+      {protocol, hostname, port, path} = parse_url url
+      scheme = protocol[0..-2] # remove trailing :
+      schemes[scheme]
+      .request
+        hostname: hostname
+        port: port || window?.port || (if scheme is 'https' then 443 else 80)
+        path: path
+        method: method.toUpperCase()
+        headers: headers
+      .on "response", handler
+      .on "error", (error) -> reject error
+      .end(body)
 
 module.exports = {request}

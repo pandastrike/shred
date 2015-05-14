@@ -26,7 +26,6 @@ We need a way to resolve URLs that doesn't automatically URL escape them (since 
       _resolve = URL.resolve
       -> decodeURIComponent _resolve arguments...
 
-
 We have a dictionary of authorization functions. We only support basic auth at the moment.
 
     Authorization =
