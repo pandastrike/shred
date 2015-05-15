@@ -36,12 +36,12 @@
   },
   "scripts": {
     "prepublish": "coffee --nodejs --harmony -o lib/ -c src/*.*coffee",
-    "test": "coffee --nodejs --harmony test/shred.coffee",
+    "test": "coffee --nodejs --harmony test",
     "watch": "coffee --nodejs --harmony -o lib/ -cw src/*.*coffee",
     "tag": "(node_modules/.bin/json -f package.json version | xargs -I version git tag -am version version) && git push --tags"
   },
   "dependencies": {
-    "fairmont": "^1.0.0-alpha-17",
+    "fairmont": "1.0.0-beta-03",
     "typely": "0.0.0",
     "url-template": "^2.0.4",
     "when": "^3.4.6"
@@ -49,7 +49,7 @@
   "devDependencies": {
     "amen": "^1.0.0-alpha-01",
     "c50n": "^0.7.0",
-    "coffee-script": "git://github.com/jashkenas/coffeescript.git#4f82e59",
+    "coffee-script": "1.9.2",
     "colors": "^0.6.2",
     "json": "^9.0.3",
     "through": "^2.3.4"
