@@ -7,7 +7,7 @@ schemes =
   http: require "http"
   https: require "https"
 
-{read, type, is_array, is_string} = require "fairmont"
+{read, type, is_array, is_string, to_json} = require "fairmont"
 
 user_agent = "Shred v1.0.0-alpha"
 redirects = [ 301, 302, 303, 305, 307 ]
