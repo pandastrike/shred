@@ -3,9 +3,9 @@ assert = require "assert"
 {type} = require "fairmont"
 {resolve} = require "path"
 {resource} = require "../src/shred"
-amen = require "amen"
 
-amen.describe "Resources", (context) ->
+
+module.exports = (context) ->
 
   context.test "Create a resource from a URL", (context) ->
 
@@ -70,5 +70,3 @@ amen.describe "Resources", (context) ->
           .list()
 
         assert.equal type(yield data), "array"
-
-      context.test "Make an authorized request"
