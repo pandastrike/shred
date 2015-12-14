@@ -9,11 +9,9 @@ We first just pick up a bunch of library code that we're going to need.
     querystring = require "querystring"
     resolve_url =
 
-    {include, clone, isObject, isFunction, base64} = require "fairmont"
-
-Typely allows us to overload methods.
-
-    {overload} = require "typely"
+    {include, clone,
+    isString, isObject, isFunction,
+    base64, Method} = require "fairmont"
 
 Our request library encapsulates Node's HTTP client library for us.
 
@@ -48,15 +46,16 @@ We can call `resource` in one of three ways:
 
 We basically implement the first two of these in terms of the third.
 
-    resource = overload (match) ->
+    resource = Method.create()
 
-      match "string", (url) -> resource {url}
+    Method.define resource, isString, (url) -> resource {url}
 
-      match "string", "object", (url, description) -> resource {url, description}
+    Method.define resource, isString, isObject, (url, description) ->
+      resource {url, description}
 
 In other words, we don't really get to the good stuff until now. The object can include properties for the URL, the description, and an event emitter.
 
-      match "object", ({url, description}) ->
+    Method.define resource, isObject, ({url, description}) ->
 
 We define some more helper functions, which we do here because we need access to the closure to implement them.
 
@@ -121,16 +120,18 @@ If we get a string as the first argument, we know it's a path (or a URL, but _re
 
 In either event, an optional second parameter describes the resource (basically, adding actions).
 
-        _resource = overload (match) ->
+        _resource = Method.create()
 
-          match "string", (path) -> from_path path
-          match "string", "object", (path, description) ->
-            from_path path, description
+        Method.define _resource, isString, (path) -> from_path path
 
-          match "object", (parameters) ->
-            from_parameters parameters
+        Method.define _resource, isString, isObject, (path, description) ->
+          from_path path, description
 
-          match "object", "object", (parameters, description) ->
+        Method.define _resource, isObject, (parameters) ->
+          from_parameters parameters
+
+        Method.define _resource, isObject, isObject,
+          (parameters, description) ->
             from_parameters parameters, description
 
 We add actions or subsidiary resources based on the description. An object describes an action, so we call `make_request` for those. A function means we'er defining a subsidiary resource, so we call it, with the current resource as an argument for context.
