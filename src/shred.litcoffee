@@ -9,7 +9,7 @@ We first just pick up a bunch of library code that we're going to need.
     querystring = require "querystring"
     resolve_url =
 
-    {include, clone, type, base64} = require "fairmont"
+    {include, clone, isObject, isFunction, base64} = require "fairmont"
 
 Typely allows us to overload methods.
 
@@ -139,10 +139,10 @@ When we're defining a subsidiary resource, we want to make sure there's a descri
 
         for name, definition of description
           do (name, definition) ->
-            _resource[name] = switch type(definition)
-              when "object"
+            _resource[name] = switch
+              when (isObject definition)
                 make_request(clone definition)
-              when "function"
+              when (isFunction definition)
                 definition ->
                   if arguments.length == 1
                     _resource arguments..., {}

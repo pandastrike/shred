@@ -1,6 +1,6 @@
 assert = require "assert"
 
-{type} = require "fairmont"
+{isFunction, isArray} = require "fairmont"
 {resolve} = require "path"
 {resource} = require "../src/shred"
 
@@ -10,23 +10,22 @@ module.exports = (context) ->
   context.test "Create a resource from a URL", (context) ->
 
     github = resource "https://api.github.com/"
-    assert.equal type(github), "function"
+    assert isFunction github
 
     context.test "Create a subordinate resource with a path", ->
       repo = github "repos/pandastrike/shred"
-      assert.equal type(repo), "function"
+      assert isFunction repo
 
     context.test "Create a subordinate resource with a template", ->
       repo = (github "repos/{owner}/{repo}/")
-      assert.equal type(repo owner: "pandastrike", repo: "shred"), "function"
+      assert isFunction repo owner: "pandastrike", repo: "shred"
 
     context.test "Create a subordinate resource with an initializer", ->
       github = resource "https://api.github.com/",
         repo: (resource) ->
           resource "repos/{owner}/{repo}/"
 
-      assert.equal type(github.repo owner: "pandastrike", repo: "shred"),
-        "function"
+      assert isFunction github.repo owner: "pandastrike", repo: "shred"
 
     context.test "Create a subordinate resource with a request description", ->
 
@@ -39,7 +38,7 @@ module.exports = (context) ->
             expect: 200
 
       {data} = yield repo.list()
-      assert.equal type(yield data), "array"
+      assert isArray yield data
 
     context.test "Create a nested subordinate resource
       using an initializer with a request description", ->
@@ -60,7 +59,7 @@ module.exports = (context) ->
         .issues
         .list()
 
-      assert.equal type(yield data), "array"
+      assert isArray yield data
 
       context.test "Using a full URL for a nested resource", ->
 
@@ -69,4 +68,4 @@ module.exports = (context) ->
           .issues("https://api.github.com/repos/pandastrike/shred/issues")
           .list()
 
-        assert.equal type(yield data), "array"
+        assert isArray yield data

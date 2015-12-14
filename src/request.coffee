@@ -7,7 +7,7 @@ schemes =
   http: require "http"
   https: require "https"
 
-{read, type, is_array, is_string, to_json} = require "fairmont"
+{read, type, isArray, isString, toJSON} = require "fairmont"
 
 user_agent = "Shred v1.0.0-alpha"
 redirects = [ 301, 302, 303, 305, 307 ]
@@ -20,16 +20,16 @@ request = ({url, method, headers, redirect, expect}, body) ->
   redirect ?= true
   headers["user-agent"] ?= user_agent
   expect ?= [ 200 ]
-  expect = if is_array expect then expect else [ expect ]
+  expect = if isArray expect then expect else [ expect ]
 
 
 
   # TODO: handle streams
   body =
     if body?
-      if is_string body || is_stream body
+      if isString body || is_stream body
         body
-      else to_json body
+      else toJSON body
 
   promise (resolve, reject) ->
 

@@ -1,6 +1,6 @@
 assert = require "assert"
 
-{type} = require "fairmont"
+{isArray} = require "fairmont"
 {resource} = require "../src/shred"
 
 module.exports = (context) ->
@@ -14,7 +14,7 @@ module.exports = (context) ->
           expect: 200
 
     {data} = yield repo.list()
-    assert.equal type(yield data), "array"
+    assert isArray yield data
 
 
   context.test "Make a request that passes a string body to the handler.", (context) ->
@@ -27,7 +27,7 @@ module.exports = (context) ->
           expect: 200
 
     {data} = yield repo.list "'assignee': 'none'"
-    assert.equal type(yield data), "array"
+    assert isArray yield data
 
 
   context.test "Make a request that passes an object body to the handler.", (context) ->
@@ -42,7 +42,7 @@ module.exports = (context) ->
     {data} = yield repo.list
       assignee: "none"
       state: "all"
-    assert.equal type(yield data), "array"
+    assert isArray yield data
 
 
   # TODO: These tests need to be written.
